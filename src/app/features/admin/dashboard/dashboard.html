@@ -1,56 +1,87 @@
 <div class="dashboard-page">
-
   @if (isLoading()) {
     <div class="loading-overlay">
       <div class="spinner"></div>
       <p>Chargement des statistiques...</p>
     </div>
   } @else {
-    <!-- Stats Cards -->
+    <section class="dashboard-header">
+      <p class="dashboard-description">
+        Suivez rapidement la santé du système, les principales entités et les tendances du trafic transport.
+      </p>
+    </section>
+
     <div class="stats-grid">
       <div class="stat-card">
         <div class="icon bg-blue">🏢</div>
-        <div class="stat-info">
+        <div>
           <span class="label">Agences</span>
           <span class="value">{{ totalAgencies() }}</span>
-          <span class="trend">Agences de transport</span>
+          <span class="trend">Entités actives</span>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="icon bg-green">🚌</div>
-        <div class="stat-info">
-          <span class="label">Total Bus</span>
+        <div>
+          <span class="label">Bus</span>
           <span class="value">{{ totalBuses() | number }}</span>
-          <span class="trend">Parc automobile global</span>
+          <span class="trend">Véhicules disponibles</span>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="icon bg-purple">👥</div>
-        <div class="stat-info">
+        <div>
           <span class="label">Utilisateurs</span>
           <span class="value">{{ totalUsers() | number }}</span>
-          <span class="trend">Tous les rôles confondus</span>
+          <span class="trend">Tous profils</span>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="icon bg-orange">📍</div>
-        <div class="stat-info">
+        <div>
           <span class="label">Gares</span>
           <span class="value">{{ totalGares() }}</span>
-          <span class="trend">Stations du réseau</span>
+          <span class="trend">Points de correspondance</span>
         </div>
       </div>
     </div>
 
-    <!-- Recent Activity / Charts Placeholder -->
-    <div class="dashboard-content">
-      <div class="chart-card">
-        <h3>Répartition par Ville</h3>
-        <div class="chart-placeholder">[Graphique: Top 5 des villes les plus actives]</div>
-      </div>
+    <div class="dashboard-body">
+      <section class="panel card-overview">
+        <div class="panel-header">
+          <h3>Vue rapide</h3>
+          <span class="badge">Actualisé maintenant</span>
+        </div>
+        <div class="overview-grid">
+          <div class="overview-item">
+            <span class="item-label">Agences par ville</span>
+            <strong>{{ totalAgencies() > 0 ? (totalAgencies() | number) : '0' }}</strong>
+          </div>
+          <div class="overview-item">
+            <span class="item-label">Bus en flotte</span>
+            <strong>{{ totalBuses() | number }}</strong>
+          </div>
+          <div class="overview-item">
+            <span class="item-label">Utilisateurs actifs</span>
+            <strong>{{ totalUsers() | number }}</strong>
+          </div>
+          <div class="overview-item">
+            <span class="item-label">Gares référencées</span>
+            <strong>{{ totalGares() | number }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel chart-card">
+        <div class="panel-header">
+          <h3>Activité géographique</h3>
+          <span class="badge badge-soft">Top 5 des villes</span>
+        </div>
+        <div class="chart-placeholder">Graphique de performance par zone à venir</div>
+      </section>
     </div>
   }
 </div>

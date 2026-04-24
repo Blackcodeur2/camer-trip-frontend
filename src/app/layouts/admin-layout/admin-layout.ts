@@ -8,7 +8,7 @@ import { TitleCasePipe } from '@angular/common';
   selector: 'app-admin-layout',
   imports: [MatIconModule, RouterModule, TitleCasePipe],
   templateUrl: './admin-layout.html',
-  styleUrl: './admin-layout.css',
+  styleUrls: ['./admin-layout.css'],
 })
 export class AdminLayout {
   private authService = inject(AuthService);

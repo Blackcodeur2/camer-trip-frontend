@@ -74,7 +74,7 @@
         <div class="field">
           <label class="field__label" for="prenom">Prénom</label>
           <div class="input-container">
-            <span class="input-icon">👤</span>
+            <mat-icon class="input-icon">person</mat-icon>
             <input
               id="prenom"
               class="field__control"
@@ -91,7 +91,7 @@
         <div class="field">
           <label class="field__label" for="nom">Nom</label>
           <div class="input-container">
-            <span class="input-icon">👤</span>
+            <mat-icon class="input-icon">person</mat-icon>
             <input
               id="nom"
               class="field__control"
@@ -108,7 +108,7 @@
         <div class="field">
           <label class="field__label" for="email">Email</label>
           <div class="input-container">
-            <span class="input-icon">✉️</span>
+            <mat-icon class="input-icon">email</mat-icon>
             <input
               id="email"
               class="field__control"
@@ -125,7 +125,7 @@
         <div class="field">
           <label class="field__label" for="telephone">Téléphone</label>
           <div class="input-container">
-            <span class="input-icon">📞</span>
+            <mat-icon class="input-icon">phone</mat-icon>
             <input
               id="telephone"
               class="field__control"
@@ -139,27 +139,8 @@
           }
         </div>
 
-        <div class="field field--full">
-          <label class="field__label" for="num_cni">Numero de CNI / Passeport</label>
           <div class="input-container">
-            <span class="input-icon">🆔</span>
-            <input
-              id="num_cni"
-              class="field__control"
-              type="text"
-              formControlName="num_cni"
-              placeholder="Numéro d'identification"
-            />
-          </div>
-          @if (shouldShowError('num_cni')) {
-            <div class="field__error">{{ errorMessage('num_cni') }}</div>
-          }
-        </div>
-
-        <div class="field">
-          <label class="field__label" for="date_naissance">Date de naissance</label>
-          <div class="input-container">
-            <span class="input-icon">📅</span>
+            <mat-icon class="input-icon">calendar_today</mat-icon>
             <input
               id="date_naissance"
               class="field__control"
@@ -167,12 +148,11 @@
               formControlName="date_naissance"
             />
           </div>
-        </div>
-
+        
         <div class="field">
           <label class="field__label" for="sexe">Sexe</label>
           <div class="input-container">
-            <span class="input-icon">🚻</span>
+            <mat-icon class="input-icon">wc</mat-icon>
             <select id="sexe" formControlName="sexe" class="field__control field__control--select">
               <option value="M">Masculin</option>
               <option value="F">Féminin</option>
@@ -183,7 +163,7 @@
         <div class="field">
           <label class="field__label" for="password">Mot de passe</label>
           <div class="input-container">
-            <span class="input-icon">🔒</span>
+            <mat-icon class="input-icon">lock</mat-icon>
             <input
               id="password"
               class="field__control"
@@ -197,7 +177,7 @@
         <div class="field">
           <label class="field__label" for="password_confirmation">Confirmation</label>
           <div class="input-container">
-            <span class="input-icon">✅</span>
+            <mat-icon class="input-icon">lock</mat-icon>
             <input
               id="password_confirmation"
               class="field__control"

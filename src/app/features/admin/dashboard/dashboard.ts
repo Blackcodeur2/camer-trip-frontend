@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-dashboard',
   imports: [CommonModule],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.css',
+  styleUrls: ['./dashboard.css'],
 })
 export class Dashboard {
   private userService = inject(UserService);

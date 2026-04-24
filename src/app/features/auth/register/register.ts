@@ -4,12 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth-service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, MatIconModule],
   templateUrl: './register.html',
-  styleUrl: './register.css',
+  styleUrls: ['./register.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Register {
@@ -26,7 +27,6 @@ export class Register {
     // Etapes 1: Informations personnelles
     prenom: ['', [Validators.required, Validators.minLength(2)]],
     nom: ['', [Validators.required, Validators.minLength(2)]],
-    num_cni: ['', [Validators.required]],
     sexe: ['M', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     date_naissance: ['', [Validators.required]],
@@ -58,7 +58,7 @@ export class Register {
   onNext(): void {
     if (this.currentStep() === 1) {
       // Validate Step 1 fields
-      const step1Fields = ['prenom', 'nom', 'email', 'telephone', 'num_cni', 'date_naissance', 'password', 'password_confirmation'];
+      const step1Fields = ['prenom', 'nom', 'email', 'telephone', 'date_naissance', 'password', 'password_confirmation'];
       let isValid = true;
       step1Fields.forEach(field => {
         const control = this.registerForm.get(field);

@@ -78,7 +78,10 @@ export const routes: Routes = [
         canActivate: [authGuardGuard],
         data: { roles: ['PROPRIETAIRE'] },
         children: [
-
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./features/proprietaire/dashboard/dashboard').then(m => m.Dashboard),
+            }
         ]
 
     },

@@ -1,0 +1,182 @@
+<div class="dashboard-container">
+  <header class="welcome-section">
+    <div class="welcome-text">
+      <h1><mat-icon>dashboard</mat-icon> Tableau de Bord</h1>
+      <p>Vue d'ensemble de vos activités - {{ userName() }}</p>
+    </div>
+
+    <div class="kyc-badge" [class]="'kyc-badge--' + kycStatus().toLowerCase()">
+      <mat-icon>{{ kycStatus() === 'APPROUVE' ? 'verified' : 'info' }}</mat-icon>
+      <span>
+        @switch (kycStatus()) {
+          @case ('NOT_STARTED') {
+            Statut KYC: Non démarré
+          }
+          @case ('EN ATTENTE') {
+            Statut KYC: En attente
+          }
+          @case ('APPROUVE') {
+            Compte Vérifié
+          }
+          @case ('REJETE') {
+            Vérification rejetée
+          }
+          @default {
+            {{ kycStatus() }}
+          }
+        }
+      </span>
+    </div>
+  </header>
+
+  @if (isRestricted()) {
+    <div class="restriction-view animate-fade-in">
+      <div class="restriction-card">
+        <div class="restriction-header">
+          <div
+            class="status-icon-wrapper"
+            [class.status-icon--success]="kycStatus() === 'APPROVED'"
+          >
+            <mat-icon>{{
+              kycStatus() === 'APPROVED' ? 'verified_user' : 'pending_actions'
+            }}</mat-icon>
+          </div>
+          <h2>Activation de votre compte</h2>
+          <p class="subtitle">
+            Complétez les étapes ci-dessous pour accéder à votre gestionnaire d'agence.
+          </p>
+        </div>
+
+        <div class="steps-list">
+          <!-- KYC Step -->
+          <div class="step-item" [class.step-item--done]="kycStatus() === 'APPROVED'">
+            <div class="step-status">
+              <mat-icon>{{
+                kycStatus() === 'APPROVED' ? 'check_circle' : 'hourglass_empty'
+              }}</mat-icon>
+            </div>
+            <div class="step-content">
+              <h3>Vérification des documents (KYC)</h3>
+              <p>
+                @if (kycStatus() === 'APPROVED') {
+                  Vos documents ont été validés avec succès par notre équipe.
+                } @else if (kycStatus() === 'PENDING') {
+                  Votre dossier est en cours d'examen. Vous recevrez une notification bientôt.
+                } @else {
+                  Vous devez soumettre vos documents légaux pour vérification.
+                }
+              </p>
+            </div>
+          </div>
+
+          <!-- Subscription Step -->
+          <div class="step-item" [class.step-item--done]="isSubscribed()">
+            <div class="step-status">
+              <mat-icon>{{ isSubscribed() ? 'check_circle' : 'payments' }}</mat-icon>
+            </div>
+            <div class="step-content">
+              <h3>Abonnement Annuel</h3>
+              <p>L'accès à la plateforme nécessite un abonnement de 50 000 FCFA / an.</p>
+              @if (!isSubscribed()) {
+                <button class="pay-btn" (click)="subscribe()" [disabled]="isPaying()">
+                  @if (isPaying()) {
+                    <span class="spinner-small"></span> Initialisation...
+                  } @else {
+                    Souscrire maintenant (50 000 FCFA)
+                  }
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="restriction-footer">
+          <button class="logout-btn" (click)="onLogout()">
+            <mat-icon>logout</mat-icon> Se déconnecter
+          </button>
+          <button class="refresh-btn" (click)="ngOnInit()">
+            <mat-icon>refresh</mat-icon> Actualiser le statut
+          </button>
+        </div>
+      </div>
+    </div>
+  } @else if (isLoading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Chargement des statistiques...</p>
+    </div>
+  } @else if (stats()) {
+    <!-- Dashboard Stats Grid (the rest of the original content) -->
+    <div class="stats-grid animate-fade-in">
+      @for (item of statItems; track item.key) {
+        <div class="stat-card" [style.border-left-color]="item.color">
+          <div
+            class="stat-icon"
+            [style.background-color]="item.color + '20'"
+            [style.color]="item.color"
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
+          </div>
+          <div class="stat-content">
+            <h3>{{ getStatValue(item.key) }}</h3>
+            <p>{{ item.label }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Team Info -->
+    <section class="team-section animate-fade-in">
+      <h2>Équipe</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <mat-icon>local_shipping</mat-icon>
+          <div class="team-info">
+            <span class="value">{{ stats()?.chauffeurs || 0 }}</span>
+            <span class="label">Chauffeurs</span>
+          </div>
+        </div>
+        <div class="team-card">
+          <mat-icon>badge</mat-icon>
+          <div class="team-info">
+            <span class="value">{{ stats()?.agents || 0 }}</span>
+            <span class="label">Agents</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions animate-fade-in">
+      <header class="section-header">
+        <h2>Actions rapides</h2>
+      </header>
+      <div class="actions-grid">
+        <button class="action-btn" routerLink="/proprietaire/agencies">
+          <mat-icon>add_business</mat-icon>
+          <span>Gérer Agences</span>
+        </button>
+        <button class="action-btn" routerLink="/proprietaire/gares">
+          <mat-icon>location_on</mat-icon>
+          <span>Gérer Gares</span>
+        </button>
+        <button class="action-btn" routerLink="/proprietaire/buses">
+          <mat-icon>directions_bus</mat-icon>
+          <span>Voir Bus</span>
+        </button>
+        <button class="action-btn" routerLink="/proprietaire/routes">
+          <mat-icon>route</mat-icon>
+          <span>Voir Trajets</span>
+        </button>
+        <button class="action-btn" routerLink="/proprietaire/voyages">
+          <mat-icon>flight_takeoff</mat-icon>
+          <span>Voir Voyages</span>
+        </button>
+        <button class="action-btn" routerLink="/proprietaire/managers">
+          <mat-icon>person_add</mat-icon>
+          <span>Gérer Utilisateurs</span>
+        </button>
+      </div>
+    </section>
+  }
+</div>
