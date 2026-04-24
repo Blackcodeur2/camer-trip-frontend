@@ -1,0 +1,21 @@
+<button
+  [type]="type"
+  [disabled]="disabled || loading"
+  [class]="'btn ' + variant"
+  [class.btn-large]="size === 'large'"
+  [class.btn-small]="size === 'small'"
+  (click)="onClick($event)"
+>
+  <span class="btn-content" [class.hidden]="loading">
+    <ng-content></ng-content>
+  </span>
+
+  @if (loading) {
+    <span class="loader-container">
+      <svg class="spinner" viewBox="0 0 24 24">
+        <circle class="path" cx="12" cy="12" r="10" fill="none" stroke-width="3"></circle>
+      </svg>
+      <span class="loading-text">{{ loadingText }}</span>
+    </span>
+  }
+</button>

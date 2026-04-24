@@ -1,0 +1,417 @@
+<main class="auth">
+  <div class="auth__overlay"></div>
+  <section class="auth__card" aria-label="Inscription">
+    <header class="auth__header">
+      <div class="auth__logo">
+        <span class="logo-icon">🚍</span>
+      </div>
+      <h1 class="auth__title">Créer un compte</h1>
+      <p class="auth__subtitle">
+        Rejoignez <strong>{{ 'CamerTrip' }}</strong> aujourd'hui
+      </p>
+    </header>
+
+    <div class="steps-progress field--full">
+      <div
+        class="step-indicator"
+        [class.step-indicator--active]="currentStep() >= 1"
+        [class.step-indicator--completed]="currentStep() > 1"
+      >
+        <span class="step-number">1</span>
+        <span class="step-label">Profil</span>
+      </div>
+      <div class="step-line" [class.step-line--active]="currentStep() > 1"></div>
+      <div
+        class="step-indicator"
+        [class.step-indicator--active]="currentStep() >= 2"
+        [class.step-indicator--completed]="currentStep() > 2"
+      >
+        <span class="step-number">2</span>
+        <span class="step-label">Documents</span>
+      </div>
+      <div class="step-line" [class.step-line--active]="currentStep() > 2"></div>
+      <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 3">
+        <span class="step-number">3</span>
+        <span class="step-label">Résumé</span>
+      </div>
+    </div>
+
+    <form class="auth__form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Step 1: Profile Selection & Personal Info -->
+      <ng-container *ngIf="currentStep() === 1">
+        <div class="field field--full mb-4">
+          <label class="field__label">Choisissez votre profil</label>
+          <div class="role-selector">
+            <label
+              class="role-option"
+              [class.role-option--active]="registerForm.get('role_user')?.value === 'CLIENT'"
+            >
+              <input type="radio" formControlName="role_user" value="CLIENT" class="role-radio" />
+              <div class="role-icon-wrapper client-icon"><span class="role-icon">🧳</span></div>
+              <div class="role-info">
+                <span class="role-name">Voyageur</span>
+                <span class="role-desc">Réservez vos billets</span>
+              </div>
+            </label>
+
+            <label
+              class="role-option"
+              [class.role-option--active]="registerForm.get('role_user')?.value === 'PROPRIETAIRE'"
+            >
+              <input
+                type="radio"
+                formControlName="role_user"
+                value="PROPRIETAIRE"
+                class="role-radio"
+              />
+              <div class="role-icon-wrapper prop-icon"><span class="role-icon">🏢</span></div>
+              <div class="role-info">
+                <span class="role-name">Propriétaire</span>
+                <span class="role-desc">Gérez votre agence</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="prenom">Prénom</label>
+          <div class="input-container">
+            <span class="input-icon">👤</span>
+            <input
+              id="prenom"
+              class="field__control"
+              type="text"
+              formControlName="prenom"
+              placeholder="Prénom"
+            />
+          </div>
+          @if (shouldShowError('prenom')) {
+            <div class="field__error">{{ errorMessage('prenom') }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="nom">Nom</label>
+          <div class="input-container">
+            <span class="input-icon">👤</span>
+            <input
+              id="nom"
+              class="field__control"
+              type="text"
+              formControlName="nom"
+              placeholder="Nom"
+            />
+          </div>
+          @if (shouldShowError('nom')) {
+            <div class="field__error">{{ errorMessage('nom') }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="email">Email</label>
+          <div class="input-container">
+            <span class="input-icon">✉️</span>
+            <input
+              id="email"
+              class="field__control"
+              type="email"
+              formControlName="email"
+              placeholder="votre@email.com"
+            />
+          </div>
+          @if (shouldShowError('email')) {
+            <div class="field__error">{{ errorMessage('email') }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="telephone">Téléphone</label>
+          <div class="input-container">
+            <span class="input-icon">📞</span>
+            <input
+              id="telephone"
+              class="field__control"
+              type="tel"
+              formControlName="telephone"
+              placeholder="6xx xxx xxx"
+            />
+          </div>
+          @if (shouldShowError('telephone')) {
+            <div class="field__error">{{ errorMessage('telephone') }}</div>
+          }
+        </div>
+
+        <div class="field field--full">
+          <label class="field__label" for="num_cni">Numero de CNI / Passeport</label>
+          <div class="input-container">
+            <span class="input-icon">🆔</span>
+            <input
+              id="num_cni"
+              class="field__control"
+              type="text"
+              formControlName="num_cni"
+              placeholder="Numéro d'identification"
+            />
+          </div>
+          @if (shouldShowError('num_cni')) {
+            <div class="field__error">{{ errorMessage('num_cni') }}</div>
+          }
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="date_naissance">Date de naissance</label>
+          <div class="input-container">
+            <span class="input-icon">📅</span>
+            <input
+              id="date_naissance"
+              class="field__control"
+              type="date"
+              formControlName="date_naissance"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="sexe">Sexe</label>
+          <div class="input-container">
+            <span class="input-icon">🚻</span>
+            <select id="sexe" formControlName="sexe" class="field__control field__control--select">
+              <option value="M">Masculin</option>
+              <option value="F">Féminin</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="password">Mot de passe</label>
+          <div class="input-container">
+            <span class="input-icon">🔒</span>
+            <input
+              id="password"
+              class="field__control"
+              type="password"
+              formControlName="password"
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="password_confirmation">Confirmation</label>
+          <div class="input-container">
+            <span class="input-icon">✅</span>
+            <input
+              id="password_confirmation"
+              class="field__control"
+              type="password"
+              formControlName="password_confirmation"
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+
+        <div class="auth__actions mt-6">
+          <button type="button" class="auth__primary" (click)="onNext()">
+            <span class="btn-content">Continuer <span class="arrow">→</span></span>
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Step 2: Business Documents -->
+      <ng-container *ngIf="currentStep() === 2">
+        <div class="step-header field--full">
+          <h3 class="step-title">Documents de l'entreprise</h3>
+          <p class="step-desc">
+            Veuillez télécharger les documents légaux pour authentifier votre agence.
+          </p>
+        </div>
+
+        <div class="field">
+          <label class="field__label">RCCM (Registre du Commerce)</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              (change)="onFileChange($event, 'rccm')"
+              class="file-input"
+              accept=".pdf,image/*"
+            />
+            <div class="file-custom-input">
+              <span class="file-icon">📄</span>
+              <span class="file-text">{{
+                registerForm.get('rccm')?.value?.name || 'Choisir un fichier'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">DFE (Décl. Fiscale)</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              (change)="onFileChange($event, 'dfe')"
+              class="file-input"
+              accept=".pdf,image/*"
+            />
+            <div class="file-custom-input">
+              <span class="file-icon">📜</span>
+              <span class="file-text">{{
+                registerForm.get('dfe')?.value?.name || 'Choisir un fichier'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">Statuts de l'entreprise</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              (change)="onFileChange($event, 'statuts')"
+              class="file-input"
+              accept=".pdf,image/*"
+            />
+            <div class="file-custom-input">
+              <span class="file-icon">📑</span>
+              <span class="file-text">{{
+                registerForm.get('statuts')?.value?.name || 'Choisir un fichier'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">RIB (Relevé d'Identité Bancaire)</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              (change)="onFileChange($event, 'rib')"
+              class="file-input"
+              accept=".pdf,image/*"
+            />
+            <div class="file-custom-input">
+              <span class="file-icon">🏦</span>
+              <span class="file-text">{{
+                registerForm.get('rib')?.value?.name || 'Choisir un fichier'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">CNI Gérant (Recto)</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              (change)="onFileChange($event, 'gerant_id_front')"
+              class="file-input"
+              accept="image/*"
+            />
+            <div class="file-custom-input">
+              <span class="file-icon">🆔</span>
+              <span class="file-text">{{
+                registerForm.get('gerant_id_front')?.value?.name || 'Recto'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">CNI Gérant (Verso)</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              (change)="onFileChange($event, 'gerant_id_back')"
+              class="file-input"
+              accept="image/*"
+            />
+            <div class="file-custom-input">
+              <span class="file-icon">🆔</span>
+              <span class="file-text">{{
+                registerForm.get('gerant_id_back')?.value?.name || 'Verso'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field field--full">
+          <label class="field__label">Selfie du Gérant</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              (change)="onFileChange($event, 'gerant_selfie')"
+              class="file-input"
+              accept="image/*"
+            />
+            <div class="file-custom-input">
+              <span class="file-icon">📸</span>
+              <span class="file-text">{{
+                registerForm.get('gerant_selfie')?.value?.name || 'Prendre un selfie'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth__actions mt-6 flex-row">
+          <button type="button" class="auth__secondary w-1-3" (click)="onPrevious()">Retour</button>
+          <button type="button" class="auth__primary w-2-3" (click)="onNext()">Suivant →</button>
+        </div>
+      </ng-container>
+
+      <!-- Step 3: Summary -->
+      <ng-container *ngIf="currentStep() === 3">
+        <div class="step-header field--full">
+          <h3 class="step-title">Résumé de l'inscription</h3>
+          <p class="step-desc">Veuillez vérifier vos informations avant la soumission.</p>
+        </div>
+
+        <div class="summary-card field--full">
+          <div class="summary-item">
+            <span class="summary-label">Nom Complet</span>
+            <span class="summary-value"
+              >{{ registerForm.get('nom')?.value }} {{ registerForm.get('prenom')?.value }}</span
+            >
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Email</span>
+            <span class="summary-value">{{ registerForm.get('email')?.value }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Type de profil</span>
+            <span
+              class="summary-value badge-role"
+              [class.badge-role--prop]="registerForm.get('role_user')?.value === 'PROPRIETAIRE'"
+            >
+              {{ registerForm.get('role_user')?.value }}
+            </span>
+          </div>
+          <div class="summary-item" *ngIf="registerForm.get('role_user')?.value === 'PROPRIETAIRE'">
+            <span class="summary-label">Documents joints</span>
+            <span class="summary-value text-emerald-600">✓ 7 fichiers prêts</span>
+          </div>
+        </div>
+
+        <div class="auth__actions mt-6 flex-row">
+          <button
+            type="button"
+            class="auth__secondary w-1-3"
+            (click)="onPrevious()"
+            [disabled]="isLoading()"
+          >
+            Retour
+          </button>
+          <button type="submit" class="auth__primary w-2-3" [disabled]="isLoading()">
+            <span class="btn-content" *ngIf="!isLoading()"
+              >Confirmer & S'inscrire <span class="arrow">→</span></span
+            >
+            <span class="btn-spinner" *ngIf="isLoading()"></span>
+          </button>
+        </div>
+      </ng-container>
+
+      <div class="auth__footer field--full mt-6" *ngIf="currentStep() === 1">
+        Déjà membre ? <a routerLink="/auth/login" class="login-link">Se connecter</a>
+      </div>
+    </form>
+  </section>
+</main>

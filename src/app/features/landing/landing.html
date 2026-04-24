@@ -1,0 +1,311 @@
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--  NAVBAR                                                 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<nav class="navbar" id="top" [class.scrolled]="isScrolled">
+  <div class="navbar__container">
+    <a routerLink="/" class="navbar__brand">
+      <div class="brand-logo-wrap">
+        <span class="brand-icon">🚍</span>
+      </div>
+      <span class="brand-name">Camer<strong>Trip</strong></span>
+    </a>
+
+    <div class="navbar__center">
+      <a routerLink="/landing" fragment="fonctionnement" class="navbar__link">Fonctionnement</a>
+      <a routerLink="/landing" fragment="features" class="navbar__link">Partenaires</a>
+      <a routerLink="/landing" fragment="pour-proprietaires" class="navbar__link">Pour Agences</a>
+    </div>
+
+    <div class="navbar__actions">
+      <a routerLink="/auth/login" class="btn-ghost">Connexion</a>
+      <a routerLink="/auth/register" class="btn-primary">Créer un compte</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero__container">
+    <div class="hero__content">
+      <div class="hero__badge">
+        <span class="badge-dot"></span>
+        Plateforme #1 du transport routier au Cameroun
+      </div>
+      <h1 class="hero__title">
+        Voyagez à travers le pays <br />
+        avec une <span class="hero__accent">simplicité absolue</span>
+      </h1>
+      <p class="hero__subtitle">
+        CamerTrip connecte des dizaines d'agences de transport de la place. Trouvez votre trajet,
+        comparez les prix, et réservez instantanément en payant avec Mobile Money.
+      </p>
+
+      <div class="hero__stats">
+        <div class="stat-item">
+          <strong>50+</strong>
+          <span>Agences partenaires</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <strong>200+</strong>
+          <span>Villes desservies</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <strong>10k+</strong>
+          <span>Voyageurs mensuels</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="search-widget-wrapper">
+  <div class="search-bar">
+    <div class="search-field group">
+      <div class="search-icon">📍</div>
+      <div class="search-input-group">
+        <label>Ville de Départ</label>
+        <input type="text" placeholder="Ex: Yaoundé, Douala..." />
+      </div>
+    </div>
+
+    <div class="search-divider"></div>
+
+    <div class="search-field group">
+      <div class="search-icon">🏁</div>
+      <div class="search-input-group">
+        <label>Destination</label>
+        <input type="text" placeholder="Ex: Bafoussam, Bamenda..." />
+      </div>
+    </div>
+
+    <div class="search-divider"></div>
+
+    <div class="search-field group">
+      <div class="search-icon">📅</div>
+      <div class="search-input-group">
+        <label>Date de départ</label>
+        <input type="date" />
+      </div>
+    </div>
+
+    <a routerLink="/auth/register" class="search-btn">
+      <span class="btn-text">Rechercher</span>
+      <span class="btn-icon">→</span>
+    </a>
+  </div>
+</div>
+
+<section id="fonctionnement" class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Simplicité d'utilisation</div>
+      <h2 class="section-title">Comment ça marche ?</h2>
+      <p class="section-subtitle">
+        Oubliez les longues files d'attente en gare. Votre billet s'achète désormais directement
+        depuis votre smartphone.
+      </p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon-wrap">
+          <span class="step-icon">🔍</span>
+          <div class="step-number">01</div>
+        </div>
+        <h3>Recherchez le trajet</h3>
+        <p>
+          Sélectionnez votre ville de départ et votre destination pour afficher instantanément
+          toutes les agences et horaires disponibles.
+        </p>
+      </div>
+
+      <div class="step-connector"></div>
+
+      <div class="step-card">
+        <div class="step-icon-wrap">
+          <span class="step-icon">💳</span>
+          <div class="step-number">02</div>
+        </div>
+        <h3>Réservez & Payez</h3>
+        <p>
+          Comparez les offres, choisissez le bus qui vous convient et payez de façon sécurisée via
+          Orange Money ou MTN MoMo.
+        </p>
+      </div>
+
+      <div class="step-connector"></div>
+
+      <div class="step-card">
+        <div class="step-icon-wrap">
+          <span class="step-icon">🎫</span>
+          <div class="step-number">03</div>
+        </div>
+        <h3>Montez à bord !</h3>
+        <p>
+          Recevez votre billet électronique par SMS et mail. Présentez-le lors de l'embarquement
+          pour monter à bord.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="features-showcase">
+  <div class="container">
+    <div class="showcase-content">
+      <div class="showcase-text">
+        <div class="section-label">Fonctionnalités Clés</div>
+        <h2 class="section-title">Tout pour faciliter vos déplacements</h2>
+
+        <div class="feature-list">
+          <div class="feature-item">
+            <div class="feature-icon">🛡️</div>
+            <div class="feature-details">
+              <h4>Agences Vérifiées & Certifiées</h4>
+              <p>
+                Chaque agence présente sur CamerTrip fait l'objet d'un contrôle rigoureux de ses
+                assurances et autorisations.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-details">
+              <h4>Billets Électroniques Immédiats</h4>
+              <p>
+                Ne prenez plus le risque de perdre votre billet papier. Tout est sécurisé dans votre
+                compte et disponible hors connexion.
+              </p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon">🔔</div>
+            <div class="feature-details">
+              <h4>Notifications en temps réel</h4>
+              <p>
+                Recevez une alerte en cas de retard, modification d'horaire ou pour vous rappeler
+                votre l'heure de départ.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="showcase-visual">
+        <div class="floating-ticket glow-effect">
+          <div class="ticket-header">
+            <span class="ticket-agency">Touristique Express</span>
+            <span class="ticket-date">12 Aout 2026</span>
+          </div>
+          <div class="ticket-route">
+            <div class="city">
+              <span class="city-name">Yaoundé</span>
+              <span class="time">06:30</span>
+            </div>
+            <div class="route-line-visual">
+              <span class="bus-icon-small">🚌</span>
+            </div>
+            <div class="city right">
+              <span class="city-name">Douala</span>
+              <span class="time">10:45</span>
+            </div>
+          </div>
+          <div class="ticket-footer">
+            <div class="ticket-info">
+              <span class="label">Siège</span>
+              <span class="value accent">24A</span>
+            </div>
+            <div class="ticket-info right">
+              <span class="label">Statut</span>
+              <span class="badge badge-success">Confirmé</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pour-proprietaires" class="owner-cta">
+  <div class="container relative">
+    <div class="owner-card">
+      <div class="owner-content">
+        <h2 class="owner-title">Vous gérez une agence de transport ?</h2>
+        <p class="owner-desc">
+          CamerTrip vous offre un système de gestion complet pour vos lignes, vos bus, votre
+          personnel et vos billets avec paiements intégrés. Rejoignez le réseau national le plus
+          performant.
+        </p>
+
+        <div class="owner-grid">
+          <div class="owner-perk">✔️ Tableaux de bord & Statistiques</div>
+          <div class="owner-perk">✔️ Gestion Multi-Gares intégrée</div>
+          <div class="owner-perk">✔️ Module de gestion des Colis</div>
+          <div class="owner-perk">✔️ Export automatique PDF</div>
+        </div>
+
+        <div class="owner-actions">
+          <a routerLink="/auth/register" class="btn-owner">Devenir Partenaire</a>
+          <a href="#" class="btn-owner-ghost">Parler à notre équipe</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="modern-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-logo">🚍 CamerTrip</div>
+        <p>
+          L'application qui modernise le transport inter-régional au Cameroun. Voyages plus sûrs,
+          réservations plus rapides.
+        </p>
+        <div class="social-links">
+          <a href="#" class="social-btn">FB</a>
+          <a href="#" class="social-btn">TW</a>
+          <a href="#" class="social-btn">IG</a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h4>Voyageurs</h4>
+        <ul>
+          <li><a routerLink="/auth/register">Créer un compte</a></li>
+          <li><a href="#">Trouver un trajet</a></li>
+          <li><a href="#">Support Voyageur</a></li>
+          <li><a href="#">FAQ & Aide</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Partenaires</h4>
+        <ul>
+          <li><a routerLink="/landing" fragment="pour-proprietaires">Ouvrir une agence</a></li>
+          <li><a routerLink="/auth/register">Espace Partenaire</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Nous contacter</h4>
+        <ul>
+          <li><strong>📍</strong> Dschang, Cameroun</li>
+          <li><strong>📞</strong> +237 658135105</li>
+          <li><strong>✉️</strong> infos@camertrip.cm</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 CamerTrip. Tous droits réservés.</p>
+      <div class="footer-legal">
+        <a href="#">Conditions & Termes</a>
+        <a href="#">Mentions Légales</a>
+      </div>
+    </div>
+  </div>
+</footer>

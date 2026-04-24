@@ -1,0 +1,48 @@
+<main class="auth">
+  <section class="auth__card" aria-label="Connexion">
+    <header class="auth__header">
+      <h1 class="auth__title">Connexion</h1>
+      <p class="auth__subtitle">Content de vous revoir sur <strong>{{ 'appName' }}</strong></p>
+    </header>
+
+    <form class="auth__form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="field">
+        <label class="field__label" for="email">Email</label>
+        <div class="input-container">
+          <span class="input-icon">✉️</span>
+          <input id="email" class="field__control" type="email" formControlName="email" inputmode="email"
+            autocomplete="username" placeholder="votre@email.com" />
+        </div>
+        @if (shouldShowError('email')) {
+        <div class="field__error">{{ errorMessage('email') }}</div>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="password">Mot de passe</label>
+        <div class="input-container">
+          <span class="input-icon">🔒</span>
+          <input id="password" class="field__control" type="password" formControlName="password"
+            autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        @if (shouldShowError('password')) {
+        <div class="field__error">{{ errorMessage('password') }}</div>
+        }
+      </div>
+
+      <div class="forgot-password">
+        <a routerLink="/auth/forgot-password">Mot de passe oublié ?</a>
+      </div>
+
+      <app-app-button type="submit" variant="auth__primary" [loading]="isLoading()" loadingText="Connexion en cours...">
+        Se connecter
+      </app-app-button>
+
+      <div class="auth__footer">
+        Vous n'avez pas encore de compte ? <a routerLink="/auth/register">S'inscrire</a>
+      </div>
+
+    </form>
+  </section>
+</main>
