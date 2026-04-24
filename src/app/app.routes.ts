@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuardGuard } from './core/guard/auth/auth-guard-guard';
 import { guestGuardGuard } from './core/guard/guest/guest-guard-guard';
 
 export const routes: Routes = [
@@ -42,6 +43,19 @@ export const routes: Routes = [
             {
                 path: 'reset-password',
                 loadComponent: () => import('./features/auth/reset-password/reset-password').then(m => m.ResetPassword),
+            },
+        ],
+    },
+    {
+        path: 'admin',
+        canActivate: [authGuardGuard],
+        data: {
+            roles: ['ADMIN'],
+        },
+        children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./features/admin/dashboard/dashboard').then(m => m.AdminDashboard),
             },
         ],
     },

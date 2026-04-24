@@ -5,9 +5,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
 export interface AuthResponse {
-  user: User;
-  token?: string;
-  access_token?: string;
+  data: {
+    user: User;
+    token?: string;
+    access_token?: string;
+  };
+
 }
 
 @Injectable({
@@ -18,14 +21,14 @@ export class AuthService {
 
   public readonly currentUser = signal<User | null>(this.getUserFromStorage());
 
-  constructor(private http: HttpClient){}
+  constructor(private http: HttpClient) { }
 
   login(data: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API}/login`, data).pipe(
       tap(response => {
-        const token = response.token || response.access_token;
-        if (token && response.user) {
-          this.saveSession(response.user, token);
+        const token = response.data.token || response.data.access_token;
+        if (token && response.data.user) {
+          this.saveSession(response.data.user, token);
         }
       })
     );
@@ -34,9 +37,9 @@ export class AuthService {
   register(data: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.API}/register`, data).pipe(
       tap(response => {
-        const token = response.token || response.access_token;
-        if (token && response.user) {
-          this.saveSession(response.user, token);
+        const token = response.data.token || response.data.access_token;
+        if (token && response.data.user) {
+          this.saveSession(response.data.user, token);
         }
       })
     );
@@ -56,7 +59,7 @@ export class AuthService {
   resetPassword(data: any): Observable<any> {
     return this.http.post(`${this.API}/reset-password`, data);
   }
-  
+
   changePassword(data: any): Observable<any> {
     return this.http.post(`${this.API}/change-password`, data);
   }
@@ -77,7 +80,7 @@ export class AuthService {
     return null;
   }
 
-  
+
   fetchUser(): Observable<User> {
     return this.http.get<User>(`${this.API}/user`).pipe(
       tap(user => {

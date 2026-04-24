@@ -133,7 +133,7 @@ export class Register {
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          const role = response.user.role_user;
+          const role = response.data.user.role_user;
           if (role === 'PROPRIETAIRE') {
             this.router.navigate(['/proprietaire/dashboard']);
           } else {

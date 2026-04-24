@@ -8,14 +8,14 @@
     <form class="auth__form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
       <div class="field">
-        <label class="field__label" for="email">Email</label>
+        <label class="field__label" for="login">Email ou nom d'utilisateur</label>
         <div class="input-container">
           <span class="input-icon">✉️</span>
-          <input id="email" class="field__control" type="email" formControlName="email" inputmode="email"
-            autocomplete="username" placeholder="votre@email.com" />
+          <input id="login" class="field__control" type="text" formControlName="login" inputmode="text"
+            autocomplete="username" placeholder="email ou nom d'utilisateur" />
         </div>
-        @if (shouldShowError('email')) {
-        <div class="field__error">{{ errorMessage('email') }}</div>
+        @if (shouldShowError('login')) {
+        <div class="field__error">{{ errorMessage('login') }}</div>
         }
       </div>
 

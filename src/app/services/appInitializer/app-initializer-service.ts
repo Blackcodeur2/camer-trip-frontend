@@ -31,7 +31,7 @@ export class AppInitializerService {
    * Redirige l'utilisateur vers son dashboard selon son rôle
    */
   private redirectToUserDashboard(): void {
-    const role = this.authService.getRole();
+    const role = localStorage.getItem('role');
 
     const roleRoutes: { [key: string]: string } = {
       'ADMIN': '/admin/dashboard',
@@ -39,7 +39,7 @@ export class AppInitializerService {
       'CHAUFFEUR': '/chauffeur/dashboard',
       'AGENT': '/agent/dashboard',
       'PROPRIETAIRE': '/proprietaire/dashboard',
-      'CLIENT': '/client/home'
+      'CLIENT': '/landing'
     };
 
     const redirectPath = roleRoutes[role || ''] || '/splash';

@@ -7,12 +7,12 @@ export const guestGuardGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   if (authService.isLoggedIn()) {
-    const role = authService.getRole();
+    const role = localStorage.getItem('role');
     if (role === 'ADMIN') return router.createUrlTree(['/admin/dashboard']);
     if (role === 'CHEF_AGENCE') return router.createUrlTree(['/chef_agence/dashboard']);
     if (role === 'CHAUFFEUR') return router.createUrlTree(['/chauffeur/dashboard']);
     if (role === 'AGENT') return router.createUrlTree(['/agent/dashboard']);
-    if (role === 'CLIENT') return router.createUrlTree(['/client/home']);
+    if (role === 'CLIENT') return router.createUrlTree(['/landing']);
     return false;
   }
   

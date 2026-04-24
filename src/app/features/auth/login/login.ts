@@ -20,7 +20,7 @@ export class Login {
   private readonly authService = inject(AuthService);
 
   protected readonly loginForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    login: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
 
@@ -29,15 +29,19 @@ export class Login {
 
     if (this.loginForm.invalid) return;
 
-    const { email, password } = this.loginForm.getRawValue();
+    const { login, password } = this.loginForm.getRawValue();
     this.isLoading.set(true);
 
-    this.authService.login({ email, password }).subscribe({
+    this.authService.login({ login, password }).subscribe({
       next: (response: any) => {
         try {
-          const role = this.authService.getRole();
+          const role = response.data?.user?.role_user;
+          console.log('Login response:', response);
+          console.log('User role:', role);
+
           switch (role) {
             case 'ADMIN':
+              console.log('Redirecting to admin dashboard');
               this.router.navigate(['/admin/dashboard']);
               break;
             case 'CHEF_AGENCE':
@@ -53,7 +57,8 @@ export class Login {
               this.router.navigate(['/proprietaire/dashboard']);
               break;
             default:
-              this.router.navigate(['/client/home']);
+              console.log('Redirecting to landing (default case)');
+              this.router.navigate(['/landing']);
               break;
           }
         } catch (error) {
@@ -80,12 +85,12 @@ export class Login {
     });
   }
 
-  protected shouldShowError(controlName: 'email' | 'password'): boolean {
+  protected shouldShowError(controlName: 'login' | 'password'): boolean {
     const control = this.loginForm.get(controlName);
     return !!control && (this.submitted() || control.touched) && control.invalid;
   }
 
-  protected errorMessage(controlName: 'email' | 'password'): string {
+  protected errorMessage(controlName: 'login' | 'password'): string {
     const control = this.loginForm.get(controlName);
     if (!control || !control.errors) return '';
 
