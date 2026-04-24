@@ -1,0 +1,113 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Gestion des Villes</h1>
+    </div>
+    <div style="display: flex; gap: 10px">
+      <button class="btn-primary" (click)="toggleForm()">
+        <mat-icon>{{ showForm() ? 'close' : 'add_road' }}</mat-icon>
+        <span>{{ showForm() ? 'Annuler' : 'Nouvelle Ville' }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (showForm()) {
+    <div class="card form-card animate-fade-in">
+      <div class="form-header">
+        <h2>{{ isEditing() ? 'Modifier la Ville' : 'Créer une Nouvelle Ville' }}</h2>
+      </div>
+      <form [formGroup]="villeForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nom de la ville</label>
+            <input
+              type="text"
+              formControlName="nom"
+              class="form-control"
+              placeholder="Ex: Douala"
+            />
+          </div>
+          <div class="form-group">
+            <label>Region</label>
+            <input
+              type="text"
+              formControlName="region"
+              class="form-control"
+              placeholder="Ex: Ouest"
+            />
+          </div>
+        </div>
+        <div class="form-actions">
+          <app-app-button type="submit" [disabled]="villeForm.invalid" [loading]="isSubmitting()">
+            {{ isEditing() ? 'Mettre à jour' : 'Enregistrer la ville' }}
+          </app-app-button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="card table-card">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="center">Réf</th>
+            <th>nom</th>
+            <th>region</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ville of paginatedV(); track ville.id) {
+            <tr class="route-row">
+              <td class="center ref-cell">#{{ ville.id }}</td>
+              <td>
+                <div class="route-display">
+                  <mat-icon>location_city</mat-icon>
+                  <span class="name">{{ ville.nom }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="distance-info">
+                  <mat-icon>map</mat-icon>
+                  <span>{{ ville.region }}</span>
+                </div>
+              </td>
+              <td class="actions">
+                <div class="action-group">
+                  <button class="action-btn edit" title="Modifier" (click)="editVille(ville)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button
+                    class="action-btn delete"
+                    title="Supprimer"
+                    (click)="deleteVille(ville.id)"
+                  >
+                    <mat-icon>delete_forever</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4">
+                <div class="empty-state">
+                  <mat-icon>location_city</mat-icon>
+                  <p>Aucune ville n'a été configurée pour le moment.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <gev-pagination
+        [totalItems]="villes().length"
+        [pageSize]="pageSize()"
+        [currentPage]="currentPage()"
+        (pageChange)="currentPage.set($any($event))"
+      >
+      </gev-pagination>
+    </div>
+  </div>
+</div>

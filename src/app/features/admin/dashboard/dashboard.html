@@ -1,144 +1,56 @@
-<main class="admin-dashboard">
-  <aside class="admin-dashboard__sidebar">
-    <h2>Administration</h2>
-    <nav class="admin-dashboard__nav">
-      <button type="button" class="admin-dashboard__nav-item" [class.active]="activeSection() === 'agences'" (click)="setSection('agences')">Agences inscrites</button>
-      <button type="button" class="admin-dashboard__nav-item" [class.active]="activeSection() === 'users'" (click)="setSection('users')">Comptes utilisateurs</button>
-      <button type="button" class="admin-dashboard__nav-item" [class.active]="activeSection() === 'documents'" (click)="setSection('documents')">Documents KYC</button>
-      <button type="button" class="admin-dashboard__nav-item" [class.active]="activeSection() === 'profile'" (click)="setSection('profile')">Mon profil</button>
-    </nav>
-  </aside>
+<div class="dashboard-page">
 
-  <section class="admin-dashboard__content">
-    <header class="admin-dashboard__header">
-      <h1>Tableau de bord administrateur</h1>
-      <p>Gérez les agences, les utilisateurs et les documents soumis par les propriétaires.</p>
-    </header>
+  @if (isLoading()) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Chargement des statistiques...</p>
+    </div>
+  } @else {
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="icon bg-blue">🏢</div>
+        <div class="stat-info">
+          <span class="label">Agences</span>
+          <span class="value">{{ totalAgencies() }}</span>
+          <span class="trend">Agences de transport</span>
+        </div>
+      </div>
 
-    <div *ngIf="activeSection() === 'agences'" class="admin-dashboard__panel">
-      <h3>Agences inscrites</h3>
-      <div *ngIf="agences().length === 0" class="admin-dashboard__empty">Aucune agence disponible.</div>
-      <div *ngIf="agences().length > 0" class="table-wrapper">
-        <table class="admin-dashboard__table">
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Téléphone</th>
-              <th>Stations</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let agence of agences()">
-              <td>{{ agence.nom }}</td>
-              <td>{{ agence.email }}</td>
-              <td>{{ agence.telephone }}</td>
-              <td>{{ agence.stations?.length || 0 }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="stat-card">
+        <div class="icon bg-green">🚌</div>
+        <div class="stat-info">
+          <span class="label">Total Bus</span>
+          <span class="value">{{ totalBuses() | number }}</span>
+          <span class="trend">Parc automobile global</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon bg-purple">👥</div>
+        <div class="stat-info">
+          <span class="label">Utilisateurs</span>
+          <span class="value">{{ totalUsers() | number }}</span>
+          <span class="trend">Tous les rôles confondus</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon bg-orange">📍</div>
+        <div class="stat-info">
+          <span class="label">Gares</span>
+          <span class="value">{{ totalGares() }}</span>
+          <span class="trend">Stations du réseau</span>
+        </div>
       </div>
     </div>
 
-    <div *ngIf="activeSection() === 'users'" class="admin-dashboard__panel">
-      <h3>Comptes utilisateurs</h3>
-      <div *ngIf="users().length === 0" class="admin-dashboard__empty">Aucun utilisateur trouvé.</div>
-      <div *ngIf="users().length > 0" class="table-wrapper">
-        <table class="admin-dashboard__table">
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Rôle</th>
-              <th>Email</th>
-              <th>Téléphone</th>
-              <th>Statut KYC</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users()">
-              <td>{{ user.prenom }} {{ user.nom }}</td>
-              <td>{{ user.role_user }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.telephone }}</td>
-              <td>{{ user.kyc_status || 'N/A' }}</td>
-            </tr>
-          </tbody>
-        </table>
+    <!-- Recent Activity / Charts Placeholder -->
+    <div class="dashboard-content">
+      <div class="chart-card">
+        <h3>Répartition par Ville</h3>
+        <div class="chart-placeholder">[Graphique: Top 5 des villes les plus actives]</div>
       </div>
     </div>
-
-    <div *ngIf="activeSection() === 'documents'" class="admin-dashboard__panel">
-      <h3>Documents KYC soumis</h3>
-      <div *ngIf="documents().length === 0" class="admin-dashboard__empty">Aucun document en attente.</div>
-      <div *ngIf="documents().length > 0" class="table-wrapper">
-        <table class="admin-dashboard__table">
-          <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Type</th>
-              <th>Statut</th>
-              <th>Fichier</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let document of documents()">
-              <td>{{ document.user?.prenom }} {{ document.user?.nom }} ({{ document.user?.username }})</td>
-              <td>{{ document.type }}</td>
-              <td>{{ getDocumentLabel(document.statut) }}</td>
-              <td>
-                <a [href]="document.chemin_fichier" target="_blank" rel="noreferrer">Voir</a>
-              </td>
-              <td class="actions-cell">
-                <app-app-button type="button" variant="secondary" (click)="approveDocument(document)">Approuver</app-app-button>
-                <app-app-button type="button" variant="danger" (click)="rejectDocument(document)">Rejeter</app-app-button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div *ngIf="activeSection() === 'profile'" class="admin-dashboard__panel admin-dashboard__profile-panel">
-      <h3>Mon profil</h3>
-      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
-        <div class="profile-form__field">
-          <label>Nom</label>
-          <input type="text" formControlName="nom" />
-          <div class="field-error" *ngIf="shouldShowError('nom')">{{ errorMessage('nom') }}</div>
-        </div>
-        <div class="profile-form__field">
-          <label>Prénom</label>
-          <input type="text" formControlName="prenom" />
-          <div class="field-error" *ngIf="shouldShowError('prenom')">{{ errorMessage('prenom') }}</div>
-        </div>
-        <div class="profile-form__field">
-          <label>Email</label>
-          <input type="email" formControlName="email" />
-          <div class="field-error" *ngIf="shouldShowError('email')">{{ errorMessage('email') }}</div>
-        </div>
-        <div class="profile-form__field">
-          <label>Téléphone</label>
-          <input type="text" formControlName="telephone" />
-          <div class="field-error" *ngIf="shouldShowError('telephone')">{{ errorMessage('telephone') }}</div>
-        </div>
-        <div class="profile-form__field">
-          <label>Date de naissance</label>
-          <input type="date" formControlName="date_naissance" />
-        </div>
-        <div class="profile-form__field">
-          <label>Sexe</label>
-          <select formControlName="sexe">
-            <option value="M">Homme</option>
-            <option value="F">Femme</option>
-          </select>
-          <div class="field-error" *ngIf="shouldShowError('sexe')">{{ errorMessage('sexe') }}</div>
-        </div>
-
-        <app-app-button type="submit" variant="auth__primary" [loading]="isLoading()" loadingText="Enregistrement...">
-          Enregistrer
-        </app-app-button>
-      </form>
-    </div>
-  </section>
-</main>
+  }
+</div>

@@ -1,0 +1,56 @@
+<div class="staff-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar agent-mode">
+    <div class="sidebar-brand">
+      <span class="logo-icon"><mat-icon>confirmation_number</mat-icon></span>
+      <div class="brand-text">
+        <span class="app-name">General Express</span>
+        <span class="role-badge">Agent / Guichet</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a
+        *ngFor="let item of menuItems"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <mat-icon class="icon">{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="nav-item logout" (click)="logout()">
+        <mat-icon class="icon">logout</mat-icon>
+        <span>Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="breadcrumb">
+        <span>Staff Portal</span>
+      </div>
+
+      <div class="user-menu">
+        <div class="notifications">
+          <button class="icon-btn" [routerLink]="['/agent/notifications']">
+            <mat-icon>notifications</mat-icon>
+          </button>
+          <!--<span class="badge" *ngIf="unreadCount() > 0">{{ unreadCount() }}</span>-->
+        </div>
+        <div class="avatar">
+          {{ userInitials() }}
+        </div>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

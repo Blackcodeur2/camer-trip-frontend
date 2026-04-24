@@ -1,0 +1,47 @@
+<div class="agency-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo-icon"><mat-icon>business</mat-icon></span>
+      <div class="brand-text">
+        <span class="app-name">Espace Agence</span>
+        <span class="role-badge">Chef d'Agence</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of menuItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+          <mat-icon class="icon">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="nav-item logout" (click)="logout()">
+        <mat-icon class="icon">logout</mat-icon>
+        <span>Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="breadcrumb">
+        <span>Espace Agence</span> / <span>{{ authService.getRole() | titlecase }}</span>
+      </div>
+
+      <div class="user-menu">
+        <div class="avatar">
+          {{ getInitials() }}
+        </div>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

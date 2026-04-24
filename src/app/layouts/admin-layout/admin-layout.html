@@ -1,0 +1,52 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo-icon">🚍</span>
+      <div class="brand-text">
+        <span class="app-name">CamerTrip</span>
+        <span class="role-badge">{{ currentUserRole() | titlecase }}</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of menuItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="nav-item logout" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="header-left">
+        <div>
+          <p class="page-label">Tableau de bord administrateur</p>
+          <h1 class="page-title">Bienvenue {{ currentUser()?.prenom || 'Admin' }}</h1>
+        </div>
+      </div>
+
+      <div class="user-menu">
+        <div class="user-info">
+          <div class="avatar">{{ userInitials() }}</div>
+          <div>
+            <p class="user-name">{{ currentUser()?.prenom || 'Administrateur' }} {{ currentUser()?.nom || '' }}</p>
+            <p class="user-role">{{ currentUserRole() | titlecase }}</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

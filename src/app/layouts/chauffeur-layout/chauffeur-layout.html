@@ -1,0 +1,51 @@
+<div class="app-container">
+  <!-- Premium Top Bar -->
+  <header class="app-header">
+    <div class="user-profile">
+      <div class="avatar">{{ initials }}</div>
+      <div class="welcome-text">
+        <span class="greeting">Bonjour,</span>
+        <span class="username">{{ user?.prenom }}</span>
+      </div>
+    </div>
+    <button class="icon-btn notification">
+      <mat-icon>notifications_none</mat-icon>
+      <span class="dot"></span>
+    </button>
+  </header>
+
+  <!-- Main Viewport -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Floating Bottom Nav -->
+  <nav class="bottom-nav-container">
+    <div class="bottom-nav">
+      <a routerLink="/chauffeur/dashboard" routerLinkActive="active" class="nav-item">
+        <div class="icon-wrapper">
+          <mat-icon>dashboard</mat-icon>
+        </div>
+        <span>Tableau</span>
+      </a>
+      <a routerLink="/chauffeur/history" routerLinkActive="active" class="nav-item">
+        <div class="icon-wrapper">
+          <mat-icon>history</mat-icon>
+        </div>
+        <span>Historique</span>
+      </a>
+      <a routerLink="/chauffeur/report-incident" routerLinkActive="active" class="nav-item">
+        <div class="icon-wrapper">
+          <mat-icon>report_problem</mat-icon>
+        </div>
+        <span>Incident</span>
+      </a>
+      <a routerLink="/chauffeur/profile" routerLinkActive="active" class="nav-item">
+        <div class="icon-wrapper">
+          <mat-icon>person</mat-icon>
+        </div>
+        <span>Profil</span>
+      </a>
+    </div>
+  </nav>
+</div>

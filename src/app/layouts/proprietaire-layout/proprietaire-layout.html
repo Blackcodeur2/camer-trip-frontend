@@ -1,0 +1,59 @@
+<div class="proprietaire-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo-icon"><mat-icon>domain</mat-icon></span>
+      <div class="brand-text">
+        <span class="app-name">GEV Business</span>
+        <span class="role-badge">Propriétaire</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of menuItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+          <mat-icon class="icon">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+          @if (item.badge) {
+            <span class="nav-badge">{{ item.badge }}</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">{{ getInitials() }}</div>
+        <div class="user-details">
+          <span class="user-name">{{ getUserName() }}</span>
+          <span class="user-role">Propriétaire</span>
+        </div>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="breadcrumb">
+        <span>GEV Business</span>
+        <mat-icon class="breadcrumb-sep">chevron_right</mat-icon>
+        <span class="breadcrumb-active">Espace Propriétaire</span>
+      </div>
+
+      <div class="user-menu">
+        <div class="avatar-chip">
+          <div class="avatar">{{ getInitials() }}</div>
+          <span>{{ getUserName() }}</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

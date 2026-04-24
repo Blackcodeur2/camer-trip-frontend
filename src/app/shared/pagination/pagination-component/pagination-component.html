@@ -1,0 +1,35 @@
+<div class="pagination-container" *ngIf="totalItems() > pageSize()">
+  <button
+    class="pagination-btn"
+    [disabled]="currentPage() === 1"
+    (click)="onPageChange(currentPage() - 1)"
+    title="Précédent"
+  >
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+
+  <div class="page-numbers">
+    @for (page of pages(); track page) {
+      @if (page === -1) {
+        <span class="ellipsis">...</span>
+      } @else {
+        <button
+          class="page-number-btn"
+          [class.active]="page === currentPage()"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+      }
+    }
+  </div>
+
+  <button
+    class="pagination-btn"
+    [disabled]="currentPage() === totalPages()"
+    (click)="onPageChange(currentPage() + 1)"
+    title="Suivant"
+  >
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+</div>
