@@ -1,9 +1,9 @@
 export interface User {
     id: number;
-    num_cni?: string;
-    nom: string;
-    prenom: string;
-    email: string;
+    nom?: string;
+    prenom?: string;
+    username?: string;
+    email?: string;
     date_naissance?: string;
     telephone: string;
     station_id: number;

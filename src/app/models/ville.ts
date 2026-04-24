@@ -1,1 +1,6 @@
-export interface Ville {}
+export interface Ville {
+  id: number;
+  nom?: string;
+  region?: string;
+}
+

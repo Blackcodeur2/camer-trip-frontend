@@ -96,6 +96,76 @@
   </div>
 </div>
 
+<section class="agence-search-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Agences partenaires</div>
+      <h2 class="section-title">Découvrez les agences et voyages disponibles</h2>
+      <p class="section-subtitle">
+        Parcourez les agences enregistrées, leurs gares, et les voyages programmés sans vous connecter.
+      </p>
+    </div>
+
+    <div class="agency-filter-card">
+      <input
+        type="text"
+        class="agency-search-input"
+        placeholder="Rechercher agence, ville, trajet..."
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+    </div>
+
+    <div *ngIf="loading()" class="agency-loading">Chargement des agences...</div>
+    <div *ngIf="!loading() && filteredAgences().length === 0" class="agency-empty">
+      Aucune agence trouvée pour cette recherche.
+    </div>
+
+    <div class="agency-grid">
+      <article *ngFor="let agence of filteredAgences()" class="agency-card">
+        <div class="agency-card-header">
+          <div>
+            <span class="agency-tag">Agence</span>
+            <h3>{{ agence.nom }}</h3>
+          </div>
+          <span class="agency-count">{{ agence.stations?.length || 0 }} gares</span>
+        </div>
+
+        <p class="agency-meta">{{ agence.adresse || 'Adresse non disponible' }}</p>
+        <div class="agency-contact">
+          <span>📧 {{ agence.email || 'Non renseigné' }}</span>
+          <span>📞 {{ agence.telephone || 'Non renseigné' }}</span>
+        </div>
+
+        <div class="agency-stations">
+          <div *ngFor="let station of agence.stations" class="station-card">
+            <div class="station-title">{{ station.nom || 'Gare sans nom' }}</div>
+            <div class="station-info">{{ station.adresse || 'Adresse non renseignée' }}</div>
+
+            <div *ngIf="station.voyages?.length" class="voyage-list">
+              <div class="voyage-heading">Voyages programmés</div>
+              <div *ngFor="let voyage of station.voyages" class="voyage-item">
+                <div class="voyage-main">
+                  <strong>{{ voyage.num_voyage || 'N° inconnu' }}</strong>
+                  <span class="voyage-route">
+                    {{ voyage.trajet?.villeDepart?.nom || 'Départ' }} →
+                    {{ voyage.trajet?.villeArrivee?.nom || 'Arrivée' }}
+                  </span>
+                </div>
+                <div class="voyage-meta">
+                  <span>{{ voyage.date_depart || 'Date inconnue' }}</span>
+                  <span>{{ voyage.heure_depart || '' }}</span>
+                  <span>{{ voyage.prix ? (voyage.prix + ' FCFA') : 'Prix non défini' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
 <section id="fonctionnement" class="how-it-works">
   <div class="container">
     <div class="section-header">
