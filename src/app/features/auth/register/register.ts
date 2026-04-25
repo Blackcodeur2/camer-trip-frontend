@@ -15,33 +15,77 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class Register {
 
-   protected readonly currentStep = signal(1);
+  protected readonly currentStep = signal(1);
   protected readonly submitted = signal(false);
   protected readonly isLoading = signal(false);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
 
+  private fileValidator(allowedTypes: string[], maxSizeMB: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const file = control.value as File;
+      if (!file) return null;
+      
+      const isValidType = allowedTypes.some(type => {
+        if (type === 'image/*') return file.type.startsWith('image/');
+        return file.type === type;
+      });
+
+      if (!isValidType) {
+        return { fileType: true };
+      }
+      
+      const sizeMB = file.size / (1024 * 1024);
+      if (sizeMB > maxSizeMB) {
+        return { fileSize: { maxSize: maxSizeMB, actualSize: sizeMB } };
+      }
+      
+      return null;
+    };
+  }
+
+  private ageValidator(minAge: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+      const today = new Date();
+      const birthDate = new Date(control.value);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age < minAge ? { minAge: { requiredAge: minAge, actualAge: age } } : null;
+    };
+  }
+
   protected readonly registerForm = this.fb.nonNullable.group({
     role_user: ['CLIENT', [Validators.required]],
-    // Etapes 1: Informations personnelles
-    prenom: ['', [Validators.required, Validators.minLength(2)]],
-    nom: ['', [Validators.required, Validators.minLength(2)]],
+    
+    // Etape 2: Informations personnelles
+    prenom: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZÀ-ÿ\s-]+$/)]],
+    nom: ['', [Validators.required, Validators.minLength(2), Validators.pattern(/^[a-zA-ZÀ-ÿ\s-]+$/)]],
     sexe: ['M', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    date_naissance: ['', [Validators.required]],
-    telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
+    email: ['', [Validators.required, Validators.pattern(/^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/)]],
+    date_naissance: ['', [Validators.required, this.ageValidator(18)]],
+    telephone: ['', [Validators.required, Validators.pattern(/^6[0-9]{8}$/)]],
+    
+    // Etape 3: Sécurité
+    password: ['', [
+      Validators.required, 
+      Validators.minLength(8),
+      Validators.pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/)
+    ]],
     password_confirmation: ['', [Validators.required]],
     
-    // Etape 2: Document administratifs
-    rccm: [null as File | null],
-    dfe: [null as File | null],
-    statuts: [null as File | null],
-    rib: [null as File | null],
-    gerant_id_front: [null as File | null],
-    gerant_id_back: [null as File | null],
-    gerant_selfie: [null as File | null],
+    // Etape 4: Document administratifs
+    rccm: [null as File | null, [this.fileValidator(['application/pdf', 'image/*'], 5)]],
+    dfe: [null as File | null, [this.fileValidator(['application/pdf', 'image/*'], 5)]],
+    statuts: [null as File | null, [this.fileValidator(['application/pdf', 'image/*'], 5)]],
+    rib: [null as File | null, [this.fileValidator(['application/pdf', 'image/*'], 5)]],
+    gerant_id_front: [null as File | null, [this.fileValidator(['image/*'], 5)]],
+    gerant_id_back: [null as File | null, [this.fileValidator(['image/*'], 5)]],
+    gerant_selfie: [null as File | null, [this.fileValidator(['image/*'], 5)]],
   }, { validators: this.passwordMatchValidator });
 
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -57,10 +101,16 @@ export class Register {
 
   onNext(): void {
     if (this.currentStep() === 1) {
-      // Validate Step 1 fields
-      const step1Fields = ['prenom', 'nom', 'email', 'telephone', 'date_naissance', 'password', 'password_confirmation'];
+      const control = this.registerForm.get('role_user');
+      if (control?.invalid) {
+        control.markAsTouched();
+        return;
+      }
+      this.currentStep.set(2);
+    } else if (this.currentStep() === 2) {
+      const step2Fields = ['prenom', 'nom', 'email', 'telephone', 'date_naissance', 'sexe'];
       let isValid = true;
-      step1Fields.forEach(field => {
+      step2Fields.forEach(field => {
         const control = this.registerForm.get(field);
         if (control?.invalid) {
           control.markAsTouched();
@@ -68,35 +118,29 @@ export class Register {
         }
       });
       if (!isValid) return;
-
-      if (this.registerForm.get('role_user')?.value === 'PROPRIETAIRE') {
-        this.currentStep.set(2);
-      } else {
-        this.currentStep.set(3); // Go to Summary for CLIENT
-      }
-    } else if (this.currentStep() === 2) {
-      // Validate Step 2 fields (Files)
-      const step2Fields = ['rccm', 'dfe', 'statuts', 'rib', 'gerant_id_front', 'gerant_id_back', 'gerant_selfie'];
+      this.currentStep.set(3);
+    } else if (this.currentStep() === 3) {
+      const step3Fields = ['password', 'password_confirmation'];
       let isValid = true;
-      step2Fields.forEach(field => {
+      step3Fields.forEach(field => {
         const control = this.registerForm.get(field);
-        if (!control?.value) {
+        if (control?.invalid) {
+          control.markAsTouched();
           isValid = false;
-          Swal.fire('Attention', `Veuillez sélectionner le fichier : ${field.toUpperCase()}`, 'warning');
         }
       });
+      if (this.registerForm.errors?.['passwordMismatch']) {
+        this.registerForm.get('password_confirmation')?.markAsTouched();
+        isValid = false;
+      }
       if (!isValid) return;
-      this.currentStep.set(3);
+      this.currentStep.set(4);
     }
   }
 
   onPrevious(): void {
     if (this.currentStep() > 1) {
-      if (this.currentStep() === 3 && this.registerForm.get('role_user')?.value !== 'PROPRIETAIRE') {
-        this.currentStep.set(1);
-      } else {
-        this.currentStep.set(this.currentStep() - 1);
-      }
+      this.currentStep.set(this.currentStep() - 1);
     }
   }
 
@@ -104,11 +148,30 @@ export class Register {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       this.registerForm.patchValue({ [field]: file });
+      this.registerForm.get(field)?.markAsTouched();
     }
   }
 
   onSubmit(): void {
     this.submitted.set(true);
+
+    // If step 4 (Proprietaire), validate files
+    if (this.registerForm.get('role_user')?.value === 'PROPRIETAIRE') {
+      const step4Fields = ['rccm', 'dfe', 'statuts', 'rib', 'gerant_id_front', 'gerant_id_back', 'gerant_selfie'];
+      let isValid = true;
+      step4Fields.forEach(field => {
+        const control = this.registerForm.get(field);
+        if (!control?.value) {
+          control?.setErrors({ ...control.errors, required: true });
+          control?.markAsTouched();
+          isValid = false;
+        }
+      });
+      if (!isValid) {
+        Swal.fire('Attention', 'Veuillez fournir tous les documents obligatoires avant de soumettre.', 'warning');
+        return;
+      }
+    }
 
     if (this.registerForm.invalid) return;
 
@@ -166,7 +229,18 @@ export class Register {
     if (control.errors['required']) return 'Champ obligatoire.';
     if (control.errors['email']) return 'Email invalide.';
     if (control.errors['minlength']) return `Minimum ${control.errors['minlength'].requiredLength} caractères.`;
-    if (control.errors['pattern']) return 'Format invalide.';
+    if (control.errors['minAge']) return 'Vous devez avoir au moins 18 ans.';
+    
+    if (control.errors['fileType']) return 'Format invalide (PDF ou Image attendu).';
+    if (control.errors['fileSize']) return `Fichier trop volumineux (max ${control.errors['fileSize'].maxSize}MB).`;
+
+    if (control.errors['pattern']) {
+      if (controlName === 'telephone') return 'Numéro invalide (ex: 6XXXXXXXX).';
+      if (controlName === 'password') return 'Doit contenir majuscule, minuscule et chiffre.';
+      if (controlName === 'prenom' || controlName === 'nom') return 'Lettres uniquement.';
+      if (controlName === 'email') return 'Format d\'email invalide.';
+      return 'Format invalide.';
+    }
     if (control.errors['passwordMismatch']) return 'Les mots de passe ne correspondent pas.';
     return 'Valeur invalide.';
   }

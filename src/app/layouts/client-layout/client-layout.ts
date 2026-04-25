@@ -1,25 +1,24 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import Swal from 'sweetalert2';
+import { Component, computed, inject } from '@angular/core';
+import { Router, RouterModule, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth-service';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-client-layout',
-  imports: [MatIconModule, RouterModule],
+  imports: [MatIconModule, RouterModule, RouterLink],
   templateUrl: './client-layout.html',
   styleUrl: './client-layout.css',
 })
 export class ClientLayout {
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
   private router = inject(Router);
 
-  currentUser = this.authService.currentUser;
+  protected readonly currentUser = this.authService.currentUser;
 
-  get initials(): string {
+  protected readonly initials = computed(() => {
     const u = this.currentUser();
     return u ? `${u.prenom?.[0] || ''}${u.nom?.[0] || ''}`.toUpperCase() : '?';
-  }
+  });
 
   get greeting(): string {
     const hour = new Date().getHours();
@@ -29,21 +28,25 @@ export class ClientLayout {
   }
 
   onLogout(): void {
-    Swal.fire({
-      title: 'Déconnexion',
-      text: 'Voulez-vous vraiment vous déconnecter ?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Oui, déconnecter',
-      cancelButtonText: 'Annuler',
-      confirmButtonColor: '#2563EB'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.authService.logout().subscribe({
-          next: () => this.router.navigate(['/login']),
-          error: () => this.router.navigate(['/login'])
-        });
-      }
+    import('sweetalert2').then((Swal) => {
+      Swal.default.fire({
+        title: 'Déconnexion ?',
+        text: 'Êtes-vous sûr de vouloir vous déconnecter ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#006644',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, me déconnecter',
+        cancelButtonText: 'Annuler',
+        background: '#ffffff',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.authService.logout().subscribe({
+            next: () => this.router.navigate(['/login']),
+            error: () => this.router.navigate(['/login'])
+          });
+        }
+      });
     });
   }
 }

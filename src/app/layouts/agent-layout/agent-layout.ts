@@ -1,53 +1,74 @@
-import { Component, inject, signal } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { Router, RouterModule, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth-service';
 import { MatIconModule } from '@angular/material/icon';
 import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-agent-layout',
-  imports: [MatIconModule, RouterModule],
+  imports: [MatIconModule, RouterModule, RouterLink, TitleCasePipe],
   templateUrl: './agent-layout.html',
   styleUrl: './agent-layout.css',
 })
 export class AgentLayout {
-  private authService = inject(AuthService);
-    private router = inject(Router);
+  public authService = inject(AuthService);
+  private router = inject(Router);
 
-    unreadCount = signal(0);
-    userInitials = signal('AG');
+  protected readonly currentUser = this.authService.currentUser;
 
-    menuItems = [
-        { label: 'Nouvelle Vente', icon: 'point_of_sale', route: '/agent/booking' },
-        { label: 'Historique', icon: 'history', route: '/agent/reservations' },
-        { label: 'Tableau de bord', icon: 'dashboard', route: '/agent/dashboard' },
-        { label: 'Gestion Colis', icon: 'local_mall', route: '/agent/colis' },
-        { label: 'Validation', icon: 'qr_code_scanner', route: '/agent/validate' },
-        { label: 'Mon Profil', icon: 'person', route: '/agent/profile' },
-    ];
+  protected readonly currentUserRole = computed(() => {
+    const role = this.currentUser()?.role_user;
+    return role ? role.toUpperCase() : 'AGENT';
+  });
 
-    ngOnInit() {
-        const user = this.authService.currentUser();
-        if (user) {
-            this.userInitials.set(this.getInitials(user.prenom + ' ' + user.nom));
+  protected readonly userInitials = computed(() => {
+    const user = this.currentUser();
+    if (!user) return 'AG';
+    const first = user.prenom?.trim().charAt(0) ?? '';
+    const last = user.nom?.trim().charAt(0) ?? '';
+    return `${first || 'A'}${last || 'G'}`.toUpperCase();
+  });
+
+  menuItems = [
+    { label: 'Nouvelle Vente', icon: 'point_of_sale', route: '/agent/booking' },
+    { label: 'Historique', icon: 'history', route: '/agent/reservations' },
+    { label: 'Tableau de bord', icon: 'dashboard', route: '/agent/dashboard' },
+    { label: 'Gestion Colis', icon: 'local_mall', route: '/agent/colis' },
+    { label: 'Validation', icon: 'qr_code_scanner', route: '/agent/validate' },
+    { label: 'Mon Profil', icon: 'person', route: '/agent/profile' },
+  ];
+
+  isUserMenuOpen = false;
+
+  toggleUserMenu() {
+    this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
+  logout() {
+    import('sweetalert2').then((Swal) => {
+      Swal.default.fire({
+        title: 'Déconnexion ?',
+        text: 'Êtes-vous sûr de vouloir vous déconnecter de votre session ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#006644', // Ton vert primary
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, me déconnecter',
+        cancelButtonText: 'Annuler',
+        background: '#ffffff',
+        customClass: {
+          popup: 'premium-swal-popup',
+          confirmButton: 'premium-swal-confirm',
+          cancelButton: 'premium-swal-cancel'
         }
-    }
-
-    getInitials(name: string): string {
-        return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-    }
-
-    loadUnreadCount(userId: string) {
-        /*this.notificationService.getUserNotifications(userId).subscribe(notes => {
-            const count = notes.filter(n => !n.is_read).length;
-            this.unreadCount.set(count);
-        });*/
-    }
-
-    logout() {
-        this.authService.logout().subscribe({
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.authService.logout().subscribe({
             next: () => this.router.navigate(['/login']),
             error: () => this.router.navigate(['/login'])
-        });
-    }
+          });
+        }
+      });
+    });
+  }
 }

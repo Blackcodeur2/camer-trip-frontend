@@ -1,16 +1,15 @@
-<div class="app-container">
+<div class="client-layout">
   <!-- Premium Top Bar -->
   <header class="app-header">
     <div class="user-profile">
-      <div class="avatar">{{ initials }}</div>
+      <div class="avatar">{{ initials() }}</div>
       <div class="welcome-text">
         <span class="greeting">{{ greeting }}</span>
         <span class="username">{{ currentUser()?.prenom }}</span>
       </div>
     </div>
-    <button class="icon-btn notification">
-      <mat-icon>notifications_none</mat-icon>
-      <span class="dot"></span>
+    <button class="logout-btn" (click)="onLogout()">
+      <mat-icon>logout</mat-icon>
     </button>
   </header>
 

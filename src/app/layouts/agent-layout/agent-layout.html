@@ -1,31 +1,26 @@
-<div class="staff-layout">
+<div class="agent-layout">
   <!-- Sidebar -->
-  <aside class="sidebar agent-mode">
+  <aside class="sidebar">
     <div class="sidebar-brand">
-      <span class="logo-icon"><mat-icon>confirmation_number</mat-icon></span>
+      <div class="brand-logo-wrap">
+        <mat-icon>support_agent</mat-icon>
+      </div>
       <div class="brand-text">
-        <span class="app-name">General Express</span>
-        <span class="role-badge">Agent / Guichet</span>
+        <span class="app-name">Espace <strong>Agence</strong></span>
+        <span class="role-badge">Agent</span>
       </div>
     </div>
 
     <nav class="sidebar-nav">
-      <a
-        *ngFor="let item of menuItems"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        class="nav-item"
-      >
-        <mat-icon class="icon">{{ item.icon }}</mat-icon>
-        <span>{{ item.label }}</span>
-      </a>
+      @for (item of menuItems; track item.route) {
+        <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+          <mat-icon class="icon">{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
     </nav>
 
     <div class="sidebar-footer">
-      <button class="nav-item logout" (click)="logout()">
-        <mat-icon class="icon">logout</mat-icon>
-        <span>Déconnexion</span>
-      </button>
     </div>
   </aside>
 
@@ -33,19 +28,38 @@
   <div class="main-wrapper">
     <header class="top-header">
       <div class="breadcrumb">
-        <span>Staff Portal</span>
+        <mat-icon class="breadcrumb-sep">chevron_right</mat-icon>
+        <span class="breadcrumb-active">Espace Agent</span>
       </div>
 
       <div class="user-menu">
-        <div class="notifications">
-          <button class="icon-btn" [routerLink]="['/agent/notifications']">
-            <mat-icon>notifications</mat-icon>
-          </button>
-          <!--<span class="badge" *ngIf="unreadCount() > 0">{{ unreadCount() }}</span>-->
+        <div class="avatar-chip" (click)="toggleUserMenu()">
+          <div class="avatar">{{ userInitials() }}</div>
+          <div class="avatar-info">
+            <span class="user-name-chip">{{ currentUser()?.prenom || 'Agent' }} {{ currentUser()?.nom || '' }}</span>
+            <span class="user-role-chip">{{ currentUserRole() | titlecase }}</span>
+          </div>
+          <mat-icon class="chevron" [class.rotated]="isUserMenuOpen">expand_more</mat-icon>
         </div>
-        <div class="avatar">
-          {{ userInitials() }}
-        </div>
+
+        @if (isUserMenuOpen) {
+          <div class="user-dropdown">
+            <div class="dropdown-header">
+              <span class="user-full-name">{{ currentUser()?.prenom || 'Agent' }} {{ currentUser()?.nom || '' }}</span>
+              <span class="user-email">{{ currentUser()?.email }}</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a routerLink="/agent/profile" class="dropdown-item" (click)="isUserMenuOpen = false">
+              <mat-icon>person_outline</mat-icon>
+              <span>Mon Profil</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item logout-item" (click)="logout()">
+              <mat-icon>logout</mat-icon>
+              <span>Se déconnecter</span>
+            </button>
+          </div>
+        }
       </div>
     </header>
 

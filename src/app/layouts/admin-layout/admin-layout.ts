@@ -41,10 +41,37 @@ export class AdminLayout {
     { label: 'Mon profil', icon: 'person', route: '/admin/profile' },
   ];
 
+  isUserMenuOpen = false;
+
+  toggleUserMenu() {
+    this.isUserMenuOpen = !this.isUserMenuOpen;
+  }
+
   logout() {
-    this.authService.logout().subscribe({
-      next: () => this.router.navigate(['/auth/login']),
-      error: () => this.router.navigate(['/auth/login'])
+    import('sweetalert2').then((Swal) => {
+      Swal.default.fire({
+        title: 'Déconnexion ?',
+        text: 'Voulez-vous vraiment quitter la session administrateur ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#1e293b', // Couleur dark
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, me déconnecter',
+        cancelButtonText: 'Annuler',
+        background: '#ffffff',
+        customClass: {
+          popup: 'premium-swal-popup',
+          confirmButton: 'premium-swal-confirm',
+          cancelButton: 'premium-swal-cancel'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.authService.logout().subscribe({
+            next: () => this.router.navigate(['/login']),
+            error: () => this.router.navigate(['/login'])
+          });
+        }
+      });
     });
   }
 }

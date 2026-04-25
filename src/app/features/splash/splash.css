@@ -78,13 +78,13 @@
   height: 48px;
   border: 4px solid #e2e8f0;
   border-radius: 50%;
-  border-top-color: #2563eb;
+  border-top-color: #151516;
   animation: spin 1s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;
 }
 
 .loading-message {
   font-size: 0.9rem;
-  color: #94a3b8;
+  color: #353637;
   font-weight: 500;
   letter-spacing: 0.025em;
 }
@@ -102,7 +102,7 @@
 .version {
   font-weight: 600;
   background: #f1f5f9;
-  color: #64748b;
+  color: #343435;
   padding: 0.2rem 0.6rem;
   border-radius: 100px;
 }

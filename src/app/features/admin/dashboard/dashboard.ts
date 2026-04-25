@@ -3,10 +3,12 @@ import { forkJoin } from 'rxjs';
 import { AgenceService } from '../../../services/agence/agence-service';
 import { UserService } from '../../../services/users/user-service';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
 })
@@ -57,10 +59,62 @@ export class Dashboard {
         this.totalBuses.set(agenciesList.length * 8);
 
         this.isLoading.set(false);
+        setTimeout(() => this.initChart(), 0);
+
       },
       error: (err) => {
         console.error("Erreur Dashboard Admin:", err);
         this.isLoading.set(false);
+      }
+    });
+  }
+
+  chart: any;
+
+  initChart() {
+    const ctx = document.getElementById('activityChart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+        datasets: [{
+          label: 'Réservations & Voyages (Simulé)',
+          data: [120, 190, 300, 250, 200, 320, 400, 380, 210, 150, 180, 240],
+          backgroundColor: '#006644',
+          borderRadius: 6,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: '#e2e8f0',
+            },
+            border: {
+              dash: [4, 4]
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
       }
     });
   }

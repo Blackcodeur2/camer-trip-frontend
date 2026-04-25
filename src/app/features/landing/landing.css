@@ -8,10 +8,10 @@
 
 :host {
   display: block;
-  font-family: 'Inter', system-ui, sans-serif;
-  color: #0f172a;
+  font-family: var(--font-sans);
+  color: var(--color-text-main);
   scroll-behavior: smooth;
-  background-color: #f8fafc;
+  background-color: var(--color-surface);
 }
 
 h1,
@@ -19,7 +19,7 @@ h2,
 h3,
 h4,
 .brand-name {
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ═══════════════════════════════════════ */
@@ -41,25 +41,26 @@ h4,
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  background-opacity: 0.1;
   padding: 6px 16px;
   border-radius: 99px;
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 102, 68, 0.1);
 }
 
 .section-title {
   font-size: 2.75rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--color-text-main);
   line-height: 1.1;
   margin-bottom: 1.25rem;
   letter-spacing: -0.02em;
 }
 
 .section-subtitle {
-  color: #64748b;
+  color: #4f857e;
   font-size: 1.15rem;
   max-width: 600px;
   line-height: 1.6;
@@ -77,7 +78,7 @@ h4,
   display: flex;
   align-items: center;
   height: 80px;
-  background: rgba(255, 255, 255, 0.8);
+  background: #161616;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
@@ -88,6 +89,29 @@ h4,
 .navbar.scrolled {
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+}
+.navbar.scrolled .navbar__link {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+.navbar.scrolled .btn-ghost {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #040404;
+  border-style: double;
+  transition: all 0.2s;
+}
+.navbar.scrolled .btn-ghost:hover{
+  background-color: black;
+  border: 1px double #fff;
+  color: #fff
 }
 
 .navbar__container {
@@ -110,22 +134,22 @@ h4,
 .brand-logo-wrap {
   width: 40px;
   height: 40px;
-  background: #2563eb;
+  background: #0f5a4b;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 10px rgba(41, 62, 67, 0.3);
 }
 
 .brand-name {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--color-accent);
 }
 .brand-name strong {
-  color: #2563eb;
+  color: var(--color-secondary);
 }
 
 .navbar__center {
@@ -135,7 +159,7 @@ h4,
 }
 
 .navbar__link {
-  color: #475569;
+  color: #eaedf0;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.95rem;
@@ -143,7 +167,7 @@ h4,
 }
 
 .navbar__link:hover {
-  color: #2563eb;
+  color: var(--color-secondary);
 }
 
 .navbar__actions {
@@ -153,35 +177,36 @@ h4,
 }
 
 .btn-ghost {
-  color: #0f172a;
+  color: #e4e5ea;
   text-decoration: none;
   font-weight: 700;
   font-size: 0.95rem;
   padding: 0.5rem 1rem;
   border-radius: 12px;
+  border: 1px solid #fff;
   transition: all 0.2s;
 }
 
 .btn-ghost:hover {
-  background: #f1f5f9;
-  color: #2563eb;
+  background: #ffffff;
+  color: #060606;
 }
 
 .btn-primary {
-  background: #10b981; /* Solid emerald CTA */
-  color: white !important;
+  background: #ffffff; /* Solid emerald CTA */
+  color: rgb(20, 20, 20) !important;
   text-decoration: none;
   font-weight: 700;
   font-size: 0.95rem;
   padding: 0.75rem 1.5rem;
   border-radius: 14px;
   transition: all 0.3s;
-  box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 20px -5px rgba(31, 31, 31, 0.4);
 }
 
 .btn-primary:hover {
+  border: 1px double #000;
   transform: translateY(-2px);
-  box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.5);
 }
 
 /* ═══════════════════════════════════════ */
@@ -193,7 +218,12 @@ h4,
   display: flex;
   align-items: center;
   padding: 120px 0 100px;
-  background: #0f172a;
+  background: linear-gradient(135deg, rgba(168, 174, 185, 0.592), rgba(96, 103, 99, 0.8)),
+    url('/images/hero_bus.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  backdrop-filter: blur(18px);
   overflow: hidden;
 }
 
@@ -274,12 +304,12 @@ h4,
 }
 
 .hero__accent {
-  color: #60a5fa;
+  color: var(--color-secondary);
 }
 
 .hero__subtitle {
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: #94b8a7;
   margin: 0 auto 3rem;
   line-height: 1.6;
   max-width: 700px;
@@ -315,7 +345,7 @@ h4,
 
 .stat-item span {
   font-size: 0.75rem;
-  color: #cbd5e1;
+  color: #97bcb7;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -326,9 +356,6 @@ h4,
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* ═══════════════════════════════════════ */
-/*  FLOATING SEARCH WIDGET                 */
-/* ═══════════════════════════════════════ */
 .search-widget-wrapper {
   max-width: 1000px;
   margin: -60px auto 4rem;
@@ -382,7 +409,7 @@ h4,
 .search-input-group label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: #547d6b;
   margin-bottom: 2px;
 }
 
@@ -391,7 +418,7 @@ h4,
   outline: none;
   font-size: 1rem;
   font-weight: 600;
-  color: #0f172a;
+  color: #547d6b;
   background: transparent;
   width: 100%;
   font-family: inherit;
@@ -409,7 +436,7 @@ h4,
 }
 
 .search-btn {
-  background: #2563eb;
+  background: var(--color-primary);
   color: white;
   text-decoration: none;
   display: flex;
@@ -418,12 +445,12 @@ h4,
   padding: 1.25rem 2rem;
   border-radius: 20px;
   transition: all 0.3s;
-  box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 10px 20px -5px rgba(48, 95, 99, 0.3);
 }
 
 .search-btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 15px 25px -5px rgba(0, 255, 229, 0.443);
 }
 
 .btn-text {
@@ -660,7 +687,7 @@ h4,
   font-size: 1.2rem;
   background: white;
   padding: 0 0.5rem;
-  color: #2563eb;
+  color: #31948a;
 }
 
 .ticket-footer {
@@ -682,7 +709,7 @@ h4,
 .label {
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #94a3b8;
+  color: #3e5b5c;
   font-weight: 700;
 }
 .value {
@@ -690,7 +717,7 @@ h4,
   font-weight: 800;
 }
 .value.accent {
-  color: #2563eb;
+  color: #195e4d;
 }
 
 .badge {
@@ -735,7 +762,7 @@ h4,
 .agency-loading,
 .agency-empty {
   text-align: center;
-  color: #475569;
+  color: #263e39;
   margin-bottom: 2rem;
   font-weight: 600;
 }
@@ -767,14 +794,14 @@ h4,
   padding: 0.5rem 0.85rem;
   border-radius: 999px;
   background: #eff6ff;
-  color: #2563eb;
+  color: #23604a;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 0.75rem;
 }
 
 .agency-meta {
-  color: #64748b;
+  color: #648b86;
   margin-bottom: 1rem;
 }
 
@@ -833,7 +860,7 @@ h4,
 }
 
 .voyage-route {
-  color: #64748b;
+  color: #528682;
   font-size: 0.95rem;
 }
 
@@ -841,7 +868,7 @@ h4,
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  color: #475569;
+  color: #335f5a;
   font-size: 0.9rem;
 }
 
@@ -924,7 +951,7 @@ h4,
 
 .btn-owner {
   background: white;
-  color: #1e3a8a;
+  color: #23604c;
   text-decoration: none;
   font-weight: 800;
   font-size: 1.05rem;
@@ -976,7 +1003,7 @@ h4,
   color: #0f172a;
 }
 .footer-brand p {
-  color: #64748b;
+  color: #648b83;
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -1000,7 +1027,7 @@ h4,
   transition: all 0.2s;
 }
 .social-btn:hover {
-  background: #2563eb;
+  background: #23604c;
   color: white;
 }
 
@@ -1008,7 +1035,7 @@ h4,
 .footer-contact h4 {
   font-weight: 800;
   margin-bottom: 1.5rem;
-  color: #0f172a;
+  color: #0f2a29;
 }
 .footer-links ul,
 .footer-contact ul {
@@ -1018,16 +1045,16 @@ h4,
   gap: 0.75rem;
 }
 .footer-links a {
-  color: #64748b;
+  color: #4b6a61;
   text-decoration: none;
   transition: color 0.2s;
   font-weight: 500;
 }
 .footer-links a:hover {
-  color: #2563eb;
+  color: #23604c;
 }
 .footer-contact li {
-  color: #64748b;
+  color: #4a6b60;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1039,7 +1066,7 @@ h4,
   align-items: center;
   padding-top: 2rem;
   border-top: 1px solid #e2e8f0;
-  color: #94a3b8;
+  color: #94b8b6;
   font-size: 0.9rem;
 }
 .footer-legal a {
@@ -1048,7 +1075,7 @@ h4,
   margin-left: 1.5rem;
 }
 .footer-legal a:hover {
-  color: #0f172a;
+  color: #0f2a26;
 }
 
 /* ═══════════════════════════════════════ */

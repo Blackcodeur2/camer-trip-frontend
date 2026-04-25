@@ -12,58 +12,47 @@
     </header>
 
     <div class="steps-progress field--full">
-      <div
-        class="step-indicator"
-        [class.step-indicator--active]="currentStep() >= 1"
-        [class.step-indicator--completed]="currentStep() > 1"
-      >
+      <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 1" [class.step-indicator--completed]="currentStep() > 1">
         <span class="step-number">1</span>
         <span class="step-label">Profil</span>
       </div>
       <div class="step-line" [class.step-line--active]="currentStep() > 1"></div>
-      <div
-        class="step-indicator"
-        [class.step-indicator--active]="currentStep() >= 2"
-        [class.step-indicator--completed]="currentStep() > 2"
-      >
+      
+      <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 2" [class.step-indicator--completed]="currentStep() > 2">
         <span class="step-number">2</span>
-        <span class="step-label">Documents</span>
+        <span class="step-label">Infos</span>
       </div>
       <div class="step-line" [class.step-line--active]="currentStep() > 2"></div>
-      <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 3">
+
+      <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 3" [class.step-indicator--completed]="currentStep() > 3">
         <span class="step-number">3</span>
-        <span class="step-label">Résumé</span>
+        <span class="step-label">Sécurité</span>
+      </div>
+      <div class="step-line" [class.step-line--active]="currentStep() > 3"></div>
+      
+      <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 4">
+        <span class="step-number">4</span>
+        <span class="step-label">Finalisation</span>
       </div>
     </div>
 
     <form class="auth__form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <!-- Step 1: Profile Selection & Personal Info -->
+      <!-- Step 1: Profile Selection -->
       <ng-container *ngIf="currentStep() === 1">
         <div class="field field--full mb-4">
           <label class="field__label">Choisissez votre profil</label>
           <div class="role-selector">
-            <label
-              class="role-option"
-              [class.role-option--active]="registerForm.get('role_user')?.value === 'CLIENT'"
-            >
+            <label class="role-option" [class.role-option--active]="registerForm.get('role_user')?.value === 'CLIENT'">
               <input type="radio" formControlName="role_user" value="CLIENT" class="role-radio" />
-              <div class="role-icon-wrapper client-icon"><span class="role-icon">🧳</span></div>
+              <div class="role-icon-wrapper client-icon"><mat-icon class="role-icon">person</mat-icon></div>
               <div class="role-info">
-                <span class="role-name">passager</span>
+                <span class="role-name">Passager</span>
               </div>
             </label>
 
-            <label
-              class="role-option"
-              [class.role-option--active]="registerForm.get('role_user')?.value === 'PROPRIETAIRE'"
-            >
-              <input
-                type="radio"
-                formControlName="role_user"
-                value="PROPRIETAIRE"
-                class="role-radio"
-              />
-              <div class="role-icon-wrapper prop-icon"><span class="role-icon">🏢</span></div>
+            <label class="role-option" [class.role-option--active]="registerForm.get('role_user')?.value === 'PROPRIETAIRE'">
+              <input type="radio" formControlName="role_user" value="PROPRIETAIRE" class="role-radio" />
+              <div class="role-icon-wrapper prop-icon"><mat-icon class="role-icon">business</mat-icon></div>
               <div class="role-info">
                 <span class="role-name">Propriétaire</span>
               </div>
@@ -71,17 +60,20 @@
           </div>
         </div>
 
+        <div class="auth__actions mt-6">
+          <button type="button" class="auth__primary" (click)="onNext()">
+            <span class="btn-content">Continuer <span class="arrow">→</span></span>
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Step 2: Personal Info -->
+      <ng-container *ngIf="currentStep() === 2">
         <div class="field">
           <label class="field__label" for="prenom">Prénom</label>
           <div class="input-container">
-            <mat-icon class="input-icon">person</mat-icon>
-            <input
-              id="prenom"
-              class="field__control"
-              type="text"
-              formControlName="prenom"
-              placeholder="Prénom"
-            />
+            <mat-icon class="input-icon">badge</mat-icon>
+            <input id="prenom" class="field__control" type="text" formControlName="prenom" placeholder="Prénom" />
           </div>
           @if (shouldShowError('prenom')) {
             <div class="field__error">{{ errorMessage('prenom') }}</div>
@@ -91,14 +83,8 @@
         <div class="field">
           <label class="field__label" for="nom">Nom</label>
           <div class="input-container">
-            <mat-icon class="input-icon">person</mat-icon>
-            <input
-              id="nom"
-              class="field__control"
-              type="text"
-              formControlName="nom"
-              placeholder="Nom"
-            />
+            <mat-icon class="input-icon">badge</mat-icon>
+            <input id="nom" class="field__control" type="text" formControlName="nom" placeholder="Nom" />
           </div>
           @if (shouldShowError('nom')) {
             <div class="field__error">{{ errorMessage('nom') }}</div>
@@ -109,13 +95,7 @@
           <label class="field__label" for="email">Email</label>
           <div class="input-container">
             <mat-icon class="input-icon">email</mat-icon>
-            <input
-              id="email"
-              class="field__control"
-              type="email"
-              formControlName="email"
-              placeholder="votre@email.com"
-            />
+            <input id="email" class="field__control" type="email" formControlName="email" placeholder="votre@email.com" />
           </div>
           @if (shouldShowError('email')) {
             <div class="field__error">{{ errorMessage('email') }}</div>
@@ -126,28 +106,23 @@
           <label class="field__label" for="telephone">Téléphone</label>
           <div class="input-container">
             <mat-icon class="input-icon">phone</mat-icon>
-            <input
-              id="telephone"
-              class="field__control"
-              type="tel"
-              formControlName="telephone"
-              placeholder="6xx xxx xxx"
-            />
+            <input id="telephone" class="field__control" type="tel" formControlName="telephone" placeholder="6xx xxx xxx" />
           </div>
           @if (shouldShowError('telephone')) {
             <div class="field__error">{{ errorMessage('telephone') }}</div>
           }
         </div>
 
+        <div class="field">
+          <label class="field__label" for="date_naissance">Date de naissance</label>
           <div class="input-container">
             <mat-icon class="input-icon">calendar_today</mat-icon>
-            <input
-              id="date_naissance"
-              class="field__control"
-              type="date"
-              formControlName="date_naissance"
-            />
+            <input id="date_naissance" class="field__control" type="date" formControlName="date_naissance" />
           </div>
+          @if (shouldShowError('date_naissance')) {
+            <div class="field__error">{{ errorMessage('date_naissance') }}</div>
+          }
+        </div>
         
         <div class="field">
           <label class="field__label" for="sexe">Sexe</label>
@@ -160,174 +135,39 @@
           </div>
         </div>
 
-        <div class="field">
-          <label class="field__label" for="password">Mot de passe</label>
-          <div class="input-container">
-            <mat-icon class="input-icon">lock</mat-icon>
-            <input
-              id="password"
-              class="field__control"
-              type="password"
-              formControlName="password"
-              placeholder="••••••••"
-            />
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field__label" for="password_confirmation">Confirmation</label>
-          <div class="input-container">
-            <mat-icon class="input-icon">lock</mat-icon>
-            <input
-              id="password_confirmation"
-              class="field__control"
-              type="password"
-              formControlName="password_confirmation"
-              placeholder="••••••••"
-            />
-          </div>
-        </div>
-
-        <div class="auth__actions mt-6">
-          <button type="button" class="auth__primary" (click)="onNext()">
-            <span class="btn-content">Continuer <span class="arrow">→</span></span>
-          </button>
+        <div class="auth__actions mt-6 flex-row">
+          <button type="button" class="auth__secondary w-1-3" (click)="onPrevious()">Retour</button>
+          <button type="button" class="auth__primary w-2-3" (click)="onNext()">Suivant →</button>
         </div>
       </ng-container>
 
-      <!-- Step 2: Business Documents -->
-      <ng-container *ngIf="currentStep() === 2">
+      <!-- Step 3: Security -->
+      <ng-container *ngIf="currentStep() === 3">
         <div class="step-header field--full">
-          <h3 class="step-title">Documents de l'entreprise</h3>
-          <p class="step-desc">
-            Veuillez télécharger les documents légaux pour authentifier votre agence.
-          </p>
-        </div>
-
-        <div class="field">
-          <label class="field__label">RCCM (Registre du Commerce)</label>
-          <div class="file-input-wrapper">
-            <input
-              type="file"
-              (change)="onFileChange($event, 'rccm')"
-              class="file-input"
-              accept=".pdf,image/*"
-            />
-            <div class="file-custom-input">
-              <span class="file-icon">📄</span>
-              <span class="file-text">{{
-                registerForm.get('rccm')?.value?.name || 'Choisir un fichier'
-              }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field__label">DFE (Décl. Fiscale)</label>
-          <div class="file-input-wrapper">
-            <input
-              type="file"
-              (change)="onFileChange($event, 'dfe')"
-              class="file-input"
-              accept=".pdf,image/*"
-            />
-            <div class="file-custom-input">
-              <span class="file-icon">📜</span>
-              <span class="file-text">{{
-                registerForm.get('dfe')?.value?.name || 'Choisir un fichier'
-              }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field__label">Statuts de l'entreprise</label>
-          <div class="file-input-wrapper">
-            <input
-              type="file"
-              (change)="onFileChange($event, 'statuts')"
-              class="file-input"
-              accept=".pdf,image/*"
-            />
-            <div class="file-custom-input">
-              <span class="file-icon">📑</span>
-              <span class="file-text">{{
-                registerForm.get('statuts')?.value?.name || 'Choisir un fichier'
-              }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field__label">RIB (Relevé d'Identité Bancaire)</label>
-          <div class="file-input-wrapper">
-            <input
-              type="file"
-              (change)="onFileChange($event, 'rib')"
-              class="file-input"
-              accept=".pdf,image/*"
-            />
-            <div class="file-custom-input">
-              <span class="file-icon">🏦</span>
-              <span class="file-text">{{
-                registerForm.get('rib')?.value?.name || 'Choisir un fichier'
-              }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field__label">CNI Gérant (Recto)</label>
-          <div class="file-input-wrapper">
-            <input
-              type="file"
-              (change)="onFileChange($event, 'gerant_id_front')"
-              class="file-input"
-              accept="image/*"
-            />
-            <div class="file-custom-input">
-              <span class="file-icon">🆔</span>
-              <span class="file-text">{{
-                registerForm.get('gerant_id_front')?.value?.name || 'Recto'
-              }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label class="field__label">CNI Gérant (Verso)</label>
-          <div class="file-input-wrapper">
-            <input
-              type="file"
-              (change)="onFileChange($event, 'gerant_id_back')"
-              class="file-input"
-              accept="image/*"
-            />
-            <div class="file-custom-input">
-              <span class="file-icon">🆔</span>
-              <span class="file-text">{{
-                registerForm.get('gerant_id_back')?.value?.name || 'Verso'
-              }}</span>
-            </div>
-          </div>
+          <h3 class="step-title">Sécurité</h3>
+          <p class="step-desc">Créez un mot de passe robuste.</p>
         </div>
 
         <div class="field field--full">
-          <label class="field__label">Selfie du Gérant</label>
-          <div class="file-input-wrapper">
-            <input
-              type="file"
-              (change)="onFileChange($event, 'gerant_selfie')"
-              class="file-input"
-              accept="image/*"
-            />
-            <div class="file-custom-input">
-              <span class="file-icon">📸</span>
-              <span class="file-text">{{
-                registerForm.get('gerant_selfie')?.value?.name || 'Prendre un selfie'
-              }}</span>
-            </div>
+          <label class="field__label" for="password">Mot de passe</label>
+          <div class="input-container">
+            <mat-icon class="input-icon">lock</mat-icon>
+            <input id="password" class="field__control" type="password" formControlName="password" placeholder="••••••••" />
           </div>
+          @if (shouldShowError('password')) {
+            <div class="field__error">{{ errorMessage('password') }}</div>
+          }
+        </div>
+
+        <div class="field field--full">
+          <label class="field__label" for="password_confirmation">Confirmation du mot de passe</label>
+          <div class="input-container">
+            <mat-icon class="input-icon">lock_clock</mat-icon>
+            <input id="password_confirmation" class="field__control" type="password" formControlName="password_confirmation" placeholder="••••••••" />
+          </div>
+          @if (shouldShowError('password_confirmation') || registerForm.hasError('passwordMismatch')) {
+            <div class="field__error">{{ errorMessage('password_confirmation') }}</div>
+          }
         </div>
 
         <div class="auth__actions mt-6 flex-row">
@@ -336,9 +176,116 @@
         </div>
       </ng-container>
 
-      <!-- Step 3: Summary -->
-      <ng-container *ngIf="currentStep() === 3">
-        <div class="step-header field--full">
+      <!-- Step 4: Finalisation -->
+      <ng-container *ngIf="currentStep() === 4">
+        <!-- Business Documents -->
+        <ng-container *ngIf="registerForm.get('role_user')?.value === 'PROPRIETAIRE'">
+          <div class="step-header field--full">
+            <h3 class="step-title">Documents de l'entreprise</h3>
+            <p class="step-desc">Veuillez télécharger les documents légaux obligatoires.</p>
+          </div>
+
+          <div class="field">
+            <label class="field__label">RCCM (Registre du Commerce)</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'rccm')" class="file-input" accept=".pdf,image/*" />
+              <div class="file-custom-input" [class.file-custom-input--error]="shouldShowError('rccm')">
+                <mat-icon class="file-icon">description</mat-icon>
+                <span class="file-text">{{ registerForm.get('rccm')?.value?.name || 'Choisir un fichier' }}</span>
+              </div>
+            </div>
+            @if (shouldShowError('rccm')) {
+              <div class="field__error">{{ errorMessage('rccm') }}</div>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field__label">DFE (Décl. Fiscale)</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'dfe')" class="file-input" accept=".pdf,image/*" />
+              <div class="file-custom-input" [class.file-custom-input--error]="shouldShowError('dfe')">
+                <mat-icon class="file-icon">receipt_long</mat-icon>
+                <span class="file-text">{{ registerForm.get('dfe')?.value?.name || 'Choisir un fichier' }}</span>
+              </div>
+            </div>
+            @if (shouldShowError('dfe')) {
+              <div class="field__error">{{ errorMessage('dfe') }}</div>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field__label">Statuts de l'entreprise</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'statuts')" class="file-input" accept=".pdf,image/*" />
+              <div class="file-custom-input" [class.file-custom-input--error]="shouldShowError('statuts')">
+                <mat-icon class="file-icon">gavel</mat-icon>
+                <span class="file-text">{{ registerForm.get('statuts')?.value?.name || 'Choisir un fichier' }}</span>
+              </div>
+            </div>
+            @if (shouldShowError('statuts')) {
+              <div class="field__error">{{ errorMessage('statuts') }}</div>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field__label">RIB (Relevé d'Identité Bancaire)</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'rib')" class="file-input" accept=".pdf,image/*" />
+              <div class="file-custom-input" [class.file-custom-input--error]="shouldShowError('rib')">
+                <mat-icon class="file-icon">account_balance</mat-icon>
+                <span class="file-text">{{ registerForm.get('rib')?.value?.name || 'Choisir un fichier' }}</span>
+              </div>
+            </div>
+            @if (shouldShowError('rib')) {
+              <div class="field__error">{{ errorMessage('rib') }}</div>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field__label">CNI Proprietaire (Recto)</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'gerant_id_front')" class="file-input" accept="image/*" />
+              <div class="file-custom-input" [class.file-custom-input--error]="shouldShowError('gerant_id_front')">
+                <mat-icon class="file-icon">badge</mat-icon>
+                <span class="file-text">{{ registerForm.get('gerant_id_front')?.value?.name || 'Recto' }}</span>
+              </div>
+            </div>
+            @if (shouldShowError('gerant_id_front')) {
+              <div class="field__error">{{ errorMessage('gerant_id_front') }}</div>
+            }
+          </div>
+
+          <div class="field">
+            <label class="field__label">CNI Proprietaire (Verso)</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'gerant_id_back')" class="file-input" accept="image/*" />
+              <div class="file-custom-input" [class.file-custom-input--error]="shouldShowError('gerant_id_back')">
+                <mat-icon class="file-icon">credit_card</mat-icon>
+                <span class="file-text">{{ registerForm.get('gerant_id_back')?.value?.name || 'Verso' }}</span>
+              </div>
+            </div>
+            @if (shouldShowError('gerant_id_back')) {
+              <div class="field__error">{{ errorMessage('gerant_id_back') }}</div>
+            }
+          </div>
+
+          <div class="field field--full">
+            <label class="field__label">Selfie du Proprietaire</label>
+            <div class="file-input-wrapper">
+              <input type="file" (change)="onFileChange($event, 'gerant_selfie')" class="file-input" accept="image/*" />
+              <div class="file-custom-input" [class.file-custom-input--error]="shouldShowError('gerant_selfie')">
+                <mat-icon class="file-icon">photo_camera</mat-icon>
+                <span class="file-text">{{ registerForm.get('gerant_selfie')?.value?.name || 'Prendre un selfie' }}</span>
+              </div>
+            </div>
+            @if (shouldShowError('gerant_selfie')) {
+              <div class="field__error">{{ errorMessage('gerant_selfie') }}</div>
+            }
+          </div>
+        </ng-container>
+
+        <!-- Summary -->
+        <div class="step-header field--full" [class.mt-6]="registerForm.get('role_user')?.value === 'PROPRIETAIRE'">
           <h3 class="step-title">Résumé de l'inscription</h3>
           <p class="step-desc">Veuillez vérifier vos informations avant la soumission.</p>
         </div>
@@ -346,9 +293,7 @@
         <div class="summary-card field--full">
           <div class="summary-item">
             <span class="summary-label">Nom Complet</span>
-            <span class="summary-value"
-              >{{ registerForm.get('nom')?.value }} {{ registerForm.get('prenom')?.value }}</span
-            >
+            <span class="summary-value">{{ registerForm.get('nom')?.value }} {{ registerForm.get('prenom')?.value }}</span>
           </div>
           <div class="summary-item">
             <span class="summary-label">Email</span>
@@ -356,32 +301,23 @@
           </div>
           <div class="summary-item">
             <span class="summary-label">Type de profil</span>
-            <span
-              class="summary-value badge-role"
-              [class.badge-role--prop]="registerForm.get('role_user')?.value === 'PROPRIETAIRE'"
-            >
+            <span class="summary-value badge-role" [class.badge-role--prop]="registerForm.get('role_user')?.value === 'PROPRIETAIRE'">
               {{ registerForm.get('role_user')?.value }}
             </span>
           </div>
           <div class="summary-item" *ngIf="registerForm.get('role_user')?.value === 'PROPRIETAIRE'">
             <span class="summary-label">Documents joints</span>
-            <span class="summary-value text-emerald-600">✓ 7 fichiers prêts</span>
+            <span class="summary-value text-emerald-600">
+              <mat-icon style="font-size: 16px; width: 16px; height: 16px; vertical-align: middle;">check_circle</mat-icon>
+              Fichiers attachés
+            </span>
           </div>
         </div>
 
         <div class="auth__actions mt-6 flex-row">
-          <button
-            type="button"
-            class="auth__secondary w-1-3"
-            (click)="onPrevious()"
-            [disabled]="isLoading()"
-          >
-            Retour
-          </button>
+          <button type="button" class="auth__secondary w-1-3" (click)="onPrevious()" [disabled]="isLoading()">Retour</button>
           <button type="submit" class="auth__primary w-2-3" [disabled]="isLoading()">
-            <span class="btn-content" *ngIf="!isLoading()"
-              >Confirmer & S'inscrire <span class="arrow">→</span></span
-            >
+            <span class="btn-content" *ngIf="!isLoading()">Confirmer & S'inscrire <span class="arrow">→</span></span>
             <span class="btn-spinner" *ngIf="isLoading()"></span>
           </button>
         </div>

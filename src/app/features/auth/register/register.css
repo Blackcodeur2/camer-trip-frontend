@@ -4,12 +4,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 58, 138, 0.8)),
+  background: linear-gradient(135deg, rgba(168, 174, 185, 0.592), rgba(64, 88, 76, 0.8)),
     url('/images/hero_bus.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-sans);
   position: relative;
 }
 
@@ -58,13 +58,13 @@
 .auth__logo {
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: var(--color-primary);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.5rem auto;
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(0, 102, 68, 0.3);
   transform: rotate(-5deg);
   transition: transform 0.3s;
 }
@@ -80,18 +80,18 @@
 .auth__title {
   font-size: 2rem;
   font-weight: 800;
-  color: #0f172a;
+  color: var(--color-text-main);
   margin-bottom: 0.5rem;
   letter-spacing: -0.03em;
 }
 
 .auth__subtitle {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 1.1rem;
 }
 
 .auth__subtitle strong {
-  color: #2563eb;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
@@ -124,7 +124,7 @@
 .field__label {
   font-size: 0.85rem;
   font-weight: 700;
-  color: #334155;
+  color: var(--color-text-main);
   margin-left: 0.25rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -139,10 +139,18 @@
 .input-icon {
   position: absolute;
   left: 1.25rem;
-  font-size: 1.1rem;
   color: #94a3b8;
   pointer-events: none;
   transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-icon mat-icon {
+  font-size: 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .field__control,
@@ -151,10 +159,10 @@ select.field__control {
   height: 2.5rem;
   padding: 0 0.95rem 0 3rem;
   border-radius: 14px;
-  border: 2px solid #e2e8f0;
-  background: #f8fafc;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
   font-size: 0.92rem;
-  color: #0f172a;
+  color: var(--color-text-main);
   font-weight: 500;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -174,15 +182,15 @@ select.field__control {
 
 .field__control:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--color-primary);
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 4px rgba(0, 102, 68, 0.1);
   transform: translateY(-1px);
 }
 
 .field__control:focus + .input-icon,
 .input-container:focus-within .input-icon {
-  color: #2563eb;
+  color: var(--color-primary);
 }
 
 .field__error {
@@ -238,7 +246,7 @@ select.field__control {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
+  background: linear-gradient(135deg, rgba(0, 102, 68, 0.05), transparent);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -254,12 +262,12 @@ select.field__control {
 }
 
 .role-option--active {
-  border-color: #3b82f6;
-  background: #f0fdf4; /* Light green tint or light blue #eff6ff */
-  box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.15);
+  border-color: var(--color-primary);
+  background: #f0fdf4;
+  box-shadow: 0 10px 20px -5px rgba(0, 102, 68, 0.15);
 }
 .role-option--active[class*='CLIENT'] {
-  background: #eff6ff;
+  background: #f0fdf4;
 }
 
 .role-radio {
@@ -275,9 +283,15 @@ select.field__control {
   align-items: center;
   justify-content: center;
   background: #f1f5f9;
-  font-size: 1.5rem;
   transition: all 0.3s;
   z-index: 1;
+}
+
+.role-icon-wrapper mat-icon {
+  font-size: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-primary);
 }
 
 /* --- STEPS PROGRESS --- */
@@ -333,13 +347,13 @@ select.field__control {
 }
 
 .step-indicator--active .step-number {
-  background: #3b82f6;
+  background: var(--color-primary);
   color: white;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 4px rgba(0, 102, 68, 0.2);
 }
 
 .step-indicator--active .step-label {
-  color: #3b82f6;
+  color: var(--color-primary);
 }
 
 .step-indicator--completed .step-number {
@@ -348,7 +362,7 @@ select.field__control {
 }
 
 .step-line--active {
-  background: #3b82f6;
+  background: var(--color-primary);
 }
 
 /* --- STEP HEADER --- */
@@ -401,8 +415,26 @@ select.field__control {
   transition: all 0.2s;
 }
 
+.file-custom-input--error {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+.file-custom-input--error mat-icon {
+  color: #ef4444;
+}
+
 .file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-icon,
+.file-custom-input mat-icon {
   font-size: 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #64748b;
 }
 
 .file-text {
@@ -415,8 +447,8 @@ select.field__control {
 }
 
 .file-input-wrapper:hover .file-custom-input {
-  border-color: #3b82f6;
-  background: #eff6ff;
+  border-color: var(--color-primary);
+  background: #f0fdf4;
 }
 
 .file-input:focus + .file-custom-input {
@@ -496,13 +528,13 @@ select.field__control {
   border-radius: 14px;
   border: none;
   padding: 0 1.6rem;
-  background: linear-gradient(135deg, #10b981, #059669); /* Emerald Gradient */
+  background: var(--color-dark);
   color: white;
   font-weight: 800;
   font-size: 1.05rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -542,8 +574,8 @@ select.field__control {
 
 .auth__primary:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 15px 25px -5px rgba(16, 185, 129, 0.5);
-  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.4);
+  background: var(--color-dark-hover);
 }
 
 .btn-content {
@@ -608,7 +640,7 @@ select.field__control {
 }
 
 .login-link {
-  color: #2563eb;
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 800;
   margin-left: 0.25rem;
@@ -617,7 +649,7 @@ select.field__control {
 
 .login-link:hover {
   text-decoration: underline;
-  color: #1d4ed8;
+  color: var(--color-primary-dark);
 }
 
 .mt-6 {

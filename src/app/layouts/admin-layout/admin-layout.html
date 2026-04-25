@@ -1,9 +1,12 @@
 <div class="admin-layout">
+  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <span class="logo-icon">🚍</span>
+      <div class="brand-logo-wrap">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </div>
       <div class="brand-text">
-        <span class="app-name">CamerTrip</span>
+        <span class="app-name">Camer<strong>Trip</strong></span>
         <span class="role-badge">{{ currentUserRole() | titlecase }}</span>
       </div>
     </div>
@@ -18,30 +21,45 @@
     </nav>
 
     <div class="sidebar-footer">
-      <button class="nav-item logout" (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Déconnexion</span>
-      </button>
+      <!-- Les infos utilisateur sont désormais dans le header -->
     </div>
   </aside>
 
+  <!-- Main Content -->
   <div class="main-wrapper">
     <header class="top-header">
       <div class="header-left">
-        <div>
-          <p class="page-label">Tableau de bord administrateur</p>
-          <h1 class="page-title">Bienvenue {{ currentUser()?.prenom || 'Admin' }}</h1>
-        </div>
+        <p class="page-label">Tableau de bord administrateur</p>
       </div>
 
       <div class="user-menu">
-        <div class="user-info">
+        <div class="avatar-chip" (click)="toggleUserMenu()">
           <div class="avatar">{{ userInitials() }}</div>
-          <div>
-            <p class="user-name">{{ currentUser()?.prenom || 'Administrateur' }} {{ currentUser()?.nom || '' }}</p>
-            <p class="user-role">{{ currentUserRole() | titlecase }}</p>
+          <div class="avatar-info">
+            <span class="user-name-chip">{{ currentUser()?.prenom || 'Administrateur' }} {{ currentUser()?.nom || '' }}</span>
+            <span class="user-role-chip">{{ currentUserRole() | titlecase }}</span>
           </div>
+          <mat-icon class="chevron" [class.rotated]="isUserMenuOpen">expand_more</mat-icon>
         </div>
+
+        @if (isUserMenuOpen) {
+          <div class="user-dropdown">
+            <div class="dropdown-header">
+              <span class="user-full-name">{{ currentUser()?.prenom || 'Administrateur' }} {{ currentUser()?.nom || '' }}</span>
+              <span class="user-email">{{ currentUser()?.email }}</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a routerLink="/admin/profile" class="dropdown-item" (click)="isUserMenuOpen = false">
+              <mat-icon>person_outline</mat-icon>
+              <span>Mon Profil</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item logout-item" (click)="logout()">
+              <mat-icon>logout</mat-icon>
+              <span>Se déconnecter</span>
+            </button>
+          </div>
+        }
       </div>
     </header>
 

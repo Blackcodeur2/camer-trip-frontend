@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth-service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { AppButton } from '../../../shared/button/app-button/app-button';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, AppButton, RouterLink],
+  imports: [ReactiveFormsModule, AppButton, RouterLink, MatIconModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,8 +21,15 @@ export class Login {
   private readonly authService = inject(AuthService);
 
   protected readonly loginForm = this.fb.nonNullable.group({
-    login: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
+    login: ['', [
+      Validators.required, 
+      Validators.minLength(3),
+      Validators.pattern(/^([a-zA-Z0-9_-]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/)
+    ]],
+    password: ['', [
+      Validators.required, 
+      Validators.minLength(8)
+    ]],
   });
 
   onSubmit(): void {
@@ -94,9 +102,18 @@ export class Login {
     const control = this.loginForm.get(controlName);
     if (!control || !control.errors) return '';
 
-    if (control.errors['required']) return 'Champ obligatoire.';
+    if (control.errors['required']) return 'Ce champ est obligatoire.';
+    
+    if (control.errors['minlength']) {
+      const requiredLength = control.errors['minlength'].requiredLength;
+      return `Doit contenir au moins ${requiredLength} caractères.`;
+    }
+    
+    if (control.errors['pattern']) {
+      return "Email ou nom d'utilisateur invalide!";
+    }
+
     if (control.errors['email']) return 'Email invalide.';
-    if (control.errors['minlength']) return 'Mot de passe trop court.';
-    return 'Valeur invalide.';
+    return 'Email invalide.';
   }
 }

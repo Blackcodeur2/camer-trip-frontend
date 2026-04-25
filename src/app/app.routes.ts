@@ -57,9 +57,7 @@ export const routes: Routes = [
         path: 'admin',
         component: AdminLayout,
         canActivate: [authGuardGuard],
-        data: {
-            roles: ['ADMIN'],
-        },
+        data: { roles: ['ADMIN'] },
         children: [
             {
                 path: 'dashboard',
@@ -68,6 +66,10 @@ export const routes: Routes = [
             {
                 path: 'villes',
                 loadComponent: () => import('./features/admin/villes/villes').then(m => m.Villes),
+            },
+            {
+                path: 'profile',
+                loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },
         ],
     },
@@ -81,9 +83,12 @@ export const routes: Routes = [
             {
                 path: 'dashboard',
                 loadComponent: () => import('./features/proprietaire/dashboard/dashboard').then(m => m.Dashboard),
-            }
-        ]
-
+            },
+            {
+                path: 'profile',
+                loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
+            },
+        ],
     },
 
     {
@@ -92,9 +97,11 @@ export const routes: Routes = [
         canActivate: [authGuardGuard],
         data: { roles: ['CHEF_AGENCE'] },
         children: [
-
-        ]
-
+            {
+                path: 'profile',
+                loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
+            },
+        ],
     },
 
     {
@@ -103,9 +110,11 @@ export const routes: Routes = [
         canActivate: [authGuardGuard],
         data: { roles: ['AGENT'] },
         children: [
-
-        ]
-
+            {
+                path: 'profile',
+                loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
+            },
+        ],
     },
 
     {
@@ -114,9 +123,11 @@ export const routes: Routes = [
         canActivate: [authGuardGuard],
         data: { roles: ['CHAUFFEUR'] },
         children: [
-
-        ]
-
+            {
+                path: 'profile',
+                loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
+            },
+        ],
     },
 
     {
@@ -125,9 +136,11 @@ export const routes: Routes = [
         canActivate: [authGuardGuard],
         data: { roles: ['CLIENT'] },
         children: [
-
-        ]
-
+            {
+                path: 'profile',
+                loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
+            },
+        ],
     },
 
     {
