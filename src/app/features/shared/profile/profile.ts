@@ -16,17 +16,12 @@ export class Profile implements OnInit {
   public authService = inject(AuthService);
 
   protected readonly currentUser = this.authService.currentUser;
-  isRefreshing = signal(true);
+  isRefreshing = signal(false);
 
   ngOnInit(): void {
-    // Rafraîchit les données depuis l'API pour garantir l'affichage correct
-    this.authService.fetchUser().subscribe({
-      next: () => this.isRefreshing.set(false),
-      error: () => {
-        // Fallback : les données du localStorage suffisent
-        this.isRefreshing.set(false);
-      },
-    });
+    // Les données sont déjà disponibles depuis le login (localStorage -> signal)
+    // On ne rappelle PAS fetchUser() pour ne pas écraser avec un mauvais endpoint
+    this.isRefreshing.set(false);
   }
 
   protected readonly userInitials = computed(() => {

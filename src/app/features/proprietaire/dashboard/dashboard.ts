@@ -45,28 +45,30 @@ export class Dashboard {
   ];
 
   ngOnInit() {
-    // Refresh user data to get latest KYC/Subscription status
-    this.authService.fetchUser().subscribe({
-      next: (user) => {
-        if (user) {
-          this.userName.set(`${user.prenom} ${user.nom}`);
-          this.kycStatus.set(user.kyc_status || user.statut || '');
-          this.isSubscribed.set(!!user.is_subscribed);
+    const localUser = this.authService.currentUser();
 
-          this.loadStats();
-        }
-      },
-      error: () => {
-        // Fallback to local user if fetch fails
-        const user = this.authService.currentUser();
-        if (user) {
-          this.userName.set(`${user.prenom} ${user.nom}`);
-          this.kycStatus.set(user.kyc_status || user.statut || '');
-          this.isSubscribed.set(!!user.is_subscribed);
-        }
-        this.isLoading.set(false);
-      }
-    });
+    if (localUser) {
+      // Données déjà disponibles depuis le login — on les utilise directement
+      this.userName.set(`${localUser.prenom || ''} ${localUser.nom || ''}`.trim());
+      this.kycStatus.set(localUser.kyc_status || localUser.statut || '');
+      this.isSubscribed.set(!!localUser.is_subscribed);
+      this.loadStats();
+    } else {
+      // Aucune donnée locale — tenter un refresh depuis l'API
+      this.authService.fetchUser().subscribe({
+        next: (user) => {
+          if (user && user.role_user === 'PROPRIETAIRE') {
+            this.userName.set(`${user.prenom || ''} ${user.nom || ''}`.trim());
+            this.kycStatus.set(user.kyc_status || user.statut || '');
+            this.isSubscribed.set(!!user.is_subscribed);
+            this.loadStats();
+          } else {
+            this.isLoading.set(false);
+          }
+        },
+        error: () => this.isLoading.set(false)
+      });
+    }
   }
 
   onLogout() {
