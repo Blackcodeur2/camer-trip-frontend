@@ -30,6 +30,9 @@
       <div class="breadcrumb">
         <mat-icon class="breadcrumb-sep">chevron_right</mat-icon>
         <span class="breadcrumb-active">Espace Chef d'Agence</span>
+        <span style="color:#94a3b8;font-size:0.8rem;margin-left:1rem;">
+          {{ currentUser()?.prenom }} {{ currentUser()?.nom }}
+        </span>
       </div>
 
       <div class="user-menu">

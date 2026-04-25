@@ -7,7 +7,7 @@
       </div>
       <div class="brand-text">
         <span class="app-name">Camer<strong>Trip</strong></span>
-        <span class="role-badge">Propriétaire</span>
+        <span class="role-badge">{{ currentUserRole() | titlecase }}</span>
       </div>
     </div>
 
@@ -34,6 +34,10 @@
       <div class="breadcrumb">
         <mat-icon class="breadcrumb-sep">chevron_right</mat-icon>
         <span class="breadcrumb-active">Espace Propriétaire</span>
+        <!-- Nom complet visible dès le header -->
+        <span style="color:#94a3b8;font-size:0.8rem;margin-left:1rem;">
+          {{ currentUser()?.prenom }} {{ currentUser()?.nom }}
+        </span>
       </div>
 
       <div class="user-menu">

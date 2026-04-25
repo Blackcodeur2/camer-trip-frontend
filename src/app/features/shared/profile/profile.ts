@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -11,11 +11,23 @@ import Swal from 'sweetalert2';
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
-export class Profile {
+export class Profile implements OnInit {
   private fb = inject(FormBuilder);
   public authService = inject(AuthService);
 
   protected readonly currentUser = this.authService.currentUser;
+  isRefreshing = signal(true);
+
+  ngOnInit(): void {
+    // Rafraîchit les données depuis l'API pour garantir l'affichage correct
+    this.authService.fetchUser().subscribe({
+      next: () => this.isRefreshing.set(false),
+      error: () => {
+        // Fallback : les données du localStorage suffisent
+        this.isRefreshing.set(false);
+      },
+    });
+  }
 
   protected readonly userInitials = computed(() => {
     const u = this.currentUser();
@@ -26,60 +38,79 @@ export class Profile {
   protected readonly userRoleLabel = computed(() => {
     const roleMap: Record<string, string> = {
       ADMIN: 'Administrateur',
-      PROPRIETAIRE: 'Propriétaire d\'Agence',
-      CHEF_AGENCE: 'Chef d\'Agence',
+      PROPRIETAIRE: "Propriétaire d'Agence",
+      CHEF_AGENCE: "Chef d'Agence",
       AGENT: 'Agent Guichet',
       CHAUFFEUR: 'Chauffeur',
       CLIENT: 'Passager',
     };
-    const role = this.currentUser()?.role_user ?? '';
-    return roleMap[role] || role;
+    return roleMap[this.currentUser()?.role_user ?? ''] || this.currentUser()?.role_user || '—';
   });
 
-  activeTab = signal<'info' | 'password'>('info');
+  // Avatar
+  avatarPreview = signal<string | null>(null);
   isLoading = signal(false);
-  showCurrentPassword = signal(false);
-  showNewPassword = signal(false);
-  showConfirmPassword = signal(false);
+  showPwdSection = signal(false);
 
-  private passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
-    const v = control.value as string;
-    if (!v) return null;
-    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(v)) {
-      return { passwordStrength: true };
-    }
-    return null;
+  // Password visibility toggles
+  showCurrentPwd = signal(false);
+  showNewPwd = signal(false);
+  showConfirmPwd = signal(false);
+
+  // Password form
+  passwordForm = this.fb.nonNullable.group(
+    {
+      current_password: ['', [Validators.required]],
+      new_password: ['', [Validators.required, Validators.minLength(8), this.pwdStrengthValidator]],
+      new_password_confirmation: ['', [Validators.required]],
+    },
+    { validators: this.pwdMatchValidator }
+  );
+
+  private pwdStrengthValidator(c: AbstractControl): ValidationErrors | null {
+    return /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(c.value) ? null : { strength: true };
   }
 
-  passwordForm = this.fb.nonNullable.group({
-    current_password: ['', [Validators.required]],
-    new_password: ['', [Validators.required, Validators.minLength(8), this.passwordStrengthValidator]],
-    new_password_confirmation: ['', [Validators.required]],
-  }, { validators: this.passwordMatchValidator });
-
-  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const newPwd = control.get('new_password')?.value;
-    const confirmPwd = control.get('new_password_confirmation')?.value;
-    if (newPwd && confirmPwd && newPwd !== confirmPwd) {
-      control.get('new_password_confirmation')?.setErrors({ mismatch: true });
+  private pwdMatchValidator(g: AbstractControl): ValidationErrors | null {
+    const n = g.get('new_password')?.value;
+    const c = g.get('new_password_confirmation');
+    if (n && c?.value && n !== c.value) {
+      c.setErrors({ mismatch: true });
       return { mismatch: true };
     }
     return null;
   }
 
-  shouldShowError(controlName: string): boolean {
-    const ctrl = this.passwordForm.get(controlName);
-    return !!(ctrl && ctrl.invalid && ctrl.touched);
+  shouldShowError(field: string): boolean {
+    const c = this.passwordForm.get(field);
+    return !!(c?.invalid && c.touched);
   }
 
-  errorMessage(controlName: string): string {
-    const ctrl = this.passwordForm.get(controlName);
-    if (!ctrl?.errors) return '';
-    if (ctrl.errors['required']) return 'Ce champ est obligatoire.';
-    if (ctrl.errors['minlength']) return `Minimum ${ctrl.errors['minlength'].requiredLength} caractères.`;
-    if (ctrl.errors['passwordStrength']) return 'Doit contenir majuscule, minuscule et un chiffre.';
-    if (ctrl.errors['mismatch']) return 'Les mots de passe ne correspondent pas.';
+  errorMessage(field: string): string {
+    const e = this.passwordForm.get(field)?.errors;
+    if (!e) return '';
+    if (e['required']) return 'Champ obligatoire.';
+    if (e['minlength']) return `Minimum ${e['minlength'].requiredLength} caractères.`;
+    if (e['strength']) return 'Doit contenir majuscule, minuscule et chiffre.';
+    if (e['mismatch']) return 'Les mots de passe ne correspondent pas.';
     return 'Valeur invalide.';
+  }
+
+  onAvatarChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      Swal.fire('Format invalide', 'Veuillez sélectionner une image (JPG, PNG, WEBP).', 'warning');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      Swal.fire('Fichier trop lourd', 'La photo ne doit pas dépasser 2 Mo.', 'warning');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => this.avatarPreview.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+    // TODO: upload to API
   }
 
   onChangePassword(): void {
@@ -89,24 +120,18 @@ export class Profile {
     }
     this.isLoading.set(true);
     const { current_password, new_password, new_password_confirmation } = this.passwordForm.getRawValue();
-
-    this.authService.changePassword({ current_password, password: new_password, password_confirmation: new_password_confirmation })
+    this.authService
+      .changePassword({ current_password, password: new_password, password_confirmation: new_password_confirmation })
       .subscribe({
         next: () => {
           this.isLoading.set(false);
           this.passwordForm.reset();
-          Swal.fire({
-            icon: 'success',
-            title: 'Mot de passe modifié',
-            text: 'Votre mot de passe a été mis à jour avec succès.',
-            timer: 2000,
-            showConfirmButton: false,
-          });
+          this.showPwdSection.set(false);
+          Swal.fire({ icon: 'success', title: 'Mot de passe modifié !', timer: 2000, showConfirmButton: false });
         },
         error: (err) => {
           this.isLoading.set(false);
-          const msg = err?.error?.message || 'Mot de passe actuel incorrect.';
-          Swal.fire({ icon: 'error', title: 'Erreur', text: msg });
+          Swal.fire({ icon: 'error', title: 'Erreur', text: err?.error?.message || 'Mot de passe actuel incorrect.' });
         },
       });
   }

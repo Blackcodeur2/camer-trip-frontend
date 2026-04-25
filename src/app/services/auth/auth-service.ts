@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { User } from '../../models/user';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 
 export interface AuthResponse {
   data: {
@@ -82,9 +82,21 @@ export class AuthService {
 
 
   fetchUser(): Observable<User> {
-    return this.http.get<User>(`${this.API}/user`).pipe(
+    return this.http.get<any>(`${this.API}/user`).pipe(
+      map(response => {
+        // L'API peut retourner soit User directement, soit { data: User } ou { data: User[] }
+        let user: User;
+        if (response && response.data) {
+          // Réponse enveloppée : { data: User } ou { data: User[] }
+          user = Array.isArray(response.data) ? response.data[0] : response.data;
+        } else {
+          // Réponse directe : User
+          user = response;
+        }
+        return user;
+      }),
       tap(user => {
-        if (user) {
+        if (user && user.id) {
           localStorage.setItem('user', JSON.stringify(user));
           this.currentUser.set(user);
         }

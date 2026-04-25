@@ -1,185 +1,198 @@
-<section class="profile-page">
+<div class="profile-page">
 
-  <!-- Header Card -->
-  <div class="profile-hero">
-    <div class="hero-bg"></div>
-    <div class="profile-avatar-wrap">
-      <div class="profile-avatar">{{ userInitials() }}</div>
-    </div>
-    <div class="profile-identity">
-      <h1 class="profile-name">{{ currentUser()?.prenom }} {{ currentUser()?.nom }}</h1>
-      <div class="profile-role-badge">
-        <mat-icon>verified</mat-icon>
-        <span>{{ userRoleLabel() }}</span>
+@if (isRefreshing()) {
+  <!-- Skeleton loader -->
+  <div class="profile-skeleton-sidebar">
+    <div class="sk sk-avatar"></div>
+    <div class="sk sk-name"></div>
+    <div class="sk sk-badge"></div>
+    <div class="sk sk-line"></div>
+    <div class="sk sk-line"></div>
+    <div class="sk sk-line"></div>
+  </div>
+  <div class="profile-skeleton-content">
+    <div class="sk sk-card"></div>
+    <div class="sk sk-card sk-card--sm"></div>
+  </div>
+} @else {
+
+  <!-- Left column: Identity card -->
+  <aside class="profile-sidebar">
+    <div class="avatar-section">
+      <div class="avatar-wrap">
+        @if (avatarPreview()) {
+          <img [src]="avatarPreview()" alt="Photo de profil" class="avatar-img" />
+        } @else {
+          <div class="avatar-initials">{{ userInitials() }}</div>
+        }
+        <label class="avatar-edit-btn" title="Changer la photo">
+          <mat-icon>photo_camera</mat-icon>
+          <input type="file" class="avatar-file-input" accept="image/*" (change)="onAvatarChange($event)" />
+        </label>
       </div>
-      <p class="profile-email">
+      <h2 class="sidebar-name">{{ currentUser()?.prenom }} {{ currentUser()?.nom }}</h2>
+      <span class="sidebar-role-badge">{{ userRoleLabel() }}</span>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <ul class="sidebar-details">
+      <li class="sidebar-detail-item">
         <mat-icon>mail_outline</mat-icon>
-        {{ currentUser()?.email }}
-      </p>
-    </div>
-  </div>
+        <span>{{ currentUser()?.email || '—' }}</span>
+      </li>
+      <li class="sidebar-detail-item">
+        <mat-icon>phone</mat-icon>
+        <span>{{ currentUser()?.telephone || '—' }}</span>
+      </li>
+      <li class="sidebar-detail-item">
+        <mat-icon>wc</mat-icon>
+        <span>{{ currentUser()?.sexe === 'M' ? 'Masculin' : currentUser()?.sexe === 'F' ? 'Féminin' : '—' }}</span>
+      </li>
+      <li class="sidebar-detail-item">
+        <mat-icon>cake</mat-icon>
+        <span>{{ currentUser()?.date_naissance || '—' }}</span>
+      </li>
+    </ul>
 
-  <!-- Tabs -->
-  <div class="profile-tabs">
-    <button class="tab-btn" [class.active]="activeTab() === 'info'" (click)="activeTab.set('info')">
-      <mat-icon>person_outline</mat-icon>
-      Mes informations
-    </button>
-    <button class="tab-btn" [class.active]="activeTab() === 'password'" (click)="activeTab.set('password')">
-      <mat-icon>lock_outline</mat-icon>
-      Mot de passe
-    </button>
-  </div>
+    <div class="sidebar-divider"></div>
 
-  <!-- Tab: Informations -->
-  @if (activeTab() === 'info') {
-    <div class="tab-content" [@fadeIn]>
-      <div class="info-grid">
-        <div class="info-card">
-          <div class="info-icon"><mat-icon>badge</mat-icon></div>
-          <div class="info-body">
-            <span class="info-label">Prénom</span>
-            <span class="info-value">{{ currentUser()?.prenom || '—' }}</span>
-          </div>
-        </div>
-        <div class="info-card">
-          <div class="info-icon"><mat-icon>badge</mat-icon></div>
-          <div class="info-body">
-            <span class="info-label">Nom</span>
-            <span class="info-value">{{ currentUser()?.nom || '—' }}</span>
-          </div>
-        </div>
-        <div class="info-card">
-          <div class="info-icon"><mat-icon>mail_outline</mat-icon></div>
-          <div class="info-body">
-            <span class="info-label">Email</span>
-            <span class="info-value">{{ currentUser()?.email || '—' }}</span>
-          </div>
-        </div>
-        <div class="info-card">
-          <div class="info-icon"><mat-icon>phone</mat-icon></div>
-          <div class="info-body">
-            <span class="info-label">Téléphone</span>
-            <span class="info-value">{{ currentUser()?.telephone || '—' }}</span>
-          </div>
-        </div>
-        <div class="info-card">
-          <div class="info-icon"><mat-icon>wc</mat-icon></div>
-          <div class="info-body">
-            <span class="info-label">Sexe</span>
-            <span class="info-value">{{ currentUser()?.sexe === 'M' ? 'Masculin' : currentUser()?.sexe === 'F' ? 'Féminin' : '—' }}</span>
-          </div>
-        </div>
-        <div class="info-card">
-          <div class="info-icon"><mat-icon>cake</mat-icon></div>
-          <div class="info-body">
-            <span class="info-label">Date de naissance</span>
-            <span class="info-value">{{ currentUser()?.date_naissance || '—' }}</span>
-          </div>
-        </div>
-        <div class="info-card info-card--full">
-          <div class="info-icon"><mat-icon>work_outline</mat-icon></div>
-          <div class="info-body">
-            <span class="info-label">Rôle</span>
-            <span class="info-value">{{ userRoleLabel() }}</span>
-          </div>
+    <button class="change-pwd-toggle" (click)="showPwdSection.set(!showPwdSection())">
+      <mat-icon>{{ showPwdSection() ? 'lock_open' : 'lock' }}</mat-icon>
+      {{ showPwdSection() ? 'Masquer' : 'Changer le mot de passe' }}
+    </button>
+  </aside>
+
+  <!-- Right column: Content -->
+  <main class="profile-content">
+
+    <!-- Personal Information section -->
+    <section class="profile-section">
+      <div class="section-header">
+        <mat-icon>person_outline</mat-icon>
+        <div>
+          <h3>Informations personnelles</h3>
+          <p>Vos données de compte enregistrées sur la plateforme.</p>
         </div>
       </div>
-
-      <p class="info-note">
+      <div class="info-grid">
+        <div class="info-field">
+          <span class="info-field__label">Prénom</span>
+          <span class="info-field__value">{{ currentUser()?.prenom || '—' }}</span>
+        </div>
+        <div class="info-field">
+          <span class="info-field__label">Nom</span>
+          <span class="info-field__value">{{ currentUser()?.nom || '—' }}</span>
+        </div>
+        <div class="info-field">
+          <span class="info-field__label">Email</span>
+          <span class="info-field__value">{{ currentUser()?.email || '—' }}</span>
+        </div>
+        <div class="info-field">
+          <span class="info-field__label">Téléphone</span>
+          <span class="info-field__value">{{ currentUser()?.telephone || '—' }}</span>
+        </div>
+        <div class="info-field">
+          <span class="info-field__label">Sexe</span>
+          <span class="info-field__value">{{ currentUser()?.sexe === 'M' ? 'Masculin' : currentUser()?.sexe === 'F' ? 'Féminin' : '—' }}</span>
+        </div>
+        <div class="info-field">
+          <span class="info-field__label">Date de naissance</span>
+          <span class="info-field__value">{{ currentUser()?.date_naissance || '—' }}</span>
+        </div>
+        <div class="info-field info-field--full">
+          <span class="info-field__label">Rôle</span>
+          <span class="info-field__value role-tag">
+            <mat-icon>verified</mat-icon>
+            {{ userRoleLabel() }}
+          </span>
+        </div>
+      </div>
+      <p class="readonly-note">
         <mat-icon>info_outline</mat-icon>
-        Pour modifier vos informations personnelles, veuillez contacter un administrateur.
+        Pour modifier vos informations, contactez un administrateur.
       </p>
-    </div>
-  }
+    </section>
 
-  <!-- Tab: Mot de passe -->
-  @if (activeTab() === 'password') {
-    <div class="tab-content">
-      <div class="password-card">
-        <div class="password-card-header">
+    <!-- Password section -->
+    @if (showPwdSection()) {
+      <section class="profile-section">
+        <div class="section-header">
           <mat-icon>security</mat-icon>
           <div>
-            <h3>Changer votre mot de passe</h3>
-            <p>Votre nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.</p>
+            <h3>Changer le mot de passe</h3>
+            <p>Choisissez un mot de passe fort : min. 8 caractères, 1 majuscule, 1 chiffre.</p>
           </div>
         </div>
 
-        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="password-form">
+        <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="pwd-form">
           <!-- Current password -->
-          <div class="field">
-            <label class="field__label">Mot de passe actuel</label>
-            <div class="input-container">
-              <span class="input-icon"><mat-icon>lock</mat-icon></span>
-              <input
-                [type]="showCurrentPassword() ? 'text' : 'password'"
-                class="field__control"
-                formControlName="current_password"
-                placeholder="••••••••"
-                [class.field__control--error]="shouldShowError('current_password')"
-              />
-              <button type="button" class="toggle-pwd" (click)="showCurrentPassword.set(!showCurrentPassword())">
-                <mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <div class="form-field">
+            <label class="form-field__label">Mot de passe actuel</label>
+            <div class="input-wrap">
+              <mat-icon class="input-ico">lock</mat-icon>
+              <input [type]="showCurrentPwd() ? 'text' : 'password'" formControlName="current_password"
+                placeholder="••••••••" class="form-field__input"
+                [class.form-field__input--err]="shouldShowError('current_password')" />
+              <button type="button" class="toggle-eye" (click)="showCurrentPwd.set(!showCurrentPwd())">
+                <mat-icon>{{ showCurrentPwd() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </div>
             @if (shouldShowError('current_password')) {
-              <span class="field__error">{{ errorMessage('current_password') }}</span>
+              <span class="form-field__err">{{ errorMessage('current_password') }}</span>
             }
           </div>
 
           <!-- New password -->
-          <div class="field">
-            <label class="field__label">Nouveau mot de passe</label>
-            <div class="input-container">
-              <span class="input-icon"><mat-icon>lock_open</mat-icon></span>
-              <input
-                [type]="showNewPassword() ? 'text' : 'password'"
-                class="field__control"
-                formControlName="new_password"
-                placeholder="••••••••"
-                [class.field__control--error]="shouldShowError('new_password')"
-              />
-              <button type="button" class="toggle-pwd" (click)="showNewPassword.set(!showNewPassword())">
-                <mat-icon>{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <div class="form-field">
+            <label class="form-field__label">Nouveau mot de passe</label>
+            <div class="input-wrap">
+              <mat-icon class="input-ico">lock_open</mat-icon>
+              <input [type]="showNewPwd() ? 'text' : 'password'" formControlName="new_password"
+                placeholder="••••••••" class="form-field__input"
+                [class.form-field__input--err]="shouldShowError('new_password')" />
+              <button type="button" class="toggle-eye" (click)="showNewPwd.set(!showNewPwd())">
+                <mat-icon>{{ showNewPwd() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </div>
             @if (shouldShowError('new_password')) {
-              <span class="field__error">{{ errorMessage('new_password') }}</span>
+              <span class="form-field__err">{{ errorMessage('new_password') }}</span>
             }
           </div>
 
           <!-- Confirm password -->
-          <div class="field">
-            <label class="field__label">Confirmer le nouveau mot de passe</label>
-            <div class="input-container">
-              <span class="input-icon"><mat-icon>lock_reset</mat-icon></span>
-              <input
-                [type]="showConfirmPassword() ? 'text' : 'password'"
-                class="field__control"
-                formControlName="new_password_confirmation"
-                placeholder="••••••••"
-                [class.field__control--error]="shouldShowError('new_password_confirmation')"
-              />
-              <button type="button" class="toggle-pwd" (click)="showConfirmPassword.set(!showConfirmPassword())">
-                <mat-icon>{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <div class="form-field">
+            <label class="form-field__label">Confirmer le nouveau mot de passe</label>
+            <div class="input-wrap">
+              <mat-icon class="input-ico">lock_reset</mat-icon>
+              <input [type]="showConfirmPwd() ? 'text' : 'password'" formControlName="new_password_confirmation"
+                placeholder="••••••••" class="form-field__input"
+                [class.form-field__input--err]="shouldShowError('new_password_confirmation')" />
+              <button type="button" class="toggle-eye" (click)="showConfirmPwd.set(!showConfirmPwd())">
+                <mat-icon>{{ showConfirmPwd() ? 'visibility_off' : 'visibility' }}</mat-icon>
               </button>
             </div>
             @if (shouldShowError('new_password_confirmation')) {
-              <span class="field__error">{{ errorMessage('new_password_confirmation') }}</span>
+              <span class="form-field__err">{{ errorMessage('new_password_confirmation') }}</span>
             }
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="isLoading()">
-            @if (isLoading()) {
-              <span class="spinner"></span>
-            } @else {
-              <mat-icon>save</mat-icon>
-              Enregistrer le mot de passe
-            }
-          </button>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" (click)="showPwdSection.set(false)">Annuler</button>
+            <button type="submit" class="btn-save" [disabled]="isLoading()">
+              @if (isLoading()) {
+                <span class="spinner"></span>
+              } @else {
+                <mat-icon>save</mat-icon>
+                Enregistrer
+              }
+            </button>
+          </div>
         </form>
-      </div>
-    </div>
-  }
+      </section>
+    }
 
-</section>
+  </main>
+} <!-- end @else -->
+
+</div>
