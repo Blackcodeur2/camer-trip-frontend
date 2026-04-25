@@ -1,1 +1,134 @@
-<p>agences works!</p>
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Agences et Stations</h1>
+            <p class="page-subtitle">Gérez les agences de transport et leurs stations affiliées.</p>
+        </div>
+    </div>
+    <div class="card">
+        @if (isLoading()) {
+        <div class="state-container">
+            <div class="spinner"></div>
+            <p>Chargement des agences en cours...</p>
+        </div>
+        } @else if (error()) {
+        <div class="state-container error-state">
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <p>{{ error() }}</p>
+            <button class="btn-retry" (click)="loadAgences()">Réessayer</button>
+        </div>
+        } @else {
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;"></th>
+                        <th>Agence</th>
+                        <th>ville</th>
+                        <th>Adresse / BP</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Gares</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (agence of paginatedAgences(); track agence.id) {
+
+                    <!-- Ligne principale de l'agence -->
+                    <tr class="agency-row" [class.expanded]="expandedAgenceId() === agence.id"
+                        (click)="toggleExpand(agence.id)">
+                        <td class="expand-cell">
+                            <mat-icon class="expand-icon" [class.rotated]="expandedAgenceId() === agence.id">
+                                expand_more
+                            </mat-icon>
+                        </td>
+                        <td>
+                            <div class="agence-cell">
+                                <div class="agence-icon">
+                                    <mat-icon>business</mat-icon>
+                                </div>
+                                <div class="agence-name">{{ agence.nom }}</div>
+                            </div>
+                        </td>
+                        <td>{{ "-" }}</td>
+                        <td>{{ agence.adresse || '—' }}</td>
+                        <td>{{ agence.email }}</td>
+                        <td>{{ agence.telephone }}</td>
+                        <td>
+                            <span class="gares-count-badge" [class.has-gares]="(agence.stations?.length ?? 0) > 0">
+                                <mat-icon>location_on</mat-icon>
+                                {{ agence.stations?.length ?? 0 }} gare{{ (agence.stations?.length ?? 0) > 1 ? 's' : ''
+                                }}
+                            </span>
+                        </td>
+                        <!--<td>
+                            <span class="statut-badge statut-{{ agence.statut ?? 'inconnu' }}">
+                                {{ agence.statut || '—' }}
+                            </span>
+                        </td>-->
+                        <td class="text-right" (click)="$event.stopPropagation()">
+                            <button class="action-btn" title="Modifier">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Ligne accordéon : gares de l'agence -->
+                    @if (expandedAgenceId() === agence.id) {
+                    <tr class="gares-expanded-row">
+                        <td colspan="8">
+                            <div class="gares-panel">
+                                <div class="gares-panel-header">
+                                    <mat-icon>location_city</mat-icon>
+                                    <span>Gares de <strong>{{ agence.nom }}</strong></span>
+                                </div>
+                                @if (agence.stations && agence.stations.length > 0) {
+                                <div class="gares-grid">
+                                    @for (gare of agence.stations; track gare.id) {
+                                    <div class="gare-card">
+                                        <div class="gare-card-icon">
+                                            <mat-icon>directions_bus</mat-icon>
+                                        </div>
+                                        <div class="gare-card-info">
+                                            <span class="gare-ville">{{ gare.nom }}</span>
+                                            <span class="gare-quartier">{{ gare.adresse }}</span>
+                                            <span class="gare-tel">
+                                                <mat-icon>phone</mat-icon>{{ gare.telephone }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    }
+                                </div>
+                                } @else {
+                                <div class="gares-empty">
+                                    <mat-icon>location_off</mat-icon>
+                                    <p>Aucune gare affiliée à cette agence.</p>
+                                </div>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    }
+
+                    } @empty {
+                    <tr>
+                        <td colspan="8">
+                            <div class="state-container empty-state">
+                                <mat-icon class="empty-icon">business</mat-icon>
+                                <p>Aucune agence n'est enregistrée pour le moment.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <gev-pagination [totalItems]="agences().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+                (pageChange)="currentPage.set($event)">
+            </gev-pagination>
+        </div>
+        }
+    </div>
+
+</div>

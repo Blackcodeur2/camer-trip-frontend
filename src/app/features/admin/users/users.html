@@ -1,1 +1,184 @@
-<p>users works!</p>
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Utilisateurs inscrits</h1>
+            <p class="page-subtitle">Visualisez et gérez l'ensemble des utilisateurs de l'application.</p>
+        </div>
+        <div class="actions">
+            <button class="btn-primary" (click)="toggleForm()">
+                <mat-icon>{{ showCreateForm() ? 'close' : 'person_add' }}</mat-icon>
+                <span>{{ showCreateForm() ? 'Annuler' : 'Ajouter un Utilisateur' }}</span>
+            </button>
+        </div>
+    </div>
+
+    @if (showCreateForm()) {
+    <div class="card form-card">
+        <div class="form-header">
+            <h2>Nouvel Utilisateur</h2>
+            <p>Définissez son profil, son rôle et sa potentielle gare d'affectation.</p>
+        </div>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmitUser()">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" formControlName="prenom" class="form-control" placeholder="Ex: Jean" />
+                </div>
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" formControlName="nom" class="form-control" placeholder="Ex: Dupont" />
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" formControlName="email" class="form-control"
+                        placeholder="Ex: contact@email.com" />
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" formControlName="telephone" class="form-control" placeholder="Ex: 699000000" />
+                </div>
+                <div class="form-group">
+                    <label>Date de Naissance</label>
+                    <input type="date" formControlName="date_naissance" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>N° CNI / ID</label>
+                    <input type="text" formControlName="num_cni" class="form-control" placeholder="Ex: CNI..." />
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe initial</label>
+                    <input type="text" formControlName="password" class="form-control" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Rôle du profil</label>
+                    <select formControlName="role_user" class="form-control">
+                        <option value="">Sélectionnez un rôle</option>
+                        @for (r of roles; track r) {
+                        <option [value]="r">{{ getRoleLabel(r) }}</option>
+                        }
+                    </select>
+                </div>
+
+                @if (needsGareAssignment()) {
+                <div class="form-group form-highlight">
+                    <label>Agence d'appartenance</label>
+                    <select formControlName="agence_id" class="form-control">
+                        <option value="">Sélectionnez l'agence</option>
+                        @for (agence of agences(); track agence.id) {
+                        <option [value]="agence.id">{{ agence.nom }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group form-highlight">
+                    <label>Gare d'affectation</label>
+                    <select formControlName="gare_id" class="form-control">
+                        <option value="">Sélectionnez la gare</option>
+                        @for (gare of garesDisponibles(); track gare.id) {
+                        <option [value]="gare.id">{{ gare.ville }} - {{ gare.quartier }}</option>
+                        }
+                    </select>
+                </div>
+                }
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="toggleForm()">Annuler</button>
+                <app-app-button type="submit" variant="primary" [disabled]="userForm.invalid" [loading]="isCreating()"
+                    loadingText="Enregistrement...">
+                    Enregistrer l'utilisateur
+                </app-app-button>
+            </div>
+        </form>
+    </div>
+    }
+
+    <div class="card">
+        @if (isLoading()) {
+        <div class="state-container">
+            <div class="spinner"></div>
+            <p>Chargement des utilisateurs en cours...</p>
+        </div>
+        } @else if (error()) {
+        <div class="state-container error-state">
+            <mat-icon class="error-icon">error_outline</mat-icon>
+            <p>{{ error() }}</p>
+            <button class="btn-retry" (click)="loadUsers()">Réessayer</button>
+        </div>
+        } @else {
+
+        <!-- Barre de filtres par rôle -->
+        <div class="filter-bar">
+            <button class="filter-btn" [class.active]="filterRole() === ''" (click)="filterRole.set('')">
+                Tous <span class="filter-count">{{ users().length }}</span>
+            </button>
+            @for (r of roles; track r) {
+            <button class="filter-btn" [class.active]="filterRole() === r" (click)="filterRole.set(r)">
+                {{ getRoleLabel(r) }}
+                <span class="filter-count">{{ countByRole(r) }}</span>
+            </button>
+            }
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>CNI</th>
+                        <th>Rôle</th>
+                        <th>Inscrit le</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (user of filteredUsers(); track user.id) {
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar" [class]="'avatar-' + user.role_user.toLowerCase()">
+                                    {{ 'NG' }}
+                                </div>
+                                <div>
+                                    <div class="user-name">{{ user.prenom }} {{ user.nom }}</div>
+                                    <div class="user-sub">ID #{{ user.id }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="text-gray">{{ user.email }}</span></td>
+                        <td>{{ user.telephone || '—' }}</td>
+                        <td><span class="text-gray">{{ user.num_cni || '—' }}</span></td>
+                        <td>
+                            <span class="role-badge" [class]="'role-' + user.role_user.toLowerCase()">
+                                {{ getRoleLabel(user.role_user) }}
+                            </span>
+                        </td>
+                        <td>{{ (user.created_at | date:'dd/MM/yyyy') || '—' }}</td>
+                        <td class="text-right">
+                            <button class="action-btn" title="Voir détails">
+                                <mat-icon>visibility</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="7">
+                            <div class="state-container empty-state">
+                                <mat-icon class="empty-icon">people_outline</mat-icon>
+                                <p>Aucun utilisateur trouvé pour ce filtre.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <gev-pagination [totalItems]="totalItems()" [pageSize]="pageSize()" [currentPage]="currentPage()"
+                (pageChange)="onPageChange($event)">
+            </gev-pagination>
+        </div>
+        }
+    </div>
+</div>

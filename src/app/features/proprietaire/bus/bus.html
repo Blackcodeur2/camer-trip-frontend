@@ -1,1 +1,57 @@
-<p>bus works!</p>
+<div class="buses-container">
+    <div class="header">
+        <div class="header-title">
+            <h1><mat-icon>directions_bus</mat-icon> Mes Bus</h1>
+            <p>Consultez tous vos véhicules</p>
+        </div>
+    </div>
+
+    @if (isLoading()) {
+    <div class="loading">
+        <div class="spinner"></div>
+        <p>Chargement des bus...</p>
+    </div>
+    } @else if (buses().length === 0) {
+    <div class="empty-state">
+        <mat-icon>directions_bus</mat-icon>
+        <h3>Aucun bus</h3>
+        <p>Vous n'avez pas encore de bus enregistrés</p>
+    </div>
+    } @else {
+    <div class="buses-grid">
+        @for (bus of buses(); track bus.id) {
+        <div class="bus-card">
+            <div class="card-header">
+                <h3>{{ bus.marque }} {{ bus.modele }}</h3>
+                <span class="plate">{{ bus.immatriculation }}</span>
+            </div>
+            <div class="card-body">
+                <div class="info-item">
+                    <mat-icon>badge</mat-icon>
+                    <div>
+                        <span class="label">Immatriculation</span>
+                        <span class="value">{{ bus.immatriculation }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <mat-icon>event_seat</mat-icon>
+                    <div>
+                        <span class="label">Capacité</span>
+                        <span class="value">{{ bus.nb_places }} places</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <mat-icon>check_circle</mat-icon>
+                    <div>
+                        <span class="label">Statut</span>
+                        <span class="value" [class.active]="bus.statut === 'ACTIF'">
+                            {{ bus.statut }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

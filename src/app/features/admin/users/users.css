@@ -1,0 +1,538 @@
+.page-container {
+    padding: 1rem 0;
+    font-family: 'monospace', system-ui, sans-serif;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 0.25rem 0;
+    letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.card {
+    background: #1e293b;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 1px solid #334155;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #334155;
+    padding: 1rem 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #334155;
+}
+
+.data-table td {
+    padding: 1rem 1.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #334155;
+    font-size: 0.9rem;
+    color: #f8fafc;
+}
+
+.data-table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.data-table tbody tr:hover {
+    background-color: #334155;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.user-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #334155;
+    color: #1E40AF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.user-avatar.admin-avatar {
+    background-color: #FEE2E2;
+    color: #991B1B;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.user-sub {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 1px;
+}
+
+.text-gray {
+    color: #64748b;
+}
+
+/* ─── Badges de rôle ─── */
+.role-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* Classe dynamique via [class]="'role-' + user.role_user.toLowerCase()" */
+.role-admin {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.role-chef_agence {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.role-agent {
+    background: #831843;
+    color: #fbf9fa;
+}
+
+.role-chauffeur {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.role-controleur {
+    background: #EDE9FE;
+    color: #5B21B6;
+}
+
+.role-client {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.role-proprietaire {
+    background: #E0E7FF;
+    color: #3730A3;
+}
+
+/* Compatibilité anciens noms si encore utilisés */
+.role-badge.admin {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.role-badge.chef_agence {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.role-badge.agent {
+    background: #831843;
+    color: #9D174D;
+}
+
+.role-badge.chauffeur {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.role-badge.controleur {
+    background: #EDE9FE;
+    color: #5B21B6;
+}
+
+.role-badge.client {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.role-badge.proprietaire {
+    background: #E0E7FF;
+    color: #3730A3;
+}
+
+/* ─── Avatars colorés par rôle ─── */
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.avatar-admin {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.avatar-chef_agence {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.avatar-agent {
+    background: #831843;
+    color: #fcfafb;
+}
+
+.avatar-chauffeur {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.avatar-controleur {
+    background: #EDE9FE;
+    color: #5B21B6;
+}
+
+.avatar-client {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.avatar-proprietaire {
+    background: #E0E7FF;
+    color: #3730A3;
+}
+
+/* ─── Barre de filtres par rôle ─── */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #334155;
+    background: #334155;
+}
+
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid #334155;
+    border-radius: 99px;
+    background: #1e293b;
+    color: #4B5563;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    border-color: #60a5fa;
+    color: #1E40AF;
+    background: #1e3a8a;
+}
+
+.filter-btn.active {
+    background: #2563EB;
+    color: white;
+    border-color: #60a5fa;
+}
+
+.filter-count {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 99px;
+    padding: 0 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 18px;
+    text-align: center;
+}
+
+.filter-btn:not(.active) .filter-count {
+    background: #0f172a;
+    color: #64748b;
+}
+
+/* ─── Actions header ─── */
+.actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.text-right {
+    text-align: right !important;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.35rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    color: #1E40AF;
+    background-color: #DBEAFE;
+}
+
+/* ─── State containers ─── */
+.state-container {
+    padding: 5rem 2rem;
+    text-align: center;
+    color: #64748b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.error-state .error-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #EF4444;
+}
+
+.empty-state .empty-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    color: #D1D5DB;
+}
+
+.btn-retry {
+    background-color: #60a5fa;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-retry:hover {
+    background-color: #60a5fa;
+}
+
+/* ─── Spinner ─── */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #F3F4F6;
+    border-top: 3px solid #3B82F6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ─── Buttons ─── */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #60a5fa;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+    background-color: #1D4ED8;
+}
+
+.btn-primary mat-icon {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.btn-secondary {
+    background-color: #f8fafc;
+    color: #4B5563;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #334155;
+}
+
+/* ─── Form card ─── */
+.form-card {
+    margin-bottom: 2rem;
+    padding: 1.5rem 2rem;
+    border-top: 4px solid #3B82F6;
+    animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-header h2 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+    color: #f8fafc;
+}
+
+.form-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.form-highlight {
+    padding: 1rem;
+    background-color: #334155;
+    border-radius: 8px;
+    border: 1px dashed #CBD5E1;
+}
+
+.form-control {
+    padding: 0.7rem 1rem;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+    background: #1e293b;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    align-items: center;
+    border-top: 1px solid #E5E7EB;
+    padding-top: 1.5rem;
+}

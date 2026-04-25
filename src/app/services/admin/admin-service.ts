@@ -36,19 +36,6 @@ export class AdminService {
     );
   }
 
-  getDocuments(): Observable<DocumentKYC[]> {
-    return this.http.get<{ success: boolean; data: DocumentKYC[] }>(`${this.API}/admin/documents`).pipe(
-      map(response => response.data)
-    );
-  }
-
-  updateDocumentStatus(id: number, statut: string, commentaire?: string): Observable<DocumentKYC> {
-    return this.http.patch<{ success: boolean; data: DocumentKYC }>(`${this.API}/admin/documents/${id}`, {
-      statut,
-      commentaire,
-    }).pipe(map(response => response.data));
-  }
-
   getProfile(): Observable<User> {
     return this.http.get<{ success: boolean; data: User }>(`${this.API}/admin/profile`).pipe(
       map(response => response.data)

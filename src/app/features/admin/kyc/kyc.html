@@ -1,1 +1,123 @@
-<p>kyc works!</p>
+<div class="page-container">
+    <header class="page-header">
+        <div class="header-text">
+            <h1>Vérifications KYC</h1>
+            <p>Approuvez ou rejetez les demandes de création de comptes Propriétaires.</p>
+        </div>
+    </header>
+
+    @if (isLoading()) {
+    <div class="loading-state">
+        <mat-icon class="spin large-icon">sync</mat-icon>
+        <p>Chargement des dossiers KYC...</p>
+    </div>
+    }
+
+    @if (!isLoading() && submissions().length === 0) {
+    <div class="empty-state">
+        <mat-icon>verified_user</mat-icon>
+        <h2>Aucun dossier en attente</h2>
+        <p>Toutes les demandes de vérification KYC ont été traitées.</p>
+    </div>
+    }
+
+    @if (!isLoading() && submissions().length > 0) {
+    <div class="submissions-list">
+        @for (sub of submissions(); track sub.user.id) {
+        <div class="submission-card animate-in">
+            <div class="card-header">
+                <div class="user-info">
+                    <div class="avatar">NG</div>
+                    <div>
+                        <h3>{{ sub.user.prenom }} {{ sub.user.nom }}</h3>
+                        <span class="user-meta">{{ sub.user.email }} • {{ sub.user.telephone }}</span>
+                    </div>
+                </div>
+                <div class="account-type-badge" [class.business]="sub.isBusiness">
+                    {{ sub.isBusiness ? 'Entreprise' : 'Particulier' }}
+                </div>
+                <div class="status-badge" [class]="sub.statutGlobal.replace(' ', '-')">
+                    {{ sub.statutGlobal | uppercase }}
+                </div>
+            </div>
+
+            <div class="documents-grid">
+                @for (doc of sub.documents; track doc.id) {
+                <div class="document-item" (click)="viewDocument(doc)">
+                    <div class="doc-icon">
+                        <mat-icon>{{ doc.chemin_fichier.toLowerCase().endsWith('.pdf') ? 'picture_as_pdf' : 'image'
+                            }}</mat-icon>
+                    </div>
+                    <div class="doc-details">
+                        <span class="doc-type">{{ getDocLabel(doc.type) }}</span>
+                        <span class="doc-status" [class]="doc.statut.replace(' ', '-')">{{ doc.statut }}</span>
+                        @if (doc.commentaire) {
+                        <span class="doc-comment">{{ doc.commentaire }}</span>
+                        }
+                    </div>
+                    <div class="doc-actions-inline">
+                        <div class="doc-action-btn" (click)="viewDocument(doc); $event.stopPropagation()">
+                            <mat-icon>visibility</mat-icon>
+                            <span>Aperçu</span>
+                        </div>
+                        <a [href]="getDocUrl(doc)" download class="doc-action-btn download"
+                            (click)="$event.stopPropagation()">
+                            <mat-icon>download</mat-icon>
+                            <span>Télécharger</span>
+                        </a>
+                    </div>
+                </div>
+                }
+            </div>
+
+            @if (sub.statutGlobal === 'en attente') {
+            <div class="card-actions">
+                <button class="btn-reject" (click)="reject(sub)" [disabled]="isProcessing()">
+                    <mat-icon>close</mat-icon> Rejeter
+                </button>
+                <button class="btn-approve" (click)="approve(sub)" [disabled]="isProcessing()">
+                    <mat-icon>check</mat-icon> Approuver
+                </button>
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+
+    <!-- Modal de prévisualisation de document -->
+    @if (previewDocument()) {
+    <div class="modal-overlay" (click)="closePreview()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Document : {{ getDocLabel(previewDocument()!.type) }}</h3>
+                <div class="modal-actions">
+                    <a [href]="previewDocument()!.rawUrl" target="_blank" class="icon-btn"
+                        title="Ouvrir dans un nouvel onglet">
+                        <mat-icon>open_in_new</mat-icon>
+                    </a>
+                    <a [href]="previewDocument()!.rawUrl" download class="icon-btn" title="Télécharger"
+                        style="margin-left: 8px; margin-right: 8px;">
+                        <mat-icon>download</mat-icon>
+                    </a>
+                    <button class="icon-btn" (click)="closePreview()"><mat-icon>close</mat-icon></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                @if (previewDocument()!.isPdf) {
+                <iframe [src]="previewDocument()!.url" width="100%" height="500px"></iframe>
+                } @else {
+                <img [src]="previewDocument()!.url" alt="Document KYC"
+                    [class.selfie-img]="previewDocument()!.type === 'selfie'">
+                }
+                @if (previewDocument()!.comment) {
+                <div class="doc-info-box">
+                    <mat-icon>info</mat-icon>
+                    <span>{{ previewDocument()!.comment }}</span>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>

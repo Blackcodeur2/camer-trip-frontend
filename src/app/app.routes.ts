@@ -64,8 +64,20 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/admin/dashboard/dashboard').then(m => m.Dashboard),
             },
             {
-                path: 'villes',
-                loadComponent: () => import('./features/admin/villes/villes').then(m => m.Villes),
+                path: 'agences',
+                loadComponent: () => import('./features/admin/agences/agences').then(m => m.Agences),
+            },
+            {
+                path: 'users',
+                loadComponent: () => import('./features/admin/users/users').then(m => m.Users),
+            },
+            {
+                path: 'kyc',
+                loadComponent: () => import('./features/admin/kyc/kyc').then(m => m.Kyc),
+            },
+            {
+                path: 'abonnements',
+                loadComponent: () => import('./features/admin/abonnement/abonnement').then(m => m.Abonnement),
             },
             {
                 path: 'profile',
@@ -83,6 +95,38 @@ export const routes: Routes = [
             {
                 path: 'dashboard',
                 loadComponent: () => import('./features/proprietaire/dashboard/dashboard').then(m => m.Dashboard),
+            },
+            {
+                path: 'agences',
+                loadComponent: () => import('./features/proprietaire/agences/agences').then(m => m.Agences),
+            },
+            {
+                path: 'stations',
+                loadComponent: () => import('./features/proprietaire/stations/stations').then(m => m.Stations),
+            },
+            {
+                path: 'bus',
+                loadComponent: () => import('./features/proprietaire/bus/bus').then(m => m.Bus),
+            },
+            {
+                path: 'trajets',
+                loadComponent: () => import('./features/proprietaire/strajets/strajets').then(m => m.Strajets),
+            },
+            {
+                path: 'voyages',
+                loadComponent: () => import('./features/proprietaire/voyages/voyages').then(m => m.Voyages)
+            },
+            {
+                path: 'personnels',
+                loadComponent: () => import('./features/proprietaire/personnels/personnels').then(m => m.Personnels)
+            },
+            {
+                path: 'kyc',
+                loadComponent: () => import('./features/proprietaire/kyc/kyc').then(m => m.Kyc)
+            },
+            {
+                path: 'abonnements',
+                loadComponent: () => import('./features/proprietaire/abonnement/abonnement').then(m => m.Abonnement)
             },
             {
                 path: 'profile',

@@ -1,4 +1,6 @@
 export interface User {
+    num_cni: any;
+    created_at: string | number | Date;
     id: number;
     nom?: string;
     prenom?: string;

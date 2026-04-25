@@ -80,15 +80,13 @@ export class Dashboard {
     }
 
     this.chart = new Chart(ctx, {
-      type: 'bar',
+      type: 'line',
       data: {
         labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
         datasets: [{
-          label: 'Réservations & Voyages (Simulé)',
+          label: 'Nombre de reservations',
           data: [120, 190, 300, 250, 200, 320, 400, 380, 210, 150, 180, 240],
-          backgroundColor: '#006644',
-          borderRadius: 6,
-          borderSkipped: false
+          backgroundColor: '#006644',  
         }]
       },
       options: {

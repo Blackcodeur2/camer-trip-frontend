@@ -1,1 +1,228 @@
-<p>agences works!</p>
+<div class="page-container">
+
+    <!-- HEADER -->
+    <header class="page-header">
+        <div class="header-text">
+            <h1>Mes Agences</h1>
+            <p>Gérez vos agences de transport et leurs gares.</p>
+        </div>
+        @if (formMode() === 'none') {
+        <button class="btn-primary" (click)="openAgenceForm()">
+            <mat-icon>add</mat-icon> Nouvelle agence
+        </button>
+        }
+    </header>
+
+    <!-- ─── FORM : CRÉER / MODIFIER AGENCE ─── -->
+    @if (formMode() === 'agence') {
+    <div class="form-card animate-in">
+        <div class="form-card__header">
+            <h2>
+                <mat-icon>{{ editingAgence() ? 'edit' : 'add_business' }}</mat-icon>
+                {{ editingAgence() ? 'Modifier : ' + editingAgence()!.nom : 'Nouvelle agence' }}
+            </h2>
+            <button class="icon-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+        </div>
+
+        <form [formGroup]="agenceForm" (ngSubmit)="onSubmitAgence()" class="form-grid">
+
+            <div class="field field--full">
+                <label for="nom">Nom de l'agence *</label>
+                <div class="input-wrap">
+                    <mat-icon>business</mat-icon>
+                    <input id="nom" type="text" formControlName="nom" placeholder="Ex: Express Voyages SA">
+                </div>
+                @if (shouldShowError('agence', 'nom')) {
+                <span class="field-error">{{ errorMessage('agence', 'nom') }}</span>
+                }
+            </div>
+
+            <div class="field">
+                <label for="email">Email de contact *</label>
+                <div class="input-wrap">
+                    <mat-icon>email</mat-icon>
+                    <input id="email" type="email" formControlName="email" placeholder="agence@exemple.com">
+                </div>
+                @if (shouldShowError('agence', 'email')) {
+                <span class="field-error">{{ errorMessage('agence', 'email') }}</span>
+                }
+            </div>
+
+            <div class="field">
+                <label for="tel_agence">Téléphone *</label>
+                <div class="input-wrap">
+                    <mat-icon>phone</mat-icon>
+                    <input id="tel_agence" type="tel" formControlName="telephone" placeholder="6xx xxx xxx">
+                </div>
+                @if (shouldShowError('agence', 'telephone')) {
+                <span class="field-error">{{ errorMessage('agence', 'telephone') }}</span>
+                }
+            </div>
+
+            <div class="field">
+                <label for="adresse">Adresse</label>
+                <div class="input-wrap">
+                    <mat-icon>markunread_mailbox</mat-icon>
+                    <input id="adresse" type="text" formControlName="adresse" placeholder="Adresse de l'agence">
+                </div>
+            </div>
+
+            <div class="form-actions field--full">
+                <button type="button" class="btn-secondary" (click)="closeForm()">Annuler</button>
+                <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+                    @if (isSubmitting()) { <mat-icon class="spin">sync</mat-icon> Enregistrement... }
+                    @else { <mat-icon>save</mat-icon> {{ editingAgence() ? 'Mettre à jour' : 'Créer l\'agence' }} }
+                </button>
+            </div>
+        </form>
+    </div>
+    }
+
+    <!-- ─── FORM : AJOUTER UNE GARE ─── -->
+    @if (formMode() === 'gare') {
+    <div class="form-card animate-in">
+        <div class="form-card__header">
+            <h2>
+                <mat-icon>add_location_alt</mat-icon>
+                Nouvelle gare — <span class="accent">{{ agenceForGare()?.nom }}</span>
+            </h2>
+            <button class="icon-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+        </div>
+
+        <form [formGroup]="gareForm" (ngSubmit)="onSubmitGare()" class="form-grid">
+
+            <div class="field">
+                <label for="gare-ville">Ville *</label>
+                <div class="input-wrap">
+                    <mat-icon>location_city</mat-icon>
+                    <select id="gare-ville" formControlName="ville_id" class="form-control">
+                        <option value="0">-- Sélectionner une ville --</option>
+                        @for (ville of villes(); track ville.id) {
+                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
+                        }
+                    </select>
+                </div>
+                @if (shouldShowError('gare', 'ville_id')) {
+                <span class="field-error">{{ errorMessage('gare', 'ville_id') }}</span>
+                }
+            </div>
+
+            <div class="field">
+                <label for="gare-quartier">Quartier *</label>
+                <div class="input-wrap">
+                    <mat-icon>place</mat-icon>
+                    <input id="gare-quartier" type="text" formControlName="quartier" placeholder="Ex: Mvan, Essos...">
+                </div>
+                @if (shouldShowError('gare', 'quartier')) {
+                <span class="field-error">{{ errorMessage('gare', 'quartier') }}</span>
+                }
+            </div>
+
+            <div class="field">
+                <label for="gare-tel">Téléphone de la gare *</label>
+                <div class="input-wrap">
+                    <mat-icon>phone</mat-icon>
+                    <input id="gare-tel" type="tel" formControlName="telephone" placeholder="6xx xxx xxx">
+                </div>
+                @if (shouldShowError('gare', 'telephone')) {
+                <span class="field-error">{{ errorMessage('gare', 'telephone') }}</span>
+                }
+            </div>
+
+            <div class="form-actions field--full">
+                <button type="button" class="btn-secondary" (click)="closeForm()">Annuler</button>
+                <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+                    @if (isSubmitting()) { <mat-icon class="spin">sync</mat-icon> Enregistrement... }
+                    @else { <mat-icon>add_location_alt</mat-icon> Ajouter la gare }
+                </button>
+            </div>
+        </form>
+    </div>
+    }
+
+    <!-- ─── LOADING ─── -->
+    @if (isLoading()) {
+    <div class="loading-state">
+        <mat-icon class="spin large-icon">sync</mat-icon>
+        <p>Chargement de vos agences...</p>
+    </div>
+    }
+
+    <!-- ─── EMPTY STATE ─── -->
+    @if (!isLoading() && agencies().length === 0 && formMode() === 'none') {
+    <div class="empty-state">
+        <mat-icon>store_mall_directory</mat-icon>
+        <h2>Aucune agence pour le moment</h2>
+        <p>Créez votre première agence pour commencer à gérer vos voyages et votre personnel.</p>
+        <button class="btn-primary" (click)="openAgenceForm()">
+            <mat-icon>add</mat-icon> Créer ma première agence
+        </button>
+    </div>
+    }
+
+    <!-- ─── LISTE DES AGENCES ─── -->
+    @if (!isLoading() && agencies().length > 0) {
+    <div class="agencies-list">
+        @for (agence of agencies(); track agence.id) {
+        <div class="agency-card">
+            <div class="agency-card__main">
+                <div class="agency-avatar">{{ agence.nom[0] }}</div>
+                <div class="agency-info">
+                    <h3>{{ agence.nom }}</h3>
+                    <div class="agency-meta">
+                        <span><mat-icon>email</mat-icon> {{ agence.email }}</span>
+                        <span><mat-icon>phone</mat-icon> {{ agence.telephone }}</span>
+                        @if (agence.adresse) {
+                        <span><mat-icon>markunread_mailbox</mat-icon> {{ agence.adresse }}</span>
+                        }
+                    </div>
+                </div>
+                <div class="agency-status" [class]="'status--' + ((agence.statut || 'active').toLowerCase())">
+                    {{ agence.statut || 'Active' }}
+                </div>
+            </div>
+
+            <div class="agency-card__footer">
+                <div class="gare-count">
+                    <mat-icon>store</mat-icon>
+                    <span>{{ agence.stations?.length ?? 0 }} gare(s)</span>
+                    @if ((agence.stations?.length ?? 0) > 0) {
+                    <button class="toggle-gares-btn" (click)="toggleExpand(agence.id)">
+                        {{ expandedAgenceId() === agence.id ? 'Masquer' : 'Voir' }}
+                        <mat-icon>{{ expandedAgenceId() === agence.id ? 'expand_less' : 'expand_more' }}</mat-icon>
+                    </button>
+                    }
+                </div>
+                <div class="agency-actions">
+                    <button class="action-btn action-btn--add" (click)="openGareForm(agence)" title="Ajouter une gare">
+                        <mat-icon>add_location_alt</mat-icon> Ajouter gare
+                    </button>
+                    <button class="action-btn action-btn--edit" (click)="openAgenceForm(agence)" title="Modifier">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button class="action-btn action-btn--delete" (click)="deleteAgence(agence)" title="Supprimer">
+                        <mat-icon>delete_outline</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gares dépliées -->
+            @if (expandedAgenceId() === agence.id && (agence.gares?.length ?? 0) > 0) {
+            <div class="gares-list animate-in">
+                @for (gare of agence.gares!; track gare.id) {
+                <div class="gare-item">
+                    <mat-icon>location_on</mat-icon>
+                    <div>
+                        <strong>{{ gare.nom || '...' }}</strong>
+
+                        <span class="gare-tel">{{ gare.telephone }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+    </div>
+    }
+</div>

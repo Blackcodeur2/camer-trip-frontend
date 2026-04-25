@@ -1,1 +1,100 @@
-<p>stations works!</p>
+<div class="gares-container">
+    <div class="header">
+        <div class="header-title">
+            <h1><mat-icon>location_on</mat-icon> Mes Gares</h1>
+            <p>Gérez toutes vos gares routières</p>
+        </div>
+        <button class="btn-primary" (click)="openForm()" [disabled]="formMode() !== 'none'">
+            <mat-icon>add_circle</mat-icon> Nouvelle Gare
+        </button>
+    </div>
+
+    @if (formMode() === 'form') {
+    <div class="form-section">
+        <h2>{{ editingGare() ? 'Modifier Gare' : 'Nouvelle Gare' }}</h2>
+        <form [formGroup]="gareForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label>Agence</label>
+                <input type="hidden" formControlName="agence_id" placeholder="ID Agence" required />
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ville</label>
+                    <select formControlName="ville_id">
+                        <option value="0">-- Sélectionner une ville --</option>
+                        @for (ville of villes(); track ville.id) {
+                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quartier</label>
+                    <input type="text" formControlName="quartier" placeholder="Quartier" required />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" formControlName="telephone" placeholder="+243 xxxxx" required />
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary" [disabled]="!gareForm.valid || isSubmitting()">
+                    {{ isSubmitting() ? 'En cours...' : 'Enregistrer' }}
+                </button>
+                <button type="button" class="btn-secondary" (click)="closeForm()">Annuler</button>
+            </div>
+        </form>
+    </div>
+    }
+
+    @if (isLoading()) {
+    <div class="loading">
+        <div class="spinner"></div>
+        <p>Chargement des gares...</p>
+    </div>
+    } @else if (gares().length === 0) {
+    <div class="empty-state">
+        <mat-icon>location_on</mat-icon>
+        <h3>Aucune gare</h3>
+        <p>Créez votre première gare pour commencer</p>
+    </div>
+    } @else {
+    <div class="gares-grid">
+        @for (gare of gares(); track gare.id) {
+        <div class="gare-card">
+            <div class="card-header">
+                <h3>{{ gare.nom || '...' }}</h3>
+
+                <div class="card-actions">
+                    <button class="icon-btn" (click)="openForm(gare)" title="Modifier">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button class="icon-btn delete" (click)="delete(gare.id)" title="Supprimer">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="info-item">
+                    <mat-icon>location_city</mat-icon>
+                    <div>
+                        <span class="label">Quartier</span>
+                        <span class="value">{{ gare.adresse }}</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <mat-icon>phone</mat-icon>
+                    <div>
+                        <span class="label">Téléphone</span>
+                        <span class="value">{{ gare.telephone }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

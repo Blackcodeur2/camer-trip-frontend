@@ -38,6 +38,18 @@ export interface CreateStationPayload {
   providedIn: 'root',
 })
 export class ProprietaireService {
+  getMyGares() {
+    throw new Error('Method not implemented.');
+  }
+  updateGare(id: any, payload: { agence_id: number; ville_id: number; quartier: string; telephone: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  createGare(payload: { agence_id: number; ville_id: number; quartier: string; telephone: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  deleteGare(id: number) {
+    throw new Error('Method not implemented.');
+  }
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private readonly API = environment.apiUrl;
@@ -62,20 +74,20 @@ export class ProprietaireService {
 
   // ── Stations ──
   getMyStations(): Observable<Station[]> {
-    return this.http.get<{ statut: boolean; data: Station[] }>(`${this.API}/proprietaire/Stations`)
+    return this.http.get<{ statut: boolean; data: Station[] }>(`${this.API}/proprietaire/stations`)
       .pipe(map(response => response.data));
   }
 
   createStation(payload: CreateStationPayload): Observable<Station> {
-    return this.http.post<Station>(`${this.API}/proprietaire/Stations`, payload);
+    return this.http.post<Station>(`${this.API}/proprietaire/stations`, payload);
   }
 
   updateStation(id: number, payload: Partial<CreateStationPayload>): Observable<Station> {
-    return this.http.put<Station>(`${this.API}/proprietaire/Stations/${id}`, payload);
+    return this.http.put<Station>(`${this.API}/proprietaire/stations/${id}`, payload);
   }
 
   deleteStation(id: number): Observable<any> {
-    return this.http.delete(`${this.API}/proprietaire/Stations/${id}`);
+    return this.http.delete(`${this.API}/proprietaire/stations/${id}`);
   }
 
   // ── Buses ──
