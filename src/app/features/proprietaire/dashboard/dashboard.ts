@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
 import Chart from 'chart.js/auto';
 import { AuthService } from '../../../services/auth/auth-service';
@@ -20,7 +19,7 @@ interface Stats {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, MatIconModule, RouterLink],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -149,40 +148,52 @@ export class Dashboard {
       this.chart.destroy();
     }
 
+    const gradient = ctx.getContext('2d')?.createLinearGradient(0, 0, 0, 400);
+    if (gradient) {
+      gradient.addColorStop(0, 'rgba(0, 102, 68, 0.4)');
+      gradient.addColorStop(1, 'rgba(0, 102, 68, 0)');
+    }
+
     this.chart = new Chart(ctx, {
-      type: 'bar',
+      type: 'line',
       data: {
         labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
         datasets: [{
-          label: 'Réservations de vos Agences (Simulé)',
+          label: 'Réservations de vos Agences',
           data: [45, 80, 110, 90, 85, 130, 180, 160, 100, 75, 95, 120],
-          backgroundColor: '#006644', // var(--color-primary)
-          borderRadius: 6,
-          borderSkipped: false
+          borderColor: '#006644',
+          backgroundColor: gradient || 'rgba(0, 102, 68, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#006644',
+          pointBorderWidth: 2
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleFont: { size: 14, weight: 'bold' },
+            padding: 12,
+            cornerRadius: 12,
+            displayColors: false
           }
         },
         scales: {
           y: {
             beginAtZero: true,
-            grid: {
-              color: '#e2e8f0', // var(--color-border)
-            },
-            border: {
-              dash: [4, 4]
-            }
+            grid: { color: '#f1f5f9' },
+            ticks: { font: { size: 11 } }
           },
           x: {
-            grid: {
-              display: false
-            }
+            grid: { display: false },
+            ticks: { font: { size: 11 } }
           }
         }
       }

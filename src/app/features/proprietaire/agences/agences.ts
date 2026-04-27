@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, HostListener } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from "@angular/material/icon";
 import Swal from 'sweetalert2';
@@ -65,13 +65,59 @@ export class Agences {
     this.loadAgencies();
     this.loadVilles();
     this.loadVillesFromJson();
+
+    // Utiliser valueChanges pour l'autocomplete (plus robuste que (input))
+    this.agenceForm.controls.ville.valueChanges.subscribe(val => {
+      this.filterVilles(val || '');
+    });
   }
 
   loadVillesFromJson() {
+    // Utilisation d'un chemin absolu (/assets/...) pour éviter les problèmes de routes relatives
     this.http.get<{ nom: string }[]>('assets/villes.json').subscribe({
-      next: (data) => this.allVillesData.set(data),
+      next: (data) => {
+        this.allVillesData.set(data);
+        // Si l'utilisateur a déjà commencé à saisir, on filtre
+        const currentVal = this.agenceForm.controls.ville.value;
+        if (currentVal) {
+          this.filterVilles(currentVal);
+        }
+      },
       error: (err) => console.error('Erreur chargement villes.json', err)
     });
+  }
+
+  private normalizeString(str: string): string {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  onVilleFocus() {
+    this.filterVilles(this.agenceForm.controls.ville.value || '');
+  }
+
+  filterVilles(val: string) {
+    const search = this.normalizeString(val);
+    if (search.length < 1) {
+      this.filteredVilles.set([]);
+      this.showAutocomplete.set(false);
+      return;
+    }
+
+    const filtered = this.allVillesData()
+      .filter(v => this.normalizeString(v.nom).includes(search))
+      .map(v => v.nom)
+      .slice(0, 10);
+
+    this.filteredVilles.set(filtered);
+    this.showAutocomplete.set(filtered.length > 0);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.autocomplete-wrap')) {
+      this.showAutocomplete.set(false);
+    }
   }
 
   loadVilles() {
@@ -117,23 +163,8 @@ export class Agences {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  onVilleInput(event: any) {
-    const val = event.target.value.toLowerCase();
-    if (val.length < 1) {
-      this.filteredVilles.set([]);
-      this.showAutocomplete.set(false);
-      return;
-    }
-    const filtered = this.allVillesData()
-      .filter(v => v.nom.toLowerCase().includes(val))
-      .map(v => v.nom)
-      .slice(0, 10);
-    this.filteredVilles.set(filtered);
-    this.showAutocomplete.set(filtered.length > 0);
-  }
-
   selectVille(ville: string) {
-    this.agenceForm.patchValue({ ville });
+    this.agenceForm.controls.ville.setValue(ville, { emitEvent: false });
     this.showAutocomplete.set(false);
   }
 

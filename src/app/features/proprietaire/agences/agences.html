@@ -63,7 +63,7 @@
                 <label for="ville">Ville *</label>
                 <div class="input-wrap autocomplete-wrap">
                     <mat-icon>location_city</mat-icon>
-                    <input id="ville" type="text" formControlName="ville" (input)="onVilleInput($event)" placeholder="Commencez à saisir une ville...">
+                    <input id="ville" type="text" formControlName="ville" (focus)="onVilleFocus()" placeholder="Commencez à saisir une ville...">
                     
                     @if (showAutocomplete()) {
                     <ul class="autocomplete-list">

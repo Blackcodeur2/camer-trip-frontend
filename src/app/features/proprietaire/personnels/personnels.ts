@@ -13,11 +13,7 @@ import { Station } from '../../../models/station';
   imports: [CommonModule, MatIconModule, ReactiveFormsModule],
   templateUrl: './personnels.html',
   styleUrl: './personnels.css',
-})
-export class Personnels {
-editingGerant() {
-throw new Error('Method not implemented.');
-}
+}) export class Personnels{
   private proprietaireService = inject(ProprietaireService);
   private fb = inject(FormBuilder);
 
@@ -28,6 +24,7 @@ throw new Error('Method not implemented.');
   isSubmitting = signal(false);
   showForm = signal(false);
   showPassword = signal(false);
+  editingGerant = signal<User | null>(null);
 
   gerantForm = this.fb.nonNullable.group({
     prenom:               ['', Validators.required],
@@ -36,9 +33,9 @@ throw new Error('Method not implemented.');
     telephone:            ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
     num_cni:              ['', Validators.required],
     date_naissance:       ['', Validators.required],
-    gare_id:              [0,  Validators.required],
-    password:             ['', [Validators.required, Validators.minLength(8)]],
-    password_confirmation: ['', Validators.required],
+    station_id:           [0,  Validators.required],
+    password:             ['', [Validators.minLength(8)]],
+    password_confirmation: [''],
   }, { validators: this.passwordMatchValidator });
 
   private passwordMatchValidator(ctrl: any) {
@@ -76,9 +73,28 @@ throw new Error('Method not implemented.');
     });
   }
 
-  openForm() {
+  openForm(manager?: User) {
     this.showForm.set(true);
-    this.gerantForm.reset();
+    if (manager) {
+      this.editingGerant.set(manager);
+      this.gerantForm.patchValue({
+        prenom: manager.prenom,
+        nom: manager.nom,
+        email: manager.email,
+        telephone: manager.telephone,
+        num_cni: (manager as any).num_cni,
+        date_naissance: (manager as any).date_naissance,
+        station_id: manager.station_id || 0
+      });
+      // Mot de passe optionnel en édition
+      this.gerantForm.controls.password.clearValidators();
+      this.gerantForm.controls.password.setValidators([Validators.minLength(8)]);
+    } else {
+      this.editingGerant.set(null);
+      this.gerantForm.reset();
+      this.gerantForm.controls.password.setValidators([Validators.required, Validators.minLength(8)]);
+    }
+    this.gerantForm.controls.password.updateValueAndValidity();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -98,23 +114,28 @@ throw new Error('Method not implemented.');
     }
     this.isSubmitting.set(true);
     const payload = this.gerantForm.getRawValue();
+    const editing = this.editingGerant();
 
-    /*this.proprietaireService.createGerant(payload).subscribe({
-      next: (newManager) => {
+    const request$ = editing
+      ? this.proprietaireService.updateGerant(editing.id, payload)
+      : this.proprietaireService.createGerant(payload);
+    request$.subscribe({
+      next: (res: User) => {
         this.isSubmitting.set(false);
-        this.managers.update(list => [newManager, ...list]);
-        Swal.fire({ icon: 'success', title: 'Chef d\'agence créé !', text: 'Le Chef d\'agence a accès à son espace et peut se connecter.', confirmButtonColor: '#7c3aed' });
+        if (editing) { 
+          this.managers.update(list => list.map(m => m.id === res.id ? res : m));
+          Swal.fire({ icon: 'success', title: 'Gérant mis à jour !', timer: 2000, showConfirmButton: false });
+        } else {
+          this.managers.update(list => [res, ...list]);
+          Swal.fire({ icon: 'success', title: 'Gérant créé !', text: 'Le gérant peut maintenant se connecter.', confirmButtonColor: '#006644' });
+        }
         this.closeForm();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isSubmitting.set(false);
-        const errors = err.error?.errors;
-        const message = errors
-          ? Object.values(errors).flat().join('\n')
-          : (err.error?.message || 'Impossible de créer le Chef d\'agence.');
-        Swal.fire({ icon: 'error', title: 'Erreur', text: message, confirmButtonColor: '#7c3aed' });
+        Swal.fire({ icon: 'error', title: 'Erreur', text: err.error?.message || 'Une erreur est survenue.', confirmButtonColor: '#006644' });
       }
-    });*/
+    });
   }
 
   removeManager(manager: User) {

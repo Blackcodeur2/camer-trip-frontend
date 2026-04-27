@@ -22,9 +22,9 @@ export interface CreateGerantPayload {
   telephone: string;
   num_cni: string;
   date_naissance: string;
-  Station_id: number;
-  password: string;
-  password_confirmation: string;
+  station_id: number;
+  password?: string;
+  password_confirmation?: string;
 }
 
 export interface CreateStationPayload {
@@ -38,6 +38,9 @@ export interface CreateStationPayload {
   providedIn: 'root',
 })
 export class ProprietaireService {
+  updateGerant(id: number, payload: Partial<CreateGerantPayload>): Observable<User> {
+    return this.http.put<User>(`${this.API}/proprietaire/gerants/${id}`, payload);
+  }
   getMyGares() {
     throw new Error('Method not implemented.');
   }

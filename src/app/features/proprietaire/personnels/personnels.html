@@ -16,7 +16,7 @@
         <div class="form-card__header">
             <h2>
                 <mat-icon class="accent">person_add</mat-icon>
-                {{ true ? Modifier le Gérant' : 'Nouveau Gérant' }}
+                {{ editingGerant() ? 'Modifier le Gérant' : 'Nouveau Gérant' }}
             </h2>
             <button class="icon-btn" (click)="closeForm()" style="background: none; border: none; color: var(--color-text-muted); cursor: pointer;">
                 <mat-icon>close</mat-icon>
@@ -86,7 +86,7 @@
             </div>
 
             <div class="field">
-                <label>Mot de passe *</label>
+                <label>Mot de passe {{ editingGerant() ? '(Laisser vide pour ne pas changer)' : '*' }}</label>
                 <div class="input-wrap">
                     <mat-icon>lock</mat-icon>
                     <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••">
@@ -97,7 +97,7 @@
             </div>
 
             <div class="field">
-                <label>Confirmer *</label>
+                <label>Confirmer {{ editingGerant() ? '(Laisser vide)' : '*' }}</label>
                 <div class="input-wrap">
                     <mat-icon>lock</mat-icon>
                     <input [type]="showPassword() ? 'text' : 'password'" formControlName="password_confirmation" placeholder="••••••••">
@@ -110,7 +110,7 @@
                 </button>
                 <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
                     <mat-icon *ngIf="isSubmitting()" class="spin">sync</mat-icon>
-                    {{ isSubmitting() ? 'Traitement...' : (true ? 'Mettre à jour' : 'Créer le compte') }}
+                    {{ isSubmitting() ? 'Traitement...' : (editingGerant() ? 'Mettre à jour' : 'Créer le compte') }}
                 </button>
             </div>
         </form>
@@ -151,6 +151,9 @@
                 </div>
             </div>
             <div class="manager-actions">
+                <button class="action-btn--edit" (click)="openForm(manager)" title="Modifier le compte" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--color-border); background: white; color: var(--color-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+                    <mat-icon>edit</mat-icon>
+                </button>
                 <button class="action-btn--delete" (click)="removeManager(manager)" title="Supprimer le compte">
                     <mat-icon>person_remove</mat-icon>
                 </button>
