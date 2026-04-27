@@ -1,0 +1,60 @@
+<div class="history-container">
+    <header class="page-header animate-fade-in">
+        <h2 class="title">Vos Archives</h2>
+        <p class="subtitle">Récapitulatif de vos missions terminées</p>
+    </header>
+
+    <div *ngIf="isLoading()" class="loading-state">
+        <div class="skeleton-card" *ngFor="let i of [1,2,3]"></div>
+    </div>
+
+    <div *ngIf="!isLoading()" class="history-list">
+        <div class="history-card animate-in" *ngFor="let voyage of paginatedHistory(); let i = index"
+            [style.animation-delay]="(i * 0.1) + 's'">
+            <div class="card-main">
+                <div class="date-box">
+                    <span class="day">{{ voyage.date_depart | date:'dd' }}</span>
+                    <span class="month">{{ voyage.date_depart | date:'MMM' }}</span>
+                </div>
+                <div class="trip-content">
+                    <div class="path">
+                        {{ voyage.ville_depart }}
+                        <mat-icon>trending_flat</mat-icon>
+                        {{ voyage.ville_arrivee }}
+                    </div>
+                    <div class="meta-grid">
+                        <div class="meta-item">
+                            <mat-icon>schedule</mat-icon>
+                            {{ voyage.heure_depart }}
+                        </div>
+                        <div class="meta-item">
+                            <mat-icon>directions_bus</mat-icon>
+                            {{ voyage.vehicule_immatriculation }}
+                        </div>
+                    </div>
+                </div>
+                <div class="status-badge">
+                    <mat-icon>check_circle</mat-icon>
+                </div>
+            </div>
+            <div class="card-footer">
+                <span class="trip-id">ID: {{ voyage.num_voyage }}</span>
+                <button class="detail-btn">Détails <mat-icon>chevron_right</mat-icon></button>
+            </div>
+        </div>
+
+        <div class="empty-state animate-fade-in" *ngIf="history().length === 0">
+            <div class="empty-illustration">
+                <mat-icon>history_toggle_off</mat-icon>
+            </div>
+            <h3>Aucun archive</h3>
+            <p>Vos voyages terminés apparaîtront ici.</p>
+        </div>
+    </div>
+
+    <div class="pagination-wrapper" *ngIf="history().length > pageSize()">
+        <gev-pagination [totalItems]="history().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+            (pageChange)="currentPage.set($event)">
+        </gev-pagination>
+    </div>
+</div>

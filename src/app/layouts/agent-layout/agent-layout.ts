@@ -30,9 +30,9 @@ export class AgentLayout {
   });
 
   menuItems = [
-    { label: 'Nouvelle Vente', icon: 'point_of_sale', route: '/agent/booking' },
-    { label: 'Historique', icon: 'history', route: '/agent/reservations' },
     { label: 'Tableau de bord', icon: 'dashboard', route: '/agent/dashboard' },
+    { label: 'Nouvelle Vente', icon: 'add', route: '/agent/booking/new' },
+    { label: 'Mes reservations', icon: 'list', route: '/agent/reservations' },
     { label: 'Gestion Colis', icon: 'local_mall', route: '/agent/colis' },
     { label: 'Validation', icon: 'qr_code_scanner', route: '/agent/validate' },
     { label: 'Mon Profil', icon: 'person', route: '/agent/profile' },

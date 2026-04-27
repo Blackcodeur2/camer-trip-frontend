@@ -1,0 +1,200 @@
+<div class="colis-page">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Gestion des Colis</h1>
+            <p>Consultez et enregistrez les expéditions de colis.</p>
+        </div>
+        <div class="header-actions">
+            <button class="btn-primary" (click)="toggleViewMode()">
+                <mat-icon>{{ viewMode() === 'list' ? 'add' : 'list' }}</mat-icon>
+                <span>{{ viewMode() === 'list' ? 'Nouveau Colis' : 'Retour à la liste' }}</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- VIEW: LIST -->
+    <div *ngIf="viewMode() === 'list'" class="list-view">
+        <div *ngIf="isLoading()" class="loading-state">
+            <div class="spinner"></div>
+            <p>Chargement des colis...</p>
+        </div>
+
+        <div *ngIf="!isLoading()" class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Expéditeur</th>
+                        <th>Colis</th>
+                        <th>Destinataire</th>
+                        <th>Trajet (Gares)</th>
+                        <th>Coût & Poids</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (colis of paginatedColis(); track colis.id) {
+                    <tr class="res-row">
+                        <td>
+                            <div class="client-info">
+                                <span class="name">{{ colis.user?.prenom }} {{ colis.user?.nom }}</span>
+                                <span class="phone">
+                                    <mat-icon>phone</mat-icon>
+                                    {{ colis.user?.telephone }}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-weight: 600; color:#334155">{{ colis.nom_colis }}</span>
+                        </td>
+                        <td>
+                            <div class="client-info">
+                                <span class="name">{{ colis.nom_destinataire }}</span>
+                                <span class="phone"><mat-icon>phone</mat-icon> {{ colis.tel_destinataire }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="voyage-info" *ngIf="colis.voyage">
+                                <span class="trip-id" style="font-size: 0.8rem; color: #64748b;">
+                                    Voyage #{{ colis.voyage.num_voyage || colis.voyage.id }}<br />
+                                    <span style="color: #1e293b; font-weight: 600;">
+                                        {{ colis.gareProvenance?.ville?.nom || colis.gareProvenance?.nom || '...' }}
+                                        &rarr;
+                                        {{ colis.gareDestination?.ville?.nom || colis.gareDestination?.nom || '...' }}
+                                    </span>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="price-cell">
+                            <span class="amount">{{ colis.prix | number:'1.0-0' }}</span> <span
+                                class="currency">FCFA</span><br />
+                            <span style="font-size:0.75rem; color:#64748b;">{{ colis.poids || 0 }} kg</span>
+                        </td>
+                        <td class="date-cell">
+                            {{ colis.created_at | date:'dd MMM yyyy, HH:mm' }}
+                        </td>
+                        <td>
+                            <span class="status-badge" [class]="colis.statut">
+                                <mat-icon class="status-icon" *ngIf="colis.statut === 'retire'">check_circle</mat-icon>
+                                <mat-icon class="status-icon" *ngIf="colis.statut === 'en attente'">schedule</mat-icon>
+                                {{ colis.statut }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn validate" *ngIf="colis.statut === 'en attente'"
+                                    title="Marquer comme retiré" (click)="markAsRetrieved(colis.id!)">
+                                    <mat-icon>check_circle</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div *ngIf="colisList().length === 0" class="empty-state">
+                <mat-icon>local_mall</mat-icon>
+                <p>Aucun colis enregistré.</p>
+            </div>
+        </div>
+
+        <gev-pagination *ngIf="!isLoading()" [totalItems]="colisList().length" [pageSize]="pageSize()"
+            [currentPage]="currentPage()" (pageChange)="currentPage.set($event)">
+        </gev-pagination>
+    </div>
+
+    <!-- VIEW: CREATE -->
+    <div *ngIf="viewMode() === 'create'" class="create-view">
+        <form [formGroup]="colisForm" (ngSubmit)="onSubmitColis()">
+            <div class="form-grid">
+
+                <!-- Section Expéditeur -->
+                <div class="form-section">
+                    <h3>1. Expéditeur (Client)</h3>
+                    <div class="form-group search-group">
+                        <label>Rechercher un client (Tel ou Nom) <span class="text-danger">*</span></label>
+                        <div class="search-input-wrap">
+                            <mat-icon>search</mat-icon>
+                            <input type="text" formControlName="clientSearchQuery" placeholder="Ex: 690..."
+                                (input)="onClientSearch($event)">
+                        </div>
+                        <div class="search-results" *ngIf="clientSearchResults().length > 0">
+                            <div class="search-item" *ngFor="let m of clientSearchResults()" (click)="selectClient(m)">
+                                <span>{{ m.nom }} {{ m.prenom }}</span>
+                                <span class="phone">{{ m.telephone }}</span>
+                            </div>
+                        </div>
+                        <div *ngIf="selectedClient()" class="selected-client-card">
+                            <mat-icon style="color: #10b981;">check_circle</mat-icon>
+                            <div class="details">
+                                <span class="name">{{ selectedClient()?.nom }} {{ selectedClient()?.prenom }}</span>
+                                <span>{{ selectedClient()?.telephone }}</span>
+                            </div>
+                            <button type="button" class="btn-clear"
+                                (click)="clearClient()"><mat-icon>close</mat-icon></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Colis -->
+                <div class="form-section">
+                    <h3>2. Informations du colis</h3>
+                    <div class="form-group">
+                        <label>Description (Contenu) <span class="text-danger">*</span></label>
+                        <input type="text" formControlName="nom_colis" placeholder="Carton d'effets, documents...">
+                    </div>
+                    <div class="flex-row">
+                        <div class="form-group">
+                            <label>Poids (kg)</label>
+                            <input type="number" formControlName="poids" placeholder="Ex: 5" min="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Prix facturé (FCFA)</label>
+                            <input type="number" formControlName="prix" placeholder="Ex: 2000" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section Voyage & Destinataire -->
+                <div class="form-section">
+                    <h3>3. Voyage & Destinataire</h3>
+                    <div class="form-group">
+                        <label>Voyage de transport <span class="text-danger">*</span></label>
+                        <select formControlName="voyage_id" (change)="onVoyageChange()">
+                            <option value="">Sélectionnez le voyage prévu</option>
+                            <option *ngFor="let m of availableVoyages()" [value]="m.id">
+                                Voyage #{{ m.num_voyage || m.id }} :
+                                {{ m.trajet?.ville_depart_nom || m.trajet?.villeDepart?.nom || '...' }} &rarr;
+                                {{ m.trajet?.ville_arrive_nom || m.trajet?.villeArrivee?.nom || '...' }}
+                                ({{ m.date_depart | date:'dd/MM HH:mm' }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Champ destination caché puisque nous le déduisons du voyage sélectionné -->
+                    <input type="hidden" formControlName="destination">
+                    <div class="form-group">
+                        <label>Nom du destinataire <span class="text-danger">*</span></label>
+                        <input type="text" formControlName="nom_destinataire" placeholder="Nom complet">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone du destinataire <span class="text-danger">*</span></label>
+                        <input type="text" formControlName="tel_destinataire" placeholder="Numéro de téléphone">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="toggleViewMode()">Annuler</button>
+                <button type="submit" class="btn-primary"
+                    [disabled]="colisForm.invalid || !selectedClient() || isSubmitting()">
+                    <mat-icon *ngIf="isSubmitting()">hourglass_empty</mat-icon>
+                    <span>{{ isSubmitting() ? 'Enregistrement...' : 'Enregistrer le Colis' }}</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="client-home">
+    <!-- Welcome Section -->
+    <header class="home-header animate-fade-in">
+        <div class="header-top">
+            <div class="welcome-text">
+                <h1 class="welcome-title">Où souhaitez-vous <span class="highlight">aller ?</span></h1>
+                <p class="subtitle">Réservez votre voyage en quelques clics</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Active Reservation Card (The Hero) -->
+    <section class="hero-section animate-scale-in" *ngIf="upcomingTrips().length > 0">
+        <div class="section-header">
+            <h3 class="section-title">Prochain voyage</h3>
+            <span class="active-badge">Confirmé</span>
+        </div>
+
+        <div class="active-trip-card" (click)="navigate('/client/mes-reservations')">
+            <div class="trip-header">
+                <div class="bus-company">Express Voyage</div>
+                <div class="trip-date">{{ upcomingTrips()[0].voyage.date_depart | date:'dd MMM yyyy' }}</div>
+            </div>
+
+            <div class="trip-route">
+                <div class="city-info">
+                    <span class="city-name">{{ upcomingTrips()[0].voyage.ville_depart }}</span>
+                    <span class="city-code">{{ upcomingTrips()[0].voyage.ville_depart.substring(0,3).toUpperCase()
+                        }}</span>
+                </div>
+                <div class="route-visual">
+                    <div class="dot"></div>
+                    <div class="line">
+                        <mat-icon>directions_bus</mat-icon>
+                    </div>
+                    <div class="dot"></div>
+                </div>
+                <div class="city-info align-right">
+                    <span class="city-name">{{ upcomingTrips()[0].voyage.ville_arrivee }}</span>
+                    <span class="city-code">{{ upcomingTrips()[0].voyage.ville_arrivee.substring(0,3).toUpperCase()
+                        }}</span>
+                </div>
+            </div>
+
+            <div class="trip-footer">
+                <div class="footer-item">
+                    <mat-icon>schedule</mat-icon>
+                    <span>{{ upcomingTrips()[0].voyage.heure_depart }}</span>
+                </div>
+                <div class="footer-item">
+                    <mat-icon>event_seat</mat-icon>
+                    <span>Siège N° {{ upcomingTrips()[0] }}</span>
+                </div>
+                <mat-icon class="qr-preview">qr_code_2</mat-icon>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats / Balance Section -->
+    <section class="wallet-section animate-fade-in">
+        <div class="wallet-card">
+            <div class="wallet-info">
+                <span class="label">Total dépensé</span>
+                <span class="amount">{{ stats().spent | number }} <small>FCFA</small></span>
+            </div>
+            <div class="wallet-icon">
+                <mat-icon>account_balance_wallet</mat-icon>
+            </div>
+        </div>
+    </section>
+</div>

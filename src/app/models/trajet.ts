@@ -1,6 +1,7 @@
 import { Ville } from './ville';
 
 export interface Trajet {
+distance_km: any;
   id: number;
   station_id?: number;
   depart?: number | string;

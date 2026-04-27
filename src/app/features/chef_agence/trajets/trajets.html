@@ -1,0 +1,150 @@
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Gestion des Lignes</h1>
+            <p class="page-subtitle">Définissez vos trajets et les prix associés.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()"
+                style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; cursor: pointer;">
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ isExporting() ? 'hourglass_empty' :
+                    'picture_as_pdf' }}</mat-icon>
+                <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
+            </button>
+            <button class="btn-primary" (click)="toggleForm()">
+                <mat-icon>{{ showForm() ? 'close' : 'add_road' }}</mat-icon>
+                <span>{{ showForm() ? 'Annuler' : 'Nouvelle Ligne' }}</span>
+            </button>
+        </div>
+    </div>
+
+    @if (showForm()) {
+    <div class="card form-card animate-fade-in">
+        <div class="form-header">
+            <h2>{{ isEditing() ? 'Modifier la Ligne' : 'Créer une Nouvelle Ligne' }}</h2>
+        </div>
+        <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Ville de départ</label>
+                    <select formControlName="ville_depart" class="form-control">
+                        <option value="">-- Sélectionnez une ville --</option>
+                        @for (ville of villes(); track ville.id) {
+                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ville d'arrivée</label>
+                    <select formControlName="ville_arrive" class="form-control">
+                        <option value="">-- Sélectionnez une ville --</option>
+                        @for (ville of villes(); track ville.id) {
+                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prix (XAF)</label>
+                    <input type="number" formControlName="prix" class="form-control" placeholder="Ex: 5000" />
+                </div>
+                <div class="form-group">
+                    <label>Distance (Km)</label>
+                    <input type="number" formControlName="distance_km" class="form-control" placeholder="Ex: 30" />
+                </div>
+                <div class="form-group">
+                    <label>Type de Trajet</label>
+                    <select formControlName="type_trajet" class="form-control">
+                        <option value="vip">VIP</option>
+                        <option value="classique">Classique</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <app-app-button type="submit" [disabled]="routeForm.invalid" [loading]="isSubmitting()">
+                    {{ isEditing() ? 'Mettre à jour' : 'Enregistrer la ligne' }}
+                </app-app-button>
+            </div>
+        </form>
+    </div>
+    }
+
+    <div class="card table-card">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="center">Réf</th>
+                        <th>Trajet</th>
+                        <th>Distance</th>
+                        <th>Prix</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (route of paginatedRoutes(); track route.id) {
+                    <tr class="route-row">
+                        <td class="center ref-cell">#{{ route.id }}</td>
+                        <td>
+                            <div class="route-display">
+                                <div class="city from">
+                                    <span class="label">Départ</span>
+                                    <span class="name">{{ route.depart || '...' }}</span>
+                                </div>
+                                <div class="path-visual">
+                                    <div class="line"></div>
+                                    <mat-icon>east</mat-icon>
+                                </div>
+                                <div class="city to">
+                                    <span class="label">Arrivée</span>
+                                    <span class="name">{{ route.arrivee || '...' }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="distance-info">
+                                <mat-icon>route</mat-icon>
+                                <span>{{ route.distance_km || '--' }} Km</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="price-info">
+                                <span class="amount">{{ route.prix | number }}</span>
+                                <span class="currency">XAF</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="type-badge" [class]="route.type_trajet?.toLowerCase()">
+                                {{ route.type_trajet }}
+                            </span>
+                        </td>
+                        <td class="actions">
+                            <div class="action-group">
+                                <button class="action-btn edit" (click)="editRoute(route)" title="Modifier">
+                                    <mat-icon>edit_calendar</mat-icon>
+                                </button>
+                                <button class="action-btn delete" title="Supprimer">
+                                    <mat-icon>delete_forever</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <mat-icon>no_roads</mat-icon>
+                                <p>Aucune ligne n'a été configurée pour le moment.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <gev-pagination [totalItems]="routesList().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+                (pageChange)="currentPage.set($any($event))">
+            </gev-pagination>
+        </div>
+    </div>
+</div>

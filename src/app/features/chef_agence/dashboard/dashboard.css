@@ -1,0 +1,468 @@
+.dashboard-page {
+    font-family: monospace;
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+h1 {
+    font-size: 1.75rem;
+    color: #111827;
+    margin: 0;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: #6B7280;
+    margin: 4px 0 0;
+    font-size: 0.95rem;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    color: #374151;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.action-btn:hover {
+    background: #F9FAFB;
+    border-color: #D1D5DB;
+    transform: translateY(-1px);
+}
+
+.action-btn.active {
+    background: #111827;
+    color: white;
+    border-color: #111827;
+}
+
+.action-btn.active:hover {
+    background: #1F2937;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn .icon {
+    font-size: 1.1rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #F3F4F6;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+}
+
+.icon-circle.bus {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+
+.icon-circle.ticket {
+    background: #DCFCE7;
+    color: #16A34A;
+}
+
+.icon-circle.money {
+    background: #FEF3C7;
+    color: #D97706;
+}
+
+.icon-circle.staff {
+    background: #F3E8FF;
+    color: #9333EA;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1;
+}
+
+.value small {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #9CA3AF;
+}
+
+.sub {
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+.text-green {
+    color: #059669;
+}
+
+.text-blue {
+    color: #2563EB;
+}
+
+/* Dashboard Main Grid */
+.dashboard-main-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+}
+
+.left-col,
+.right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.custom-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #F3F4F6;
+    padding: 1.5rem;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #111827;
+    font-weight: 600;
+}
+
+.period {
+    font-size: 0.8rem;
+    color: #6B7280;
+    background: #F3F4F6;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* Revenue Chart */
+.chart-container {
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-top: 2rem;
+    padding-bottom: 0.5rem;
+}
+
+.bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.bar-wrapper {
+    height: 150px;
+    width: 32px;
+    background: #F3F4F6;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(180deg, #3B82F6 0%, #1D4ED8 100%);
+    border-radius: 6px;
+    transition: height 0.5s ease;
+}
+
+.day-label {
+    font-size: 0.75rem;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+/* Fleet Status */
+.fleet-status-widget {
+    margin-top: 0.5rem;
+}
+
+.progress-bar-container {
+    height: 12px;
+    background: #F3F4F6;
+    border-radius: 6px;
+    display: flex;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.segment {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.legend {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.legend-item .name {
+    font-size: 0.85rem;
+    color: #4B5563;
+}
+
+.legend-item .count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Lists (Live Trips & Recent) */
+.list-container,
+.recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+.trip-time {
+    font-weight: 700;
+    color: #111827;
+    width: 50px;
+    font-feature-settings: "tnum";
+}
+
+.trip-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.route {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+.bus.badge {
+    font-size: 0.75rem;
+    background: #F3F4F6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: fit-content;
+    margin-top: 2px;
+    color: #6B7280;
+}
+
+.occupancy {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.occupancy.full {
+    color: #DC2626;
+}
+
+/* Recent Reservations Items */
+.recent-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #F9FAFB;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.recent-item:hover {
+    background: #F3F4F6;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    background: #DBEAFE;
+    color: #1E40AF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.route-small {
+    font-size: 0.75rem;
+    color: #6B7280;
+}
+
+.amount {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #059669;
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: #2563EB;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.alert-item {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.alert-item.warning {
+    background: #FFF7ED;
+    border: 1px solid #FFEDD5;
+    color: #9A3412;
+}
+
+.alert-item.info {
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    color: #1E40AF;
+}
+
+.empty-state {
+    text-align: center;
+    color: #9CA3AF;
+    padding: 2rem 0;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-main-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .quick-actions {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .action-btn {
+        white-space: nowrap;
+    }
+}

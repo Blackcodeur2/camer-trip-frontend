@@ -142,6 +142,38 @@ export const routes: Routes = [
         data: { roles: ['CHEF_AGENCE'] },
         children: [
             {
+                path: 'dashboard',
+                loadComponent: () => import('./features/chef_agence/dashboard/dashboard').then(m => m.Dashboard),
+            },
+            {
+                path: 'trajets',
+                loadComponent: () => import('./features/chef_agence/trajets/trajets').then(m => m.Trajets),
+            },
+            {
+                path: 'bus',
+                loadComponent: () => import('./features/chef_agence/bus/bus').then(m => m.BusPage),
+            },
+            {
+                path: 'voyages',
+                loadComponent: () => import('./features/chef_agence/voyages/voyages').then(m => m.Voyages),
+            },
+            {
+                path: 'reservations',
+                loadComponent: () => import('./features/chef_agence/reservations/reservations').then(m => m.Reservations),
+            },
+            {
+                path: 'reservations/new',
+                loadComponent: () => import('./features/agent/new-reservation/new-reservation').then(m => m.NewReservation)
+            },
+            {
+                path: 'colis',
+                loadComponent: () => import('./features/chef_agence/colis/colis').then(m => m.ColisPage),
+            },
+            {
+                path: 'personnels',
+                loadComponent: () => import('./features/chef_agence/personnels/personnels').then(m => m.Personnels)
+            },
+            {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },
@@ -154,6 +186,26 @@ export const routes: Routes = [
         canActivate: [authGuardGuard],
         data: { roles: ['AGENT'] },
         children: [
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./features/agent/dashboard/dashboard').then(m => m.Dashboard),
+            },
+            {
+                path: 'booking/new',
+                loadComponent: () => import('./features/agent/new-reservation/new-reservation').then(m => m.NewReservation)
+            },
+            {
+                path: 'reservations',
+                loadComponent: () => import('./features/chef_agence/reservations/reservations').then(m => m.Reservations)
+            },
+            {
+                path: 'validate',
+                loadComponent: () => import('./features/agent/validation/validation').then(m => m.Validation)
+            },
+            {
+                path: 'colis',
+                loadComponent: () => import('./features/chef_agence/colis/colis').then(m => m.ColisPage),
+            },
             {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
@@ -168,6 +220,18 @@ export const routes: Routes = [
         data: { roles: ['CHAUFFEUR'] },
         children: [
             {
+                path: 'dashboard',
+                loadComponent: () => import('./features/chauffeur/dashboard/dashboard').then(m => m.Dashboard)
+            },
+            {
+                path: 'historique',
+                loadComponent: () => import('./features/chauffeur/historiques/historiques').then(m => m.Historiques)
+            },
+            {
+                path: 'incident',
+                loadComponent: () => import('./features/chauffeur/incidents/incidents').then(m => m.Incidents)
+            },
+            {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },
@@ -180,6 +244,22 @@ export const routes: Routes = [
         canActivate: [authGuardGuard],
         data: { roles: ['CLIENT'] },
         children: [
+            {
+                path: 'home',
+                loadComponent: () => import('./features/client/home/home').then(m => m.Home),
+            },
+            {
+                path: 'agences',
+                loadComponent: () => import('./features/client/agences/agences').then(m => m.Agences)
+            },
+            {
+                path: 'reservations',
+                loadComponent: () => import('./features/client/reservations/reservations').then(m => m.Reservations)
+            },
+            {
+                path: 'new-reservation',
+                loadComponent: () => import('./features/client/new-reservation/new-reservation').then(m => m.NewReservation)
+            },
             {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),

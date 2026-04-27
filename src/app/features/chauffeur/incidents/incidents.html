@@ -1,0 +1,62 @@
+<div class="report-container">
+    <header class="page-header animate-fade-in">
+        <h2 class="title">Signaler un Problème</h2>
+        <p class="subtitle">Informez l'agence d'un incident en temps réel</p>
+    </header>
+
+    <div class="report-card animate-scale-in">
+        <div class="card-body">
+            <div class="form-section">
+                <label class="section-label">Type d'incident</label>
+                <div class="incident-grid">
+                    <div class="incident-option" *ngFor="let type of incidentTypes"
+                        [class.active]="selectedType === type.id" (click)="selectedType = type.id">
+                        <div class="icon-circle">
+                            <mat-icon>{{ type.icon }}</mat-icon>
+                        </div>
+                        <span>{{ type.label }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Niveau de gravité</label>
+                <div class="gravity-selector">
+                    <button class="gravity-btn low" [class.active]="incident.niveau_gravite === 'FAIBLE'"
+                        (click)="incident.niveau_gravite = 'FAIBLE'">
+                        Faible
+                    </button>
+                    <button class="gravity-btn medium" [class.active]="incident.niveau_gravite === 'MOYEN'"
+                        (click)="incident.niveau_gravite = 'MOYEN'">
+                        Moyen
+                    </button>
+                    <button class="gravity-btn high" [class.active]="incident.niveau_gravite === 'ELEVÉ'"
+                        (click)="incident.niveau_gravite = 'ELEVÉ'">
+                        Critique
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label class="section-label">Description détaillée</label>
+                <div class="textarea-wrapper">
+                    <mat-icon class="field-icon">edit_note</mat-icon>
+                    <textarea [(ngModel)]="incident.description" name="description"
+                        placeholder="Expliquez brièvement la situation..." rows="4"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <button class="submit-btn" (click)="onSubmit()" [disabled]="!incident.description || !selectedType">
+                <mat-icon>send</mat-icon>
+                ENVOYER LE SIGNALEMENT
+            </button>
+        </div>
+    </div>
+
+    <div class="info-alert animate-fade-in">
+        <mat-icon>info</mat-icon>
+        <p>Votre position GPS sera jointe automatiquement au signalement pour une assistance rapide.</p>
+    </div>
+</div>

@@ -1,0 +1,140 @@
+<div class="page-container">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Gestion de la Flotte</h2>
+        </div>
+        <div class="header-actions">
+            <div class="search-box">
+                <mat-icon>search</mat-icon>
+                <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+                    placeholder="Rechercher un bus..." />
+            </div>
+            <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()"
+                style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; cursor: pointer;">
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ isExporting() ? 'hourglass_empty' :
+                    'picture_as_pdf' }}</mat-icon>
+                <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
+            </button>
+            <button class="btn-primary" (click)="toggleForm()">
+                <mat-icon>{{ showForm() ? 'close' : 'add' }}</mat-icon>
+                <span>{{ showForm() ? 'Annuler' : 'Nouveau Bus' }}</span>
+            </button>
+        </div>
+    </div>
+
+    @if (showForm()) {
+    <div class="card form-card animate-fade-in">
+        <div class="card-header">
+            <h3>{{ isEditing() ? 'Modifier le Bus' : 'Ajouter un Nouveau Bus' }}</h3>
+        </div>
+        <form [formGroup]="busForm" (ngSubmit)="onSubmit()">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Immatriculation</label>
+                    <input type="text" formControlName="immatriculation" class="form-control"
+                        placeholder="Ex: LT 123 AA" />
+                </div>
+                <div class="form-group">
+                    <label>Code du bus</label>
+                    <input type="text" formControlName="code_bus" class="form-control" placeholder="Ex: bus_001" />
+                </div>
+                <div class="form-group">
+                    <label>type de bus</label>
+                    <select formControlName="type_bus" class="form-control">
+                        <option value="coaster">Coaster</option>
+                        <option value="gros porteur">Gros Porteur</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>classe de bus</label>
+                    <select formControlName="classe_bus" class="form-control">
+                        <option value="vip">VIP</option>
+                        <option value="classique">Classique</option>
+                    </select>
+                </div>
+                <input type="hidden" formControlName="gare_id" />
+                <div class="form-group">
+                    <label>Nombre de places</label>
+                    <input type="number" formControlName="nb_places" class="form-control" placeholder="Ex: 70" />
+                </div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select formControlName="statut" class="form-control">
+                        <option value="disponible">Disponible</option>
+                        <option value="en_maintenance">En Maintenance</option>
+                        <option value="en_voyage">En Voyage</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <app-app-button type="submit" [disabled]="busForm.invalid" [loading]="isSubmitting()">
+                    {{ isEditing() ? 'Mettre à jour' : 'Enregistrer le bus' }}
+                </app-app-button>
+            </div>
+        </form>
+    </div>
+    }
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Bus / Immat</th>
+                        <th>Code</th>
+                        <th>Capacité</th>
+                        <th>Type</th>
+                        <th>Classe</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (bus of paginatedBuses(); track bus.id) {
+                    <tr>
+                        <td>
+                            <div class="bus-info">
+                                <div class="bus-icon"><mat-icon>directions_bus</mat-icon></div>
+                                <span class="immat">{{ bus.immatriculation }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="bus-info">
+                                <span class="immat">{{ bus.code_bus }}</span>
+                            </div>
+                        </td>
+                        <td>{{ bus.nb_places }} places</td>
+                        <td>
+                            <div class="bus-info">
+                                <span class="immat">{{ bus.type_bus }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="bus-info">
+                                <span class="immat">{{ bus.classe_bus }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge" [class]="bus.statut.toLowerCase()">
+                                {{ bus.statut }}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="action-btn" (click)="editBus(bus)"
+                                title="Modifier"><mat-icon>edit</mat-icon></button>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="4" class="text-center py-8">Aucun véhicule trouvé.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+            <gev-pagination [totalItems]="buses().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+                (pageChange)="currentPage.set($any($event))">
+            </gev-pagination>
+        </div>
+    </div>
+</div>

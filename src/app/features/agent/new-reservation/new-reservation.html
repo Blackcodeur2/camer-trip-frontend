@@ -1,0 +1,331 @@
+<div class="booking-container">
+    <!-- Header with Steps -->
+    <header class="page-header">
+        <div class="header-info">
+            <h1>Réserver un Voyage</h1>
+            <p>Suivez les étapes pour enregistrer une nouvelle réservation.</p>
+        </div>
+
+        <div class="stepper">
+            <div class="step" [class.active]="currentStep() >= 1" [class.completed]="currentStep() > 1">
+                <span class="step-num">@if(currentStep() > 1) { <mat-icon>check</mat-icon> } @else { 1 }</span>
+                <span class="step-label">Trajet</span>
+            </div>
+            <div class="step-line" [class.active]="currentStep() > 1"></div>
+
+            <div class="step" [class.active]="currentStep() >= 2" [class.completed]="currentStep() > 2">
+                <span class="step-num">@if(currentStep() > 2) { <mat-icon>check</mat-icon> } @else { 2 }</span>
+                <span class="step-label">Voyage</span>
+            </div>
+            <div class="step-line" [class.active]="currentStep() > 2"></div>
+
+            <div class="step" [class.active]="currentStep() >= 3" [class.completed]="currentStep() > 3">
+                <span class="step-num">@if(currentStep() > 3) { <mat-icon>check</mat-icon> } @else { 3 }</span>
+                <span class="step-label">Client</span>
+            </div>
+            <div class="step-line" [class.active]="currentStep() > 3"></div>
+
+            <div class="step" [class.active]="currentStep() >= 4" [class.completed]="currentStep() > 4">
+                <span class="step-num">@if(currentStep() > 4) { <mat-icon>check</mat-icon> } @else { 4 }</span>
+                <span class="step-label">Siège</span>
+            </div>
+            <div class="step-line" [class.active]="currentStep() > 4"></div>
+
+            <div class="step" [class.active]="currentStep() >= 5" [class.completed]="currentStep() > 5">
+                <span class="step-num">5</span>
+                <span class="step-label">Résumé</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="booking-content">
+        <!-- STEP 1: TRIP SEARCH -->
+        @if (currentStep() === 1) {
+        <div class="step-card animate-in">
+            <div class="card-header">
+                <mat-icon>route</mat-icon>
+                <h2>Où allons-nous ?</h2>
+            </div>
+
+            <form [formGroup]="tripForm" class="trip-form">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Itinéraire</label>
+                        <div class="select-wrapper">
+                            <mat-icon>location_on</mat-icon>
+                            <select formControlName="route_id">
+                                <option value="">Sélectionnez un trajet</option>
+                                @for (route of routes(); track route.id) {
+                                <option [value]="route.id">
+                                    {{ route.villeDepart || 'Inconnu' }} → {{ route.villeArrivee || 'Inconnu' }} ({{
+                                    route.type_trajet || 'Classique' }})
+                                </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Date de voyage</label>
+                        <div class="input-wrapper">
+                            <mat-icon>calendar_today</mat-icon>
+                            <input type="date" formControlName="date">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button class="btn-primary" (click)="nextStep()" [disabled]="tripForm.invalid || loadingVoyages()">
+                        @if (loadingVoyages()) { <span class="loader"></span> }
+                        @else { Rechercher des voyages <mat-icon>arrow_forward</mat-icon> }
+                    </button>
+                </div>
+            </form>
+        </div>
+        }
+
+        <!-- STEP 2: VOYAGE SELECTION -->
+        @if (currentStep() === 2) {
+        <div class="step-card animate-in">
+            <div class="card-header-with-actions">
+                <div class="title-area">
+                    <mat-icon>directions_bus</mat-icon>
+                    <h2>Voyages disponibles</h2>
+                    <p>{{ selectedRoute()?.villeDepart || '...' }} → {{ selectedRoute()?.villeArrivee?.nom || '...' }}
+                        le {{ tripForm.get('date')?.value | date:'dd MMMM yyyy' }}</p>
+                </div>
+                <button class="btn-text" (click)="prevStep()"><mat-icon>edit</mat-icon> Modifier</button>
+            </div>
+
+            @if (voyages().length === 0) {
+            <div class="empty-state">
+                <mat-icon>event_busy</mat-icon>
+                <p>Aucun voyage trouvé pour cette date.</p>
+                <button class="btn-secondary" (click)="prevStep()">Changer de date</button>
+            </div>
+            } @else {
+            <div class="voyages-list">
+                @for (voyage of voyages(); track voyage.id) {
+                <div class="voyage-item" (click)="selectVoyage(voyage)"
+                    [class.selected]="selectedVoyage()?.id === voyage.id" [class.disabled]="isVoyageDisabled(voyage)">
+                    <div class="voyage-time">
+                        <span class="time">{{ voyage.heure_depart || '--:--' }}</span>
+                        <span class="label">Départ</span>
+                    </div>
+                    <div class="voyage-info">
+                        <span class="bus-type">Standard Coaster</span>
+                        <span class="bus-id">{{ voyage.vehicule_immatriculation }}</span>
+                    </div>
+                    <div class="voyage-status">
+                        <span class="badge" [class]="voyage.statut">{{ voyage.statut }}</span>
+                    </div>
+                    <mat-icon class="chevron">chevron_right</mat-icon>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+
+        <!-- STEP 3: CLIENT IDENTIFICATION -->
+        @if (currentStep() === 3) {
+        <div class="step-card animate-in">
+            <div class="card-header-with-actions">
+                <div class="title-area">
+                    <mat-icon>person_search</mat-icon>
+                    <h2>Identifier le client</h2>
+                </div>
+                <button class="btn-secondary" (click)="toggleNewClient()">
+                    <mat-icon>{{ isNewClient() ? 'search' : 'person_add' }}</mat-icon>
+                    {{ isNewClient() ? 'Rechercher existant' : 'Nouveau client' }}
+                </button>
+            </div>
+
+            @if (!isNewClient()) {
+            <div class="search-section">
+                <div class="search-input-field">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" [formControl]="clientSearchControl"
+                        placeholder="Rechercher par nom ou téléphone...">
+                    @if (searchingClients()) { <span class="loader-sm"></span> }
+                </div>
+
+                <div class="search-results">
+                    @for (client of clientsSearch(); track client.id) {
+                    <div class="client-result" (click)="selectClient(client)">
+                        <div class="client-avatar">{{ client.prenom[0] }}{{ client.nom[0] }}</div>
+                        <div class="client-details">
+                            <span class="name">{{ client.prenom }} {{ client.nom }}</span>
+                            <span class="meta">{{ client.telephone }} • {{ client.num_cni }}</span>
+                        </div>
+                        <mat-icon>check_circle_outline</mat-icon>
+                    </div>
+                    } @empty {
+                    @if (clientSearchControl.value && !searchingClients()) {
+                    <div class="search-empty">
+                        <p>Aucun client trouvé. <a (click)="toggleNewClient()">Créer un compte ?</a></p>
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+            } @else {
+            <form [formGroup]="clientForm" class="client-form" (ngSubmit)="submitNewClient()">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Nom</label>
+                        <div class="input-wrapper">
+                            <mat-icon>person</mat-icon>
+                            <input type="text" formControlName="nom" placeholder="Ex: NDEDI">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Prénom</label>
+                        <div class="input-wrapper">
+                            <mat-icon>person_outline</mat-icon>
+                            <input type="text" formControlName="prenom" placeholder="Ex: Jean">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Téléphone</label>
+                        <div class="input-wrapper">
+                            <mat-icon>phone</mat-icon>
+                            <input type="tel" formControlName="telephone" placeholder="6XXXXXXXX">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Numéro CNI</label>
+                        <div class="input-wrapper">
+                            <mat-icon>badge</mat-icon>
+                            <input type="text" formControlName="num_cni" placeholder="ID Card No">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Sexe</label>
+                        <div class="select-wrapper">
+                            <mat-icon>wc</mat-icon>
+                            <select formControlName="sexe">
+                                <option value="M">Masculin</option>
+                                <option value="F">Féminin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Date de Naissance</label>
+                        <div class="input-wrapper">
+                            <mat-icon>cake</mat-icon>
+                            <input type="date" formControlName="date_naissance">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="button" class="btn-text" (click)="prevStep()">Retour</button>
+                    <button type="submit" class="btn-primary" [disabled]="clientForm.invalid || submitting()">
+                        @if (submitting()) { <span class="loader"></span> }
+                        @else { Créer et Continuer <mat-icon>person_add_alt_1</mat-icon> }
+                    </button>
+                </div>
+            </form>
+            }
+        </div>
+        }
+
+        <!-- STEP 4: SEAT PICKER -->
+        @if (currentStep() === 4) {
+        <div class="step-card animate-in pb-0">
+            <div class="card-header">
+                <mat-icon>event_seat</mat-icon>
+                <h2>Choisir un siège</h2>
+                <p>Choisissez parmi les places disponibles dans le bus.</p>
+            </div>
+
+            <div class="seat-picker-layout">
+                <div class="seat-legend">
+                    <div class="legend-item"><span class="seat-box available"></span> Disponible</div>
+                    <div class="legend-item"><span class="seat-box occupied"></span> Occupé</div>
+                    <div class="legend-item"><span class="seat-box selected"></span> Sélectionné</div>
+                </div>
+
+                <div class="bus-map">
+                    <div class="bus-inner">
+                        <div class="bus-front">
+                            <div class="driver-area"><mat-icon>settings</mat-icon></div>
+                            <div class="entrance"><mat-icon>door_front</mat-icon></div>
+                        </div>
+
+                        <div class="seats-grid">
+                            @for (seat of getTotalSeatsArray(); track seat) {
+                            <button class="seat" [class.occupied]="!isSeatAvailable(seat)"
+                                [class.selected]="selectedSeat() === seat.toString()"
+                                [disabled]="!isSeatAvailable(seat)" (click)="selectSeat(seat.toString())">
+                                {{ seat }}
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer-fixed">
+                <div class="selection-summary">
+                    @if (selectedSeat()) { Siège choisi: <strong>{{ selectedSeat() }}</strong> }
+                    @else { Aucun siège sélectionné }
+                </div>
+                <div class="actions">
+                    <button class="btn-text" (click)="prevStep()">Retour</button>
+                    <button class="btn-primary" [disabled]="!selectedSeat()" (click)="confirmSeat()">
+                        Valider le siège <mat-icon>check</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- STEP 5: REVIEW & CONFIRM -->
+        @if (currentStep() === 5) {
+        <div class="step-card animate-in">
+            <div class="card-header">
+                <mat-icon>verified</mat-icon>
+                <h2>Récapitulatif de la réservation</h2>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="label">Client</span>
+                    <span class="val">{{ selectedClient()?.prenom }} {{ selectedClient()?.nom }}</span>
+                    <span class="sub">{{ selectedClient()?.telephone }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Trajet</span>
+                    <span class="val">{{ selectedRoute()?.villeDepart || '...' }} → {{
+                        selectedRoute()?.villeArrivee?.nom || '...' }}</span>
+                    <span class="sub">{{ tripForm.get('date')?.value | date:'dd/MM/yyyy' }} à {{
+                        selectedVoyage()?.heure_depart }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Siège</span>
+                    <span class="val">N° {{ selectedSeat() }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Véhicule</span>
+                    <span class="val">{{ selectedVoyage()?.vehicule_immatriculation }}</span>
+                </div>
+            </div>
+
+            <div class="total-section">
+                <span class="label">Total à payer</span>
+                <span class="price">{{ selectedRoute()?.prix | number }} FCFA</span>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn-text" (click)="prevStep()">Retour</button>
+                <button class="btn-primary" (click)="submitBooking()" [disabled]="submitting()">
+                    @if (submitting()) { <span class="loader"></span> Confirming... }
+                    @else { Confirmer la Réservation <mat-icon>send</mat-icon> }
+                </button>
+            </div>
+        </div>
+        }
+    </main>
+</div>

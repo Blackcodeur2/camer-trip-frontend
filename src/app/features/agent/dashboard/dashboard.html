@@ -1,0 +1,60 @@
+<div class="dashboard-container">
+    <header class="page-header">
+        <h1>Tableau de bord Agent</h1>
+        <p class="subtitle">Suivez en temps réel vos ventes et validations</p>
+    </header>
+
+    <div *ngIf="isLoading()" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement des performances...</p>
+    </div>
+
+    <div *ngIf="!isLoading()" class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><mat-icon>point_of_sale</mat-icon></div>
+            <div class="stat-info">
+                <h3>Ventes du jour</h3>
+                <p class="value">{{ stats().salesToday }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><mat-icon>confirmation_number</mat-icon></div>
+            <div class="stat-info">
+                <h3>Réservations actives</h3>
+                <p class="value">{{ stats().activeReservations }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><mat-icon>trending_up</mat-icon></div>
+            <div class="stat-info">
+                <h3>Chiffre d'affaire</h3>
+                <p class="value">{{ stats().revenueToday | number }} FCFA</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><mat-icon>verified</mat-icon></div>
+            <div class="stat-info">
+                <h3>Validations en attente</h3>
+                <p class="value">{{ stats().pendingValidations }}</p>
+            </div>
+        </div>
+    </div>
+
+    <section class="recent-actions">
+        <h2>Actions Rapides</h2>
+        <div class="actions-grid">
+            <button class="action-btn primary" (click)="navigateTo('/agent/booking')">
+                <mat-icon>add_shopping_cart</mat-icon>
+                <span>Nouvelle Vente</span>
+            </button>
+            <button class="action-btn secondary" (click)="navigateTo('/agent/validate')">
+                <mat-icon>qr_code_scanner</mat-icon>
+                <span>Valider Ticket</span>
+            </button>
+            <button class="action-btn secondary" (click)="navigateTo('/agent/reservations')">
+                <mat-icon>history</mat-icon>
+                <span>Historique</span>
+            </button>
+        </div>
+    </section>
+</div>

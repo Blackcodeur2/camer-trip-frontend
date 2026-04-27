@@ -11,14 +11,15 @@
     </a>
 
     <div class="navbar__center">
-      <a routerLink="/landing" fragment="fonctionnement" class="navbar__link">Fonctionnement</a>
-      <a routerLink="/landing" fragment="features" class="navbar__link">Partenaires</a>
-      <a routerLink="/landing" fragment="pour-proprietaires" class="navbar__link">Pour Agences</a>
+      <a routerLink="/landing" fragment="voyages" class="navbar__link">Voyages</a>
+      <a routerLink="/landing" fragment="fonctionnement" class="navbar__link">Tutoriel</a>
+      <a routerLink="/landing" fragment="pour-proprietaires" class="navbar__link">Partenaires</a>
+      <a routerLink="/landing" fragment="contact" class="navbar__link">Contact</a>
     </div>
 
     <div class="navbar__actions">
       <a routerLink="/auth/login" class="btn-ghost">Connexion</a>
-      <a routerLink="/auth/register" class="btn-primary">Créer un compte</a>
+      <a routerLink="/auth/register" class="btn-primary">Inscription</a>
     </div>
   </div>
 </nav>
@@ -59,50 +60,13 @@
   </div>
 </header>
 
-<div class="search-widget-wrapper">
-  <div class="search-bar">
-    <div class="search-field group">
-      <div class="search-icon">📍</div>
-      <div class="search-input-group">
-        <label>Ville de Départ</label>
-        <input type="text" placeholder="Ex: Yaoundé, Douala..." />
-      </div>
-    </div>
-
-    <div class="search-divider"></div>
-
-    <div class="search-field group">
-      <div class="search-icon"></div>
-      <div class="search-input-group">
-        <label>Destination</label>
-        <input type="text" placeholder="Ex: Bafoussam, Bamenda..." />
-      </div>
-    </div>
-
-    <div class="search-divider"></div>
-
-    <div class="search-field group">
-      <div class="search-icon">📅</div>
-      <div class="search-input-group">
-        <label>Date de départ</label>
-        <input type="date" />
-      </div>
-    </div>
-
-    <a routerLink="/auth/register" class="search-btn">
-      <span class="btn-text">Rechercher</span>
-      <span class="btn-icon">→</span>
-    </a>
-  </div>
-</div>
-
 <section class="agence-search-section">
   <div class="container">
     <div class="section-header">
       <div class="section-label">Agences partenaires</div>
       <h2 class="section-title">Découvrez les agences et voyages disponibles</h2>
       <p class="section-subtitle">
-        Parcourez les agences enregistrées, leurs gares, et les voyages programmés sans vous connecter.
+        Parcourez les agences enregistrées, leurs stations, et les voyages programmés sans vous connecter.
       </p>
     </div>
 
@@ -121,14 +85,14 @@
       Aucune agence trouvée pour cette recherche.
     </div>
 
-    <div class="agency-grid">
+    <div class="agency-grid" id="voyages">
       <article *ngFor="let agence of filteredAgences()" class="agency-card">
         <div class="agency-card-header">
           <div>
             <span class="agency-tag">Agence</span>
             <h3>{{ agence.nom }}</h3>
           </div>
-          <span class="agency-count">{{ agence.stations?.length || 0 }} gares</span>
+          <span class="agency-count">{{ agence.stations?.length || 0 }} stations</span>
         </div>
 
         <p class="agency-meta">{{ agence.adresse || 'Adresse non disponible' }}</p>
@@ -221,7 +185,7 @@
   </div>
 </section>
 
-<section id="features" class="features-showcase">
+<!--<section id="features" class="features-showcase">
   <div class="container">
     <div class="showcase-content">
       <div class="showcase-text">
@@ -297,7 +261,7 @@
       </div>
     </div>
   </div>
-</section>
+</section>-->
 
 <section id="pour-proprietaires" class="owner-cta">
   <div class="container relative">
@@ -311,15 +275,14 @@
         </p>
 
         <div class="owner-grid">
-          <div class="owner-perk">✔️ Tableaux de bord & Statistiques</div>
-          <div class="owner-perk">✔️ Gestion Multi-Gares intégrée</div>
-          <div class="owner-perk">✔️ Module de gestion des Colis</div>
-          <div class="owner-perk">✔️ Export automatique PDF</div>
+          <div class="owner-perk"><mat-icon>checked</mat-icon> Tableaux de bord & Statistiques</div>
+          <div class="owner-perk"><mat-icon>checked</mat-icon> Gestion Multi-Station intégrée</div>
+          <div class="owner-perk"><mat-icon>checked</mat-icon> Module de gestion des Colis</div>
+          <div class="owner-perk"><mat-icon>checked</mat-icon> Export automatique PDF</div>
         </div>
 
         <div class="owner-actions">
-          <a routerLink="/auth/register" class="btn-owner">Devenir Partenaire</a>
-          <a href="#" class="btn-owner-ghost">Parler à notre équipe</a>
+          <a routerLink="/auth/register" class="btn-owner">Integrer mon agence</a>
         </div>
       </div>
     </div>
@@ -336,9 +299,9 @@
           réservations plus rapides.
         </p>
         <div class="social-links">
-          <a href="#" class="social-btn">FB</a>
-          <a href="#" class="social-btn">TW</a>
-          <a href="#" class="social-btn">IG</a>
+          <a href="#" class="social-btn"><mat-icon>facebook</mat-icon></a>
+          <a href="#" class="social-btn"><mat-icon>telegram</mat-icon></a>
+          <a href="#" class="social-btn"><mat-icon>linkedin</mat-icon></a>
         </div>
       </div>
 
@@ -360,12 +323,12 @@
         </ul>
       </div>
 
-      <div class="footer-contact">
+      <div class="footer-contact" id="contact">
         <h4>Nous contacter</h4>
         <ul>
-          <li><strong>📍</strong> Dschang, Cameroun</li>
-          <li><strong>📞</strong> +237 658135105</li>
-          <li><strong>✉️</strong> infos@camertrip.cm</li>
+          <li><strong><mat-icon>address</mat-icon></strong> Dschang, Cameroun</li>
+          <li><strong><mat-icon>phone</mat-icon></strong> +237 658135105</li>
+          <li><strong><mat-icon>mail</mat-icon></strong> blackcodeur@camertrip.cm</li>
         </ul>
       </div>
     </div>

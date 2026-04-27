@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AgenceService } from '../../services/agence/agence-service';
 import { Agence } from '../../models/agence';
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-landing',
-  imports: [CommonModule, FormsModule, RouterLink,],
+  imports: [CommonModule, FormsModule, RouterLink, MatIcon],
   templateUrl: './landing.html',
   styleUrl: './landing.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

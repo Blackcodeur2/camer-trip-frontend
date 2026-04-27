@@ -1,0 +1,130 @@
+<div class="reservation-container">
+    <!-- Header -->
+    <header class="page-header animate-in">
+        <button class="btn-back" (click)='goBack()'>
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-title">
+            <h1>Réserver votre place</h1>
+            <p>Voyage {{ voyage()?.num_voyage }} • {{ voyage()?.date_depart | date:'dd MMMM yyyy' }}</p>
+        </div>
+    </header>
+
+    <main class="content-layout">
+        <!-- Left: Bus Map -->
+        <section class="bus-section animate-in">
+            <div class="bus-container" [class.small-bus]="isSmallBus()" [class.big-bus]="!isSmallBus()">
+                <div class="bus-body">
+                    <!-- Front of the bus -->
+                    <div class="bus-front">
+                        <div class="driver-seat">
+                            <mat-icon>settings</mat-icon>
+                            <span>Chauffeur</span>
+                        </div>
+                        <div class="entrance">
+                            <mat-icon>door_front</mat-icon>
+                            <span>Entrée</span>
+                        </div>
+                    </div>
+
+                    <!-- Seats Layout -->
+                    <div class="seats-grid"
+                        [style.grid-template-columns]="isSmallBus() ? 'repeat(2, 1fr) 40px 1fr' : 'repeat(2, 1fr) 40px repeat(2, 1fr)'">
+                        @for (seat of seatsArray(); track seat) {
+                        <!-- Add Aisle placeholder every N seats -->
+                        @if (isSmallBus()) {
+                        <!-- Column 1, 2, Aisle, 3 -->
+                        <button class="seat" [class.occupied]="isOccupied(seat)"
+                            [class.selected]="selectedSeat() === seat" (click)="selectSeat(seat)"
+                            [attr.aria-label]="'Siège ' + seat">
+                            <span class="seat-num">{{ seat }}</span>
+                            <div class="seat-icon"></div>
+                        </button>
+                        @if (seat % 3 === 2) { <div class="aisle"></div> }
+                        } @else {
+                        <!-- Column 1, 2, Aisle, 3, 4 -->
+                        <button class="seat" [class.occupied]="isOccupied(seat)"
+                            [class.selected]="selectedSeat() === seat" (click)="selectSeat(seat)">
+                            <span class="seat-num">{{ seat }}</span>
+                            <div class="seat-icon"></div>
+                        </button>
+                        @if (seat % 4 === 2) { <div class="aisle"></div> }
+                        }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="map-legend">
+                <div class="legend-item"><span class="box available"></span> Disponible</div>
+                <div class="legend-item"><span class="box occupied"></span> Occupé</div>
+                <div class="legend-item"><span class="box selected"></span> Votre choix</div>
+            </div>
+        </section>
+
+        <!-- Right: Trip Info & Summary -->
+        <aside class="summary-section animate-in">
+            <div class="info-card">
+                <h3>Détails du voyage</h3>
+                <div class="info-row">
+                    <mat-icon>location_on</mat-icon>
+                    <div class="text">
+                        <label>Itinéraire</label>
+                        <span>{{ voyage()?.ville_depart }} → {{ voyage()?.ville_arrivee }}</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <mat-icon>schedule</mat-icon>
+                    <div class="text">
+                        <label>Horaires</label>
+                        <span>{{ voyage()?.heure_depart || '07:30' }} • {{ voyage()?.date_depart | date:'dd/MM/yyyy'
+                            }}</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <mat-icon>directions_bus</mat-icon>
+                    <div class="text">
+                        <label>Véhicule</label>
+                        <span>{{ voyage()?.bus?.classe_bus || 'Premium Bus' }} ({{ voyage()?.vehicule_immatriculation
+                            }})</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="price-card">
+                <div class="booking-summary">
+                    <span class="label">Siège sélectionné :</span>
+                    <span class="val">{{ selectedSeat() ? 'N° ' + selectedSeat() : 'Aucun' }}</span>
+                </div>
+                <div class="divider"></div>
+                <div class="total-price">
+                    <span class="label">Prix total</span>
+                    <span class="amount">{{ voyage()?.prix | number }} <small>FCFA</small></span>
+                </div>
+                <button class="btn-confirm" [disabled]="!selectedSeat() || isSubmitting()" (click)="confirmBooking()">
+                    @if (isSubmitting()) {
+                    <div class="loader-sm"></div>
+                    <span>Traitement...</span>
+                    } @else {
+                    <span>Continuer la réservation</span>
+                    <mat-icon>arrow_forward</mat-icon>
+                    }
+                </button>
+            </div>
+
+            <div class="safety-badge">
+                <mat-icon>verified_user</mat-icon>
+                <p>Paiement sécurisé et confirmation instantanée par SMS.</p>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Loading Overlay -->
+    @if (isLoading()) {
+    <div class="loading-overlay">
+        <div class="loader-lg"></div>
+        <p>Chargement du plan du bus...</p>
+    </div>
+    }
+</div>

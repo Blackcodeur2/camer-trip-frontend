@@ -30,14 +30,12 @@ export class ChefAgenceLayout {
 
   menuItems = [
     { label: 'Tableau de bord', icon: 'dashboard', route: '/chef_agence/dashboard' },
-    { label: 'Bus', icon: 'directions_bus', route: '/chef_agence/buses' },
-    { label: 'Personnel', icon: 'groups', route: '/chef_agence/staff' },
-    { label: 'Trajets', icon: 'map', route: '/chef_agence/routes' },
+    { label: 'Bus', icon: 'directions_bus', route: '/chef_agence/bus' },
+    { label: 'Personnel', icon: 'groups', route: '/chef_agence/personnels' },
+    { label: 'Trajets', icon: 'map', route: '/chef_agence/trajets' },
     { label: 'Voyages', icon: 'event_note', route: '/chef_agence/voyages' },
-    { label: 'Nouvelle Réservation', icon: 'add_shopping_cart', route: '/chef_agence/booking' },
     { label: 'Réservations', icon: 'history', route: '/chef_agence/reservations' },
     { label: 'Gestion Colis', icon: 'local_mall', route: '/chef_agence/colis' },
-    { label: 'Validation', icon: 'qr_code_scanner', route: '/chef_agence/validate' },
     { label: 'Mon profil', icon: 'person', route: '/chef_agence/profile' }
   ];
 
