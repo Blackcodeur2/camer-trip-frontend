@@ -11,32 +11,35 @@
 
     <div *ngIf="!isLoading()" class="stats-grid">
         <div class="stat-card">
+            <div class="stat-info">
+                <span class="value">{{ stats().salesToday }}</span>
+                <span class="label">Ventes du jour</span>
+            </div>
             <div class="stat-icon"><mat-icon>point_of_sale</mat-icon></div>
-            <div class="stat-info">
-                <h3>Ventes du jour</h3>
-                <p class="value">{{ stats().salesToday }}</p>
-            </div>
         </div>
+
         <div class="stat-card">
+            <div class="stat-info">
+                <span class="value">{{ stats().activeReservations }}</span>
+                <span class="label">Réservations actives</span>
+            </div>
             <div class="stat-icon"><mat-icon>confirmation_number</mat-icon></div>
-            <div class="stat-info">
-                <h3>Réservations actives</h3>
-                <p class="value">{{ stats().activeReservations }}</p>
-            </div>
         </div>
+
         <div class="stat-card">
+            <div class="stat-info">
+                <span class="value">{{ stats().revenueToday | number }} <small>FCFA</small></span>
+                <span class="label">Chiffre d'affaire</span>
+            </div>
             <div class="stat-icon"><mat-icon>trending_up</mat-icon></div>
-            <div class="stat-info">
-                <h3>Chiffre d'affaire</h3>
-                <p class="value">{{ stats().revenueToday | number }} FCFA</p>
-            </div>
         </div>
+
         <div class="stat-card">
-            <div class="stat-icon"><mat-icon>verified</mat-icon></div>
             <div class="stat-info">
-                <h3>Validations en attente</h3>
-                <p class="value">{{ stats().pendingValidations }}</p>
+                <span class="value">{{ stats().pendingValidations }}</span>
+                <span class="label">Validations en attente</span>
             </div>
+            <div class="stat-icon"><mat-icon>verified</mat-icon></div>
         </div>
     </div>
 

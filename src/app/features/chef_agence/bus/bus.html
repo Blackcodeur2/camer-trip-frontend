@@ -1,7 +1,7 @@
 <div class="page-container">
     <div class="page-header">
         <div>
-            <h2 class="page-title">Gestion de la Flotte</h2>
+            <h1 class="page-title">Gestion de la Flotte</h1>
         </div>
         <div class="header-actions">
             <div class="search-box">
@@ -9,10 +9,8 @@
                 <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
                     placeholder="Rechercher un bus..." />
             </div>
-            <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()"
-                style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; cursor: pointer;">
-                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ isExporting() ? 'hourglass_empty' :
-                    'picture_as_pdf' }}</mat-icon>
+            <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
+                <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
                 <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
             </button>
             <button class="btn-primary" (click)="toggleForm()">
@@ -23,8 +21,8 @@
     </div>
 
     @if (showForm()) {
-    <div class="card form-card animate-fade-in">
-        <div class="card-header">
+    <div class="form-card">
+        <div class="form-header">
             <h3>{{ isEditing() ? 'Modifier le Bus' : 'Ajouter un Nouveau Bus' }}</h3>
         </div>
         <form [formGroup]="busForm" (ngSubmit)="onSubmit()">
@@ -75,66 +73,62 @@
     </div>
     }
 
-    <div class="card">
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Bus / Immat</th>
-                        <th>Code</th>
-                        <th>Capacité</th>
-                        <th>Type</th>
-                        <th>Classe</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (bus of paginatedBuses(); track bus.id) {
-                    <tr>
-                        <td>
-                            <div class="bus-info">
-                                <div class="bus-icon"><mat-icon>directions_bus</mat-icon></div>
-                                <span class="immat">{{ bus.immatriculation }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="bus-info">
-                                <span class="immat">{{ bus.code_bus }}</span>
-                            </div>
-                        </td>
-                        <td>{{ bus.nb_places }} places</td>
-                        <td>
-                            <div class="bus-info">
-                                <span class="immat">{{ bus.type_bus }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="bus-info">
-                                <span class="immat">{{ bus.classe_bus }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="status-badge" [class]="bus.statut.toLowerCase()">
-                                {{ bus.statut }}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="action-btn" (click)="editBus(bus)"
-                                title="Modifier"><mat-icon>edit</mat-icon></button>
-                        </td>
-                    </tr>
-                    } @empty {
-                    <tr>
-                        <td colspan="4" class="text-center py-8">Aucun véhicule trouvé.</td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-
-            <gev-pagination [totalItems]="buses().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
-                (pageChange)="currentPage.set($any($event))">
-            </gev-pagination>
-        </div>
+    <div class="table-container">
+        <table class="premium-table">
+            <thead>
+                <tr>
+                    <th>Bus / Immat</th>
+                    <th>Code</th>
+                    <th>Capacité</th>
+                    <th>Type</th>
+                    <th>Classe</th>
+                    <th>Statut</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (bus of paginatedBuses(); track bus.id) {
+                <tr>
+                    <td>
+                        <div class="bus-info">
+                            <div class="bus-icon"><mat-icon>directions_bus</mat-icon></div>
+                            <span class="immat">{{ bus.immatriculation }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-weight: 800; color: var(--color-dark);">{{ bus.code_bus }}</span>
+                    </td>
+                    <td><span style="font-weight: 700;">{{ bus.nb_places }} places</span></td>
+                    <td><span style="text-transform: capitalize; font-weight: 600;">{{ bus.type_bus }}</span></td>
+                    <td><span style="text-transform: capitalize; font-weight: 700; color: var(--color-primary);">{{ bus.classe_bus }}</span></td>
+                    <td>
+                        <span class="status-badge status--{{ bus.statut === 'disponible' ? 'success' : bus.statut === 'en_voyage' ? 'active' : 'pending' }}">
+                            {{ bus.statut }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="action-btn-group" style="justify-content: flex-end;">
+                            <button class="table-action-btn" (click)="editBus(bus)" title="Modifier">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="7">
+                        <div class="state-container">
+                            <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">directions_bus</mat-icon>
+                            <p style="font-weight: 700; color: var(--color-text-muted)">Aucun véhicule trouvé.</p>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
+
+    <gev-pagination [totalItems]="buses().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+        (pageChange)="currentPage.set($any($event))">
+    </gev-pagination>
 </div>

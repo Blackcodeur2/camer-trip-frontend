@@ -13,15 +13,15 @@
     </div>
   } @else if (stats()) {
     <!-- Dashboard Stats Grid (the rest of the original content) -->
-    <div class="stats-grid animate-fade-in">
+    <div class="stats-grid">
       @for (item of statItems; track item.key) {
         <div class="stat-card">
+          <div class="stat-info">
+            <span class="value">{{ getStatValue(item.key) }}</span>
+            <span class="label">{{ item.label }}</span>
+          </div>
           <div class="stat-icon">
             <mat-icon>{{ item.icon }}</mat-icon>
-          </div>
-          <div class="stat-content">
-            <h3>{{ getStatValue(item.key) }}</h3>
-            <p>{{ item.label }}</p>
           </div>
         </div>
       }
@@ -35,39 +35,6 @@
       </div>
       <div class="chart-container">
         <canvas id="activityChart"></canvas>
-      </div>
-    </section>
-
-    <!-- Quick Actions -->
-    <section class="quick-actions animate-fade-in">
-      <header class="section-header">
-        <h2>Actions rapides</h2>
-      </header>
-      <div class="actions-grid">
-        <button class="action-btn" routerLink="/proprietaire/agencies">
-          <mat-icon>add_business</mat-icon>
-          <span>Gérer Agences</span>
-        </button>
-        <button class="action-btn" routerLink="/proprietaire/gares">
-          <mat-icon>location_on</mat-icon>
-          <span>Gérer Gares</span>
-        </button>
-        <button class="action-btn" routerLink="/proprietaire/buses">
-          <mat-icon>directions_bus</mat-icon>
-          <span>Voir Bus</span>
-        </button>
-        <button class="action-btn" routerLink="/proprietaire/routes">
-          <mat-icon>route</mat-icon>
-          <span>Voir Trajets</span>
-        </button>
-        <button class="action-btn" routerLink="/proprietaire/voyages">
-          <mat-icon>flight_takeoff</mat-icon>
-          <span>Voir Voyages</span>
-        </button>
-        <button class="action-btn" routerLink="/proprietaire/managers">
-          <mat-icon>person_add</mat-icon>
-          <span>Gérer Utilisateurs</span>
-        </button>
       </div>
     </section>
   }

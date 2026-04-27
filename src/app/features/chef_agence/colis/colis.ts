@@ -6,10 +6,11 @@ import { PaginationComponent } from '../../../shared/pagination/pagination-compo
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of, catchError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Colis } from '../../../models/colis';
+import { AppButton } from "../../../shared/button/app-button/app-button";
 
 @Component({
   selector: 'app-colis',
-  imports: [CommonModule, MatIconModule, ReactiveFormsModule, PaginationComponent],
+  imports: [CommonModule, MatIconModule, ReactiveFormsModule, PaginationComponent, AppButton],
   templateUrl: './colis.html',
   styleUrl: './colis.css',
 })

@@ -4,26 +4,6 @@
             <h1>{{ agencyName() }}</h1>
             <p class="subtitle">{{ agencyStatus() }}</p>
         </div>
-
-        <!-- Actions Rapides -->
-        <div class="quick-actions">
-            <button class="action-btn" (click)="navigateTo('/chef_agence/buses')">
-                <span class="icon">🚌</span>
-                <span class="label">Gestion Bus</span>
-            </button>
-            <button class="action-btn" (click)="navigateTo('/chef_agence/routes')">
-                <span class="icon">🛣️</span>
-                <span class="label">Gestion Trajets</span>
-            </button>
-            <button class="action-btn" (click)="navigateTo('/chef_agence/staff')">
-                <span class="icon">👨‍✈️</span>
-                <span class="label">Personnel</span>
-            </button>
-            <button class="action-btn active" (click)="navigateTo('/chef_agence/voyages')">
-                <span class="icon">📅</span>
-                <span class="label">Voyages</span>
-            </button>
-        </div>
     </div>
 
     <div *ngIf="isLoading()" class="loading-state">
@@ -35,39 +15,39 @@
     <!-- Statistiques Agence -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="icon-circle bus">🚌</div>
             <div class="info">
-                <span class="label">Bus en Voyage</span>
                 <span class="value">{{ busesOnRoad() }}/{{ totalBuses() }}</span>
+                <span class="label">Bus en Voyage</span>
                 <span class="sub text-blue">{{ busUsage() }}% utilisation</span>
             </div>
+            <div class="icon-circle bus">🚌</div>
         </div>
 
         <div class="stat-card">
-            <div class="icon-circle ticket">🎫</div>
             <div class="info">
-                <span class="label">Billets Vendus</span>
                 <span class="value">{{ ticketsSoldToday() | number }}</span>
+                <span class="label">Billets Vendus</span>
                 <span class="sub text-green">Aujourd'hui</span>
             </div>
+            <div class="icon-circle ticket">🎫</div>
         </div>
 
         <div class="stat-card">
-            <div class="icon-circle money">💰</div>
             <div class="info">
-                <span class="label">Revenu Journalier</span>
                 <span class="value">{{ dailyRevenue() | number }} <small>FCFA</small></span>
+                <span class="label">Revenu Journalier</span>
                 <span class="sub text-green">Total du jour</span>
             </div>
+            <div class="icon-circle money">💰</div>
         </div>
 
         <div class="stat-card">
-            <div class="icon-circle staff">👨‍✈️</div>
             <div class="info">
-                <span class="label">Personnel Actif</span>
                 <span class="value">{{ activeStaff() }}</span>
+                <span class="label">Personnel Actif</span>
                 <span class="sub">Chauffeurs & Agents</span>
             </div>
+            <div class="icon-circle staff">👨‍✈️</div>
         </div>
     </div>
 

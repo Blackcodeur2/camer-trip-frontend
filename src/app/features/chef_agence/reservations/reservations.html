@@ -1,48 +1,49 @@
-<div class="reservations-page">
+<div class="page-container">
     <header class="page-header">
-        <div class="header-content">
-            <h1>Historique des Réservations</h1>
-            <p>Consultez et gérez les réservations enregistrées par l'agence.</p>
+        <div>
+            <h1 class="page-title">Historique des Réservations</h1>
+            <p class="page-subtitle">Consultez et gérez les réservations enregistrées par l'agence.</p>
         </div>
-        <div class="stats-mini">
-            <div class="stat-item">
-                <span class="label">Total</span>
-                <span class="value">{{ reservations().length }}</span>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div class="stats-mini">
+                <div class="stat-item">
+                    <span class="label">Total</span>
+                    <span class="value">{{ reservations().length }}</span>
+                </div>
             </div>
-        </div>
-        <div class="header-actions" *ngIf="isChefAgence()" style="display: flex; gap: 10px; margin-left: 20px;">
-            <button class="btn-secondary action-btn" (click)="downloadPdf()" [disabled]="isExporting()"
-                style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; cursor: pointer;">
-                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ isExporting() ? 'hourglass_empty' :
-                    'picture_as_pdf' }}</mat-icon>
+            @if (isChefAgence()) {
+            <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
+                <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
                 <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
             </button>
+            }
         </div>
     </header>
 
-    <div *ngIf="isLoading()" class="loading-state">
+    @if (isLoading()) {
+    <div class="state-container">
         <div class="spinner"></div>
         <p>Chargement des réservations...</p>
     </div>
-
-    <div *ngIf="!isLoading()" class="table-container">
-        <table class="data-table">
+    } @else {
+    <div class="table-container">
+        <table class="premium-table">
             <thead>
                 <tr>
                     <th>Référence</th>
                     <th>Client</th>
                     <th>Voyage / Bus</th>
-                    <th>Siège</th>
+                    <th style="text-align: center;">Siège</th>
                     <th>Prix</th>
                     <th>Date Dédiée</th>
                     <th>Statut</th>
-                    <th>Actions</th>
+                    <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @for (res of paginatedReservations(); track res.id) {
-                <tr class="res-row">
-                    <td class="ref-cell">
+                <tr>
+                    <td>
                         <span class="ref-text">{{ res.num_reservation || ('#' + res.id) }}</span>
                     </td>
                     <td>
@@ -65,51 +66,52 @@
                             </span>
                         </div>
                     </td>
-                    <td class="center">
+                    <td style="text-align: center;">
                         <span class="seat-badge">{{ res.place || '--' }}</span>
                     </td>
-                    <td class="price-cell">
-                        <span class="amount">{{ res.prix | number:'1.0-0' }}</span>
-                        <span class="currency">FCFA</span>
+                    <td>
+                        <div class="price-cell">
+                            <span class="amount">{{ res.prix | number:'1.0-0' }}</span>
+                            <span class="currency">FCFA</span>
+                        </div>
                     </td>
                     <td class="date-cell">
                         {{ (res.date || res.voyage?.date_depart) | date:'dd MMM yyyy, HH:mm' }}
                     </td>
                     <td>
-                        <span class="status-badge" [class]="res.statut || res.status">
-                            <mat-icon class="status-icon"
-                                *ngIf="res.statut === 'validee' || res.status === 'validee'">check_circle</mat-icon>
-                            <mat-icon class="status-icon"
-                                *ngIf="res.statut === 'annule' || res.status === 'annule'">cancel</mat-icon>
-                            <mat-icon class="status-icon"
-                                *ngIf="res.statut === 'en attente' || res.status === 'en attente'">schedule</mat-icon>
+                        <span class="status-badge status--{{ res.statut === 'validee' ? 'success' : res.statut === 'annule' ? 'rejected' : 'pending' }}">
                             {{ res.statut || res.statusLabel || res.status || 'Inconnu' }}
                         </span>
                     </td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="action-btn print" title="Imprimer le ticket"
-                                (click)="printReservation(res.id)">
+                    <td style="text-align: right;">
+                        <div class="action-btn-group" style="justify-content: flex-end;">
+                            <button class="table-action-btn" title="Imprimer le ticket" (click)="printReservation(res.id)">
                                 <mat-icon>print</mat-icon>
                             </button>
-                            <button class="action-btn cancel" *ngIf="res.statut !== 'annule'"
-                                title="Annuler la réservation" (click)="cancelReservation(res.id)">
+                            @if (res.statut !== 'annule') {
+                            <button class="table-action-btn delete" title="Annuler la réservation" (click)="cancelReservation(res.id)">
                                 <mat-icon>block</mat-icon>
                             </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="8">
+                        <div class="state-container">
+                            <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">receipt_long</mat-icon>
+                            <p style="font-weight: 700; color: var(--color-text-muted)">Aucune réservation trouvée.</p>
                         </div>
                     </td>
                 </tr>
                 }
             </tbody>
         </table>
-
-        <div *ngIf="reservations().length === 0" class="empty-state">
-            <mat-icon>receipt_long</mat-icon>
-            <p>Aucune réservation trouvée.</p>
-        </div>
     </div>
 
     <gev-pagination [totalItems]="reservations().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
         (pageChange)="currentPage.set($event)">
     </gev-pagination>
+    }
 </div>

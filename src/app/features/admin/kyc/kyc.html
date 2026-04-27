@@ -1,43 +1,47 @@
 <div class="page-container">
     <header class="page-header">
         <div class="header-text">
-            <h1>Vérifications KYC</h1>
-            <p>Approuvez ou rejetez les demandes de création de comptes Propriétaires.</p>
+            <h1 class="page-title">Vérifications KYC</h1>
+            <p class="page-subtitle">Approuvez ou rejetez les demandes de création de comptes Propriétaires.</p>
         </div>
     </header>
 
     @if (isLoading()) {
     <div class="loading-state">
-        <mat-icon class="spin large-icon">sync</mat-icon>
-        <p>Chargement des dossiers KYC...</p>
+        <mat-icon class="spin" style="font-size: 48px; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
+        <p style="font-weight: 700; color: var(--color-text-muted)">Chargement des dossiers KYC...</p>
     </div>
     }
 
     @if (!isLoading() && submissions().length === 0) {
     <div class="empty-state">
-        <mat-icon>verified_user</mat-icon>
-        <h2>Aucun dossier en attente</h2>
-        <p>Toutes les demandes de vérification KYC ont été traitées.</p>
+        <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">verified_user</mat-icon>
+        <h2 style="font-family: var(--font-display); font-weight: 800; color: var(--color-dark);">Aucun dossier en attente</h2>
+        <p style="color: var(--color-text-muted); font-weight: 500;">Toutes les demandes de vérification KYC ont été traitées.</p>
     </div>
     }
 
     @if (!isLoading() && submissions().length > 0) {
     <div class="submissions-list">
         @for (sub of submissions(); track sub.user.id) {
-        <div class="submission-card animate-in">
+        <div class="submission-card">
             <div class="card-header">
                 <div class="user-info">
-                    <div class="avatar">NG</div>
+                    <div class="avatar">
+                        {{ (sub.user.prenom?.[0] ?? '') + (sub.user.nom?.[0] ?? '') | uppercase }}
+                    </div>
                     <div>
                         <h3>{{ sub.user.prenom }} {{ sub.user.nom }}</h3>
-                        <span class="user-meta">{{ sub.user.email }} • {{ sub.user.telephone }}</span>
+                        <span class="user-meta">{{ sub.user.email }}</span>
                     </div>
                 </div>
-                <div class="account-type-badge" [class.business]="sub.isBusiness">
-                    {{ sub.isBusiness ? 'Entreprise' : 'Particulier' }}
-                </div>
-                <div class="status-badge" [class]="sub.statutGlobal.replace(' ', '-')">
-                    {{ sub.statutGlobal | uppercase }}
+                <div class="badges-row">
+                    <div class="account-type-badge" [class.business]="sub.isBusiness">
+                        {{ sub.isBusiness ? 'Entreprise' : 'Particulier' }}
+                    </div>
+                    <span class="status-badge status--{{ sub.statutGlobal === 'en attente' ? 'pending' : sub.statutGlobal === 'approuve' ? 'success' : 'rejected' }}">
+                        {{ sub.statutGlobal }}
+                    </span>
                 </div>
             </div>
 
@@ -50,22 +54,11 @@
                     </div>
                     <div class="doc-details">
                         <span class="doc-type">{{ getDocLabel(doc.type) }}</span>
-                        <span class="doc-status" [class]="doc.statut.replace(' ', '-')">{{ doc.statut }}</span>
-                        @if (doc.commentaire) {
-                        <span class="doc-comment">{{ doc.commentaire }}</span>
-                        }
+                        <span class="status-badge status--{{ doc.statut === 'en attente' ? 'pending' : doc.statut === 'approuve' ? 'success' : 'rejected' }}" style="font-size: 0.65rem; padding: 2px 8px;">
+                            {{ doc.statut }}
+                        </span>
                     </div>
-                    <div class="doc-actions-inline">
-                        <div class="doc-action-btn" (click)="viewDocument(doc); $event.stopPropagation()">
-                            <mat-icon>visibility</mat-icon>
-                            <span>Aperçu</span>
-                        </div>
-                        <a [href]="getDocUrl(doc)" download class="doc-action-btn download"
-                            (click)="$event.stopPropagation()">
-                            <mat-icon>download</mat-icon>
-                            <span>Télécharger</span>
-                        </a>
-                    </div>
+                    <mat-icon style="color: var(--color-text-muted); font-size: 20px;">visibility</mat-icon>
                 </div>
                 }
             </div>
@@ -90,29 +83,20 @@
     <div class="modal-overlay" (click)="closePreview()">
         <div class="modal-content" (click)="$event.stopPropagation()">
             <div class="modal-header">
-                <h3>Document : {{ getDocLabel(previewDocument()!.type) }}</h3>
-                <div class="modal-actions">
-                    <a [href]="previewDocument()!.rawUrl" target="_blank" class="icon-btn"
-                        title="Ouvrir dans un nouvel onglet">
-                        <mat-icon>open_in_new</mat-icon>
-                    </a>
-                    <a [href]="previewDocument()!.rawUrl" download class="icon-btn" title="Télécharger"
-                        style="margin-left: 8px; margin-right: 8px;">
-                        <mat-icon>download</mat-icon>
-                    </a>
-                    <button class="icon-btn" (click)="closePreview()"><mat-icon>close</mat-icon></button>
-                </div>
+                <h3>{{ getDocLabel(previewDocument()!.type) }}</h3>
+                <button class="table-action-btn" (click)="closePreview()">
+                    <mat-icon>close</mat-icon>
+                </button>
             </div>
             <div class="modal-body">
                 @if (previewDocument()!.isPdf) {
-                <iframe [src]="previewDocument()!.url" width="100%" height="500px"></iframe>
+                <iframe [src]="previewDocument()!.url" width="100%" height="600px" style="border: none; border-radius: 20px;"></iframe>
                 } @else {
-                <img [src]="previewDocument()!.url" alt="Document KYC"
-                    [class.selfie-img]="previewDocument()!.type === 'selfie'">
+                <img [src]="previewDocument()!.url" alt="Document KYC">
                 }
                 @if (previewDocument()!.comment) {
-                <div class="doc-info-box">
-                    <mat-icon>info</mat-icon>
+                <div class="status-badge status--pending" style="margin-top: 1.5rem; width: 100%; justify-content: center; padding: 1rem; border-radius: 14px;">
+                    <mat-icon style="font-size: 18px; margin-right: 8px;">info</mat-icon>
                     <span>{{ previewDocument()!.comment }}</span>
                 </div>
                 }

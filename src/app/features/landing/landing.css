@@ -38,32 +38,33 @@ h4,
 .section-label {
   display: inline-block;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #ffffff;
-  background: var(--color-primary-light);
-  background-opacity: 0.1;
-  padding: 6px 16px;
-  border-radius: 99px;
+  color: var(--color-primary);
+  background: rgba(0, 102, 68, 0.08);
+  padding: 8px 20px;
+  border-radius: 100px;
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 102, 68, 0.1);
+  border: 1px solid rgba(0, 102, 68, 0.1);
 }
 
 .section-title {
-  font-size: 2.75rem;
-  font-weight: 800;
-  color: var(--color-text-main);
-  line-height: 1.1;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--color-dark);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.04em;
 }
 
 .section-subtitle {
-  color: #4f857e;
-  font-size: 1.15rem;
-  max-width: 600px;
+  color: var(--color-text-muted);
+  font-size: 1.25rem;
+  max-width: 650px;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 /* ═══════════════════════════════════════ */
@@ -77,41 +78,33 @@ h4,
   z-index: 100;
   display: flex;
   align-items: center;
-  height: 80px;
-  background: #232424;
+  height: 88px;
+  background: var(--color-dark);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  transition: all 0.3s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* .scrolled variant can be added by TS if needed */
 .navbar.scrolled {
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  height: 72px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.1);
+  border-bottom-color: var(--color-border);
 }
+
 .navbar.scrolled .navbar__link {
-  color: #000000;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: color 0.2s;
+  color: var(--color-dark);
 }
+
 .navbar.scrolled .btn-ghost {
-  color: #000000;
-  text-decoration: none;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
-  border: 1px solid #040404;
-  border-style: double;
-  transition: all 0.2s;
+  color: var(--color-dark);
+  border-color: var(--color-dark);
 }
-.navbar.scrolled .btn-ghost:hover{
-  background-color: black;
-  border: 1px double #fff;
-  color: #fff
+
+.navbar.scrolled .btn-ghost:hover {
+  background: var(--color-dark);
+  color: white;
 }
 
 .navbar__container {
@@ -297,11 +290,13 @@ h4,
 }
 
 .hero__title {
-  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 5.5rem);
   font-weight: 900;
   color: white;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
+  line-height: 0.95;
+  margin-bottom: 2rem;
+  letter-spacing: -0.05em;
 }
 
 .hero__accent {
@@ -309,11 +304,12 @@ h4,
 }
 
 .hero__subtitle {
-  font-size: 1.25rem;
-  color: #ffffff;
-  margin: 0 auto 3rem;
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 auto 4rem;
   line-height: 1.6;
-  max-width: 700px;
+  max-width: 800px;
+  font-weight: 500;
 }
 
 /* Stats inside hero */

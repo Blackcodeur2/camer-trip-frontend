@@ -80,3 +80,158 @@ h1, h2, h3, h4, h5, h6, .display-font {
   font-weight: 700 !important;
   font-size: 0.95rem !important;
 }
+
+/* ═══════════════════════════════════════ */
+/*  PREMIUM TABLE SYSTEM                   */
+/* ═══════════════════════════════════════ */
+
+.table-container {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.premium-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+}
+
+.premium-table thead th {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1rem 1.25rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.premium-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.premium-table tbody tr:hover {
+  background: rgba(0, 102, 68, 0.02);
+}
+
+.premium-table tbody td {
+  padding: 1rem 1.25rem;
+  color: var(--color-text-main);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.premium-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* User/Agent Column Info */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--color-primary);
+  border: 1px solid var(--color-border);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+}
+
+.status--active, .status--success, .status--verified {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+}
+
+.status--pending, .status--warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+}
+
+.status--inactive, .status--danger, .status--rejected {
+  background: rgba(226, 30, 38, 0.1);
+  color: var(--color-accent);
+}
+
+.action-btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.table-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  background: white;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.table-action-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(0, 102, 68, 0.05);
+  transform: translateY(-2px);
+}
+
+.table-action-btn.delete:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(226, 30, 38, 0.05);
+}
+

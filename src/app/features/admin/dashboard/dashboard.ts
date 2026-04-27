@@ -84,33 +84,42 @@ export class Dashboard {
       data: {
         labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
         datasets: [{
-          label: 'Nombre de reservations',
+          label: 'Réservations',
           data: [120, 190, 300, 250, 200, 320, 400, 380, 210, 150, 180, 240],
-          backgroundColor: '#006644',  
+          borderColor: '#006644',
+          backgroundColor: 'rgba(0, 102, 68, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#006644',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            padding: 12,
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 13 },
+            cornerRadius: 12,
+            displayColors: false
           }
         },
         scales: {
           y: {
             beginAtZero: true,
-            grid: {
-              color: '#e2e8f0',
-            },
-            border: {
-              dash: [4, 4]
-            }
+            grid: { color: '#f1f5f9' },
+            border: { display: false }
           },
           x: {
-            grid: {
-              display: false
-            }
+            grid: { display: false },
+            border: { display: false }
           }
         }
       }

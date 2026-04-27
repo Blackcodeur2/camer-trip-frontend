@@ -1,54 +1,61 @@
 <div class="dashboard-page">
   @if (isLoading()) {
-    <div class="loading-overlay">
-      <div class="spinner"></div>
-      <p>Chargement des statistiques...</p>
-    </div>
+  <div class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Chargement des statistiques...</p>
+  </div>
   } @else {
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="icon icon-primary"><mat-icon fontIcon="business"></mat-icon></div>
-        <div>
-          <span class="label">Agences</span>
-          <span class="value">{{ totalAgencies() }}</span>
-        </div>
-      </div>
+  <!--<header class="dashboard-header">
+    <h2>Vue d'ensemble</h2>
+    <p class="dashboard-description">
+      Bienvenue dans votre interface d'administration. Suivez l'activité globale de Camer Trip.
+    </p>
+  </header>-->
 
-      <div class="stat-card">
-        <div class="icon icon-secondary"><mat-icon fontIcon="directions_bus"></mat-icon></div>
-        <div>
-          <span class="label">Bus</span>
-          <span class="value">{{ totalBuses() | number }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="icon icon-dark"><mat-icon fontIcon="people"></mat-icon></div>
-        <div>
-          <span class="label">Utilisateurs</span>
-          <span class="value">{{ totalUsers() | number }}</span>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="icon icon-accent"><mat-icon fontIcon="location_on"></mat-icon></div>
-        <div>
-          <span class="label">Stations</span>
-          <span class="value">{{ totalGares() }}</span>
-        </div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="icon icon-primary"><mat-icon fontIcon="business"></mat-icon></div>
+      <div class="stat-info">
+        <span class="value">{{ totalAgencies() }}</span>
+        <span class="label">Agences</span>
       </div>
     </div>
 
-    <div class="dashboard-body">
-      <section class="panel chart-card">
-        <div class="panel-header">
-          <h3>Activité mensuelle</h3>
-          <span class="badge badge-soft">Cette année</span>
-        </div>
-        <div class="chart-container">
-          <canvas id="activityChart"></canvas>
-        </div>
-      </section>
+    <div class="stat-card">
+      <div class="icon icon-secondary"><mat-icon fontIcon="directions_bus"></mat-icon></div>
+      <div class="stat-info">
+        <span class="value">{{ totalBuses() | number }}</span>
+        <span class="label">Bus</span>
+      </div>
     </div>
+
+    <div class="stat-card">
+      <div class="icon icon-dark"><mat-icon fontIcon="people"></mat-icon></div>
+      <div class="stat-info">
+        <span class="value">{{ totalUsers() | number }}</span>
+        <span class="label">Utilisateurs</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon icon-accent"><mat-icon fontIcon="location_on"></mat-icon></div>
+      <div class="stat-info">
+        <span class="value">{{ totalGares() }}</span>
+        <span class="label">Stations</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-body">
+    <section class="panel chart-card">
+      <div class="panel-header">
+        <h3>Activité mensuelle</h3>
+        <span class="badge badge-soft">Cette année</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="activityChart"></canvas>
+      </div>
+    </section>
+  </div>
   }
 </div>

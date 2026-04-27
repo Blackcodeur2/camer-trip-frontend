@@ -1,92 +1,89 @@
 .page-container {
-    padding: 1rem 0;
-    font-family: 'monospace', system-ui, sans-serif;
-    animation: fadeIn 0.3s ease-in-out;
+    padding: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
 }
 
 .page-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #f8fafc;
-    margin: 0 0 0.25rem 0;
-    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--color-dark);
+    margin: 0;
+    letter-spacing: -0.05em;
 }
 
 .page-subtitle {
-    color: #64748b;
-    font-size: 0.95rem;
-    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
 }
 
-.card {
-    background: #1e293b;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    overflow: hidden;
-    border: 1px solid #334155;
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
 }
 
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
+.filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 100px;
+    background: white;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
+.filter-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: translateY(-2px);
 }
 
-.data-table th {
-    background-color: #334155;
-    padding: 1rem 1.5rem;
+.filter-btn.active {
+    background: var(--color-dark);
+    color: white;
+    border-color: var(--color-dark);
+}
+
+.filter-count {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 8px;
+    border-radius: 100px;
     font-size: 0.75rem;
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid #334155;
 }
 
-.data-table td {
-    padding: 1rem 1.5rem;
-    vertical-align: middle;
-    border-bottom: 1px solid #334155;
-    font-size: 0.9rem;
-    color: #f8fafc;
+.active .filter-count {
+    background: rgba(255, 255, 255, 0.2);
 }
 
-.data-table tbody tr {
-    transition: background-color 0.2s;
-}
-
-.data-table tbody tr:hover {
-    background-color: #334155;
-}
-
-.data-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
+/* User Cell */
 .user-cell {
     display: flex;
     align-items: center;
@@ -94,445 +91,159 @@
 }
 
 .user-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background-color: #334155;
-    color: #1E40AF;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
-.user-avatar.admin-avatar {
-    background-color: #FEE2E2;
-    color: #991B1B;
-}
+/* Role colors */
+.avatar-admin { background: #fee2e2; color: #991b1b; }
+.avatar-chef_agence { background: #fef3c7; color: #92400e; }
+.avatar-agent { background: #831843; color: white; }
+.avatar-chauffeur { background: #dbeafe; color: #1e40af; }
+.avatar-client { background: #dcfce7; color: #166534; }
+.avatar-proprietaire { background: #e0e7ff; color: #3730a3; }
 
 .user-name {
-    font-weight: 600;
-    color: #f8fafc;
+    font-weight: 800;
+    color: var(--color-dark);
 }
 
 .user-sub {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    margin-top: 1px;
-}
-
-.text-gray {
-    color: #64748b;
-}
-
-/* ─── Badges de rôle ─── */
-.role-badge {
-    display: inline-block;
-    padding: 0.25rem 0.65rem;
-    border-radius: 6px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    white-space: nowrap;
-}
-
-/* Classe dynamique via [class]="'role-' + user.role_user.toLowerCase()" */
-.role-admin {
-    background: #FEE2E2;
-    color: #991B1B;
-}
-
-.role-chef_agence {
-    background: #FEF3C7;
-    color: #92400E;
-}
-
-.role-agent {
-    background: #831843;
-    color: #fbf9fa;
-}
-
-.role-chauffeur {
-    background: #DBEAFE;
-    color: #1E40AF;
-}
-
-.role-controleur {
-    background: #EDE9FE;
-    color: #5B21B6;
-}
-
-.role-client {
-    background: #D1FAE5;
-    color: #065F46;
-}
-
-.role-proprietaire {
-    background: #E0E7FF;
-    color: #3730A3;
-}
-
-/* Compatibilité anciens noms si encore utilisés */
-.role-badge.admin {
-    background: #FEE2E2;
-    color: #991B1B;
-}
-
-.role-badge.chef_agence {
-    background: #FEF3C7;
-    color: #92400E;
-}
-
-.role-badge.agent {
-    background: #831843;
-    color: #9D174D;
-}
-
-.role-badge.chauffeur {
-    background: #DBEAFE;
-    color: #1E40AF;
-}
-
-.role-badge.controleur {
-    background: #EDE9FE;
-    color: #5B21B6;
-}
-
-.role-badge.client {
-    background: #D1FAE5;
-    color: #065F46;
-}
-
-.role-badge.proprietaire {
-    background: #E0E7FF;
-    color: #3730A3;
-}
-
-/* ─── Avatars colorés par rôle ─── */
-.user-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    flex-shrink: 0;
-    background: #DBEAFE;
-    color: #1E40AF;
-}
-
-.avatar-admin {
-    background: #FEE2E2;
-    color: #991B1B;
-}
-
-.avatar-chef_agence {
-    background: #FEF3C7;
-    color: #92400E;
-}
-
-.avatar-agent {
-    background: #831843;
-    color: #fcfafb;
-}
-
-.avatar-chauffeur {
-    background: #DBEAFE;
-    color: #1E40AF;
-}
-
-.avatar-controleur {
-    background: #EDE9FE;
-    color: #5B21B6;
-}
-
-.avatar-client {
-    background: #D1FAE5;
-    color: #065F46;
-}
-
-.avatar-proprietaire {
-    background: #E0E7FF;
-    color: #3730A3;
-}
-
-/* ─── Barre de filtres par rôle ─── */
-.filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #334155;
-    background: #334155;
-}
-
-.filter-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.9rem;
-    border: 1px solid #334155;
-    border-radius: 99px;
-    background: #1e293b;
-    color: #4B5563;
     font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
+    color: var(--color-text-muted);
+    margin-top: 2px;
 }
 
-.filter-btn:hover {
-    border-color: #60a5fa;
-    color: #1E40AF;
-    background: #1e3a8a;
-}
-
-.filter-btn.active {
-    background: #2563EB;
-    color: white;
-    border-color: #60a5fa;
-}
-
-.filter-count {
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 99px;
-    padding: 0 6px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    min-width: 18px;
-    text-align: center;
-}
-
-.filter-btn:not(.active) .filter-count {
-    background: #0f172a;
-    color: #64748b;
-}
-
-/* ─── Actions header ─── */
-.actions {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.text-right {
-    text-align: right !important;
-}
-
-.action-btn {
-    background: none;
-    border: none;
-    color: #94a3b8;
-    cursor: pointer;
-    padding: 0.35rem;
-    border-radius: 6px;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.action-btn:hover {
-    color: #1E40AF;
-    background-color: #DBEAFE;
-}
-
-/* ─── State containers ─── */
-.state-container {
-    padding: 5rem 2rem;
-    text-align: center;
-    color: #64748b;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.error-state .error-icon {
-    font-size: 3rem;
-    width: 3rem;
-    height: 3rem;
-    color: #EF4444;
-}
-
-.empty-state .empty-icon {
-    font-size: 3rem;
-    width: 3rem;
-    height: 3rem;
-    color: #D1D5DB;
-}
-
-.btn-retry {
-    background-color: #60a5fa;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 0.6rem 1.2rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.btn-retry:hover {
-    background-color: #60a5fa;
-}
-
-/* ─── Spinner ─── */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #F3F4F6;
-    border-top: 3px solid #3B82F6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* ─── Buttons ─── */
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: #60a5fa;
-    color: white;
-    border: none;
+/* Role Badges */
+.role-badge {
+    padding: 4px 12px;
     border-radius: 8px;
-    padding: 0.6rem 1.2rem;
-    font-weight: 500;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.btn-primary:hover {
-    background-color: #1D4ED8;
-}
+.role-admin { background: #fee2e2; color: #991b1b; }
+.role-chef_agence { background: #fef3c7; color: #92400e; }
+.role-agent { background: #831843; color: white; }
+.role-chauffeur { background: #dbeafe; color: #1e40af; }
+.role-client { background: #dcfce7; color: #166534; }
+.role-proprietaire { background: #e0e7ff; color: #3730a3; }
 
-.btn-primary mat-icon {
-    font-size: 1.2rem;
-    width: 1.2rem;
-    height: 1.2rem;
-}
-
-.btn-secondary {
-    background-color: #f8fafc;
-    color: #4B5563;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
-    padding: 0.6rem 1.2rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-secondary:hover {
-    background-color: #334155;
-}
-
-/* ─── Form card ─── */
+/* Form Card */
 .form-card {
-    margin-bottom: 2rem;
-    padding: 1.5rem 2rem;
-    border-top: 4px solid #3B82F6;
-    animation: slideDown 0.3s ease-out forwards;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.form-header {
-    margin-bottom: 2rem;
+    background: white;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    margin-bottom: 3rem;
+    border: 1px solid var(--color-border);
 }
 
 .form-header h2 {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.25rem;
-    color: #f8fafc;
-}
-
-.form-header p {
-    margin: 0;
-    color: #64748b;
-    font-size: 0.9rem;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-dark);
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-
-.full-width {
-    grid-column: 1 / -1;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    margin: 2rem 0;
 }
 
 .form-group label {
+    display: block;
     font-size: 0.85rem;
-    font-weight: 600;
-    color: #f8fafc;
-}
-
-.form-highlight {
-    padding: 1rem;
-    background-color: #334155;
-    border-radius: 8px;
-    border: 1px dashed #CBD5E1;
+    font-weight: 800;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
 }
 
 .form-control {
-    padding: 0.7rem 1rem;
-    border: 1px solid #D1D5DB;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    transition: border-color 0.2s;
-    font-family: inherit;
     width: 100%;
-    box-sizing: border-box;
-    background: #1e293b;
+    padding: 0.85rem 1.25rem;
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.3s;
 }
 
 .form-control:focus {
     outline: none;
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--color-primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(0, 102, 68, 0.05);
+}
+
+.form-highlight {
+    background: rgba(0, 102, 68, 0.03);
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px dashed var(--color-primary);
 }
 
 .form-actions {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+}
+
+/* States */
+.state-container {
+    padding: 5rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    border-top: 1px solid #E5E7EB;
-    padding-top: 1.5rem;
+    gap: 1.5rem;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 5px solid var(--color-surface-hover);
+    border-top: 5px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.5rem;
+    background: var(--color-dark);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }

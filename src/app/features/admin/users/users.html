@@ -13,7 +13,7 @@
     </div>
 
     @if (showCreateForm()) {
-    <div class="card form-card">
+    <div class="form-card">
         <div class="form-header">
             <h2>Nouvel Utilisateur</h2>
             <p>Définissez son profil, son rôle et sa potentielle gare d'affectation.</p>
@@ -50,7 +50,7 @@
                     <input type="text" formControlName="password" class="form-control" />
                 </div>
 
-                <div class="form-group full-width">
+                <div class="form-group">
                     <label>Rôle du profil</label>
                     <select formControlName="role_user" class="form-control">
                         <option value="">Sélectionnez un rôle</option>
@@ -93,20 +93,20 @@
     </div>
     }
 
-    <div class="card">
-        @if (isLoading()) {
-        <div class="state-container">
-            <div class="spinner"></div>
-            <p>Chargement des utilisateurs en cours...</p>
-        </div>
-        } @else if (error()) {
-        <div class="state-container error-state">
-            <mat-icon class="error-icon">error_outline</mat-icon>
-            <p>{{ error() }}</p>
-            <button class="btn-retry" (click)="loadUsers()">Réessayer</button>
-        </div>
-        } @else {
+    @if (isLoading()) {
+    <div class="state-container">
+        <div class="spinner"></div>
+        <p>Chargement des utilisateurs en cours...</p>
+    </div>
+    } @else if (error()) {
+    <div class="state-container error-state">
+        <mat-icon class="error-icon" style="font-size: 48px; width: 48px; height: 48px; color: var(--color-accent);">error_outline</mat-icon>
+        <p>{{ error() }}</p>
+        <button class="btn-retry" (click)="loadUsers()">Réessayer</button>
+    </div>
+    } @else {
 
+    <div class="table-container">
         <!-- Barre de filtres par rôle -->
         <div class="filter-bar">
             <button class="filter-btn" [class.active]="filterRole() === ''" (click)="filterRole.set('')">
@@ -120,65 +120,65 @@
             }
         </div>
 
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Utilisateur</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                        <th>CNI</th>
-                        <th>Rôle</th>
-                        <th>Inscrit le</th>
-                        <th class="text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (user of filteredUsers(); track user.id) {
-                    <tr>
-                        <td>
-                            <div class="user-cell">
-                                <div class="user-avatar" [class]="'avatar-' + user.role_user.toLowerCase()">
-                                    {{ 'NG' }}
-                                </div>
-                                <div>
-                                    <div class="user-name">{{ user.prenom }} {{ user.nom }}</div>
-                                    <div class="user-sub">ID #{{ user.id }}</div>
-                                </div>
+        <table class="premium-table">
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>CNI</th>
+                    <th>Rôle</th>
+                    <th>Inscrit le</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (user of filteredUsers(); track user.id) {
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar" [class]="'avatar-' + user.role_user.toLowerCase()">
+                                {{ (user.prenom?.[0] ?? '') + (user.nom?.[0] ?? '') | uppercase }}
                             </div>
-                        </td>
-                        <td><span class="text-gray">{{ user.email }}</span></td>
-                        <td>{{ user.telephone || '—' }}</td>
-                        <td><span class="text-gray">{{ user.num_cni || '—' }}</span></td>
-                        <td>
-                            <span class="role-badge" [class]="'role-' + user.role_user.toLowerCase()">
-                                {{ getRoleLabel(user.role_user) }}
-                            </span>
-                        </td>
-                        <td>{{ (user.created_at | date:'dd/MM/yyyy') || '—' }}</td>
-                        <td class="text-right">
-                            <button class="action-btn" title="Voir détails">
+                            <div>
+                                <div class="user-name">{{ user.prenom }} {{ user.nom }}</div>
+                                <div class="user-sub">ID #{{ user.id }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span style="color: var(--color-text-muted)">{{ user.email }}</span></td>
+                    <td>{{ user.telephone || '—' }}</td>
+                    <td>{{ user.num_cni || '—' }}</td>
+                    <td>
+                        <span class="role-badge" [class]="'role-' + user.role_user.toLowerCase()">
+                            {{ getRoleLabel(user.role_user) }}
+                        </span>
+                    </td>
+                    <td>{{ (user.created_at | date:'dd/MM/yyyy') || '—' }}</td>
+                    <td style="text-align: right;">
+                        <div class="action-btn-group" style="justify-content: flex-end;">
+                            <button class="table-action-btn" title="Voir détails">
                                 <mat-icon>visibility</mat-icon>
                             </button>
-                        </td>
-                    </tr>
-                    } @empty {
-                    <tr>
-                        <td colspan="7">
-                            <div class="state-container empty-state">
-                                <mat-icon class="empty-icon">people_outline</mat-icon>
-                                <p>Aucun utilisateur trouvé pour ce filtre.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-
-            <gev-pagination [totalItems]="totalItems()" [pageSize]="pageSize()" [currentPage]="currentPage()"
-                (pageChange)="onPageChange($event)">
-            </gev-pagination>
-        </div>
-        }
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="7">
+                        <div class="state-container empty-state">
+                            <mat-icon style="font-size: 48px; width: 48px; height: 48px;">people_outline</mat-icon>
+                            <p>Aucun utilisateur trouvé pour ce filtre.</p>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
+
+    <gev-pagination [totalItems]="totalItems()" [pageSize]="pageSize()" [currentPage]="currentPage()"
+        (pageChange)="onPageChange($event)">
+    </gev-pagination>
+    }
 </div>

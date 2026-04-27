@@ -4,11 +4,9 @@
             <h1 class="page-title">Planification des Voyages</h1>
             <p class="page-subtitle">Programmez et surveillez les départs de bus.</p>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()"
-                style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; cursor: pointer;">
-                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ isExporting() ? 'hourglass_empty' :
-                    'picture_as_pdf' }}</mat-icon>
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
+                <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
                 <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
             </button>
             <button class="btn-primary" (click)="toggleForm()">
@@ -18,7 +16,7 @@
         </div>
     </div>
 
-    <div class="stats-bar animate-fade-in">
+    <div class="stats-bar">
         <div class="stat-card">
             <div class="icon today"><mat-icon>today</mat-icon></div>
             <div class="info">
@@ -42,7 +40,7 @@
         </div>
     </div>
 
-    <div class="search-section animate-fade-in">
+    <div class="search-section">
         <div class="search-box">
             <mat-icon>search</mat-icon>
             <input type="text" placeholder="Rechercher un voyage, une destination, un chauffeur..."
@@ -51,7 +49,7 @@
     </div>
 
     @if (showForm()) {
-    <div class="card form-card animate-fade-in">
+    <div class="form-card">
         <div class="form-header">
             <h3>{{ isEditing() ? 'Modifier le Voyage' : 'Programmer un Nouveau Voyage' }}</h3>
         </div>
@@ -66,7 +64,6 @@
                             {{ trajet.depart }} -> {{ trajet.arrivee}} ({{ trajet.type_trajet }})
                         </option>
                         }
-
                     </select>
                 </div>
                 <div class="form-group">
@@ -112,7 +109,6 @@
                     </select>
                 </div>
                 }
-
             </div>
             <div class="form-actions">
                 <app-app-button type="submit" [disabled]="voyageForm.invalid" [loading]="isSubmitting()">
@@ -124,121 +120,111 @@
     }
 
     @if (isLoading()) {
-    <div class="card loading-card">
+    <div class="state-container">
         <div class="spinner"></div>
         <p>Chargement des voyages...</p>
     </div>
-    }
-
-    @if (!isLoading()) {
-    <div class="card table-card">
-
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Date & Heure</th>
-                        <th>Voyage & Trajet</th>
-                        <th>Chauffeur</th>
-                        <th>Bus / Véhicule</th>
-                        <th>Places</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (voyage of paginatedVoyages(); track voyage.id) {
-                    <tr class="voyage-row">
-                        <td>
-                            <div class="date-cell">
-                                <span class="day">{{ voyage.date_depart | date:'dd MMM yyyy':'':'fr' }}</span>
-                                <span class="time">{{ voyage.heure_depart || (voyage.date_depart | date:'HH:mm')
-                                    }}</span>
+    } @else {
+    <div class="table-container">
+        <table class="premium-table">
+            <thead>
+                <tr>
+                    <th>Date & Heure</th>
+                    <th>Voyage & Trajet</th>
+                    <th>Chauffeur</th>
+                    <th>Bus / Véhicule</th>
+                    <th>Places</th>
+                    <th>Statut</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (voyage of paginatedVoyages(); track voyage.id) {
+                <tr>
+                    <td>
+                        <div class="date-cell">
+                            <span class="day">{{ voyage.date_depart | date:'dd MMM yyyy':'':'fr' }}</span>
+                            <span class="time">{{ voyage.heure_depart || (voyage.date_depart | date:'HH:mm')
+                                }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="voyage-info">
+                            <span class="num">{{ voyage.num_voyage }}</span>
+                            <div class="path">
+                                {{ voyage?.ville_depart?.nom}}
+                                <mat-icon>arrow_forward</mat-icon>
+                                {{ voyage.ville_arrivee?.nom }}
                             </div>
-                        </td>
-                        <td>
-                            <div class="voyage-info">
-                                <span class="num">{{ voyage.num_voyage }}</span>
-                                <div class="path">
-                                    {{ voyage?.ville_depart?.nom}}
-                                    <mat-icon>arrow_forward</mat-icon>
-                                    {{ voyage.ville_arrivee?.nom }}
-                                </div>
-
+                        </div>
+                    </td>
+                    <td>
+                        @if (voyage.chauffeur) {
+                        <div class="user-cell">
+                            <div class="user-avatar avatar-chauffeur">
+                                {{ (voyage.chauffeur.prenom?.[0] ?? '') + (voyage.chauffeur.nom?.[0] ?? '') | uppercase }}
                             </div>
-                        </td>
-                        <td>
-                            @if (voyage.chauffeur) {
-                            <div class="user-cell">
-                                <div class="avatar">{{ 'CH' |
-                                    uppercase }}</div>
-                                <div class="member-meta">
-                                    <div class="name">{{ voyage.chauffeur.nom }} {{ voyage.chauffeur.prenom }}</div>
-                                    <div class="email-sub">{{ voyage.chauffeur.telephone }}</div>
-                                </div>
+                            <div>
+                                <div class="user-name" style="font-size: 0.9rem;">{{ voyage.chauffeur.nom }} {{ voyage.chauffeur.prenom }}</div>
+                                <div class="user-sub">{{ voyage.chauffeur.telephone }}</div>
                             </div>
-                            } @else {
-                            <span class="text-muted">Non assigné</span>
-                            }
-                        </td>
-                        <td>
-                            <div class="bus-info">
-                                <span class="immat">{{ voyage.vehicule_immatriculation || voyage.bus?.immatriculation
-                                    }}</span>
-                                <span class="code">{{ voyage.code_bus }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="places-cell">
-                                <span class="dispo" [class.low]="(voyage.places_disponibles || 0) < 5">
-                                    {{ voyage.places_disponibles ?? '--' }}
-                                </span>
-                                <span class="total">/ {{ voyage.bus?.nb_places || '--' }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="status-badge"
-                                [class]="(voyage.statut?.toLowerCase() || 'unknown').replace(' ', '-')">
-                                {{ voyage.statut || 'En attente' }}
+                        </div>
+                        } @else {
+                        <span style="color: var(--color-text-muted)">Non assigné</span>
+                        }
+                    </td>
+                    <td>
+                        <div class="bus-info">
+                            <span class="immat">{{ voyage.vehicule_immatriculation || voyage.bus?.immatriculation
+                                }}</span>
+                            <span class="code">{{ voyage.code_bus }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="places-cell">
+                            <span class="dispo" [class.low]="(voyage.places_disponibles || 0) < 5">
+                                {{ voyage.places_disponibles ?? '--' }}
                             </span>
-                        </td>
-                        <td class="actions">
-                            <div class="action-group">
-                                <button class="action-btn edit" (click)="editVoyage(voyage)"
-                                    title="Modifier"><mat-icon>edit</mat-icon></button>
-                                @if (voyage.statut === 'en cours' || voyage.statut === 'en voyage') {
-                                <button class="action-btn validate" (click)="markAsTerminated(voyage)"
-                                    title="Terminer"><mat-icon>check_circle</mat-icon></button>
-                                }
-                                <button class="action-btn delete"
-                                    title="Supprimer"><mat-icon>delete_outline</mat-icon></button>
-
-                            </div>
-                        </td>
-                    </tr>
-                    } @empty {
-                    <tr>
-                        <td colspan="7">
-                            <div class="empty-state">
-                                <mat-icon>event_busy</mat-icon>
-                                <span>{{ searchTerm() ? 'Aucun voyage ne correspond à votre recherche.' : 'Aucun voyage
-                                    programmé pour le moment.' }}</span>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-
-            <div class="table-footer">
-                <div class="pagination-info">
-                    Affichage de {{ paginatedVoyages().length }} sur {{ filteredVoyages().length }} voyages
-                </div>
-                <gev-pagination [totalItems]="filteredVoyages().length" [pageSize]="pageSize()"
-                    [currentPage]="currentPage()" (pageChange)="currentPage.set($any($event))">
-                </gev-pagination>
-            </div>
-        </div>
+                            <span class="total">/ {{ voyage.bus?.nb_places || '--' }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge status--{{ voyage.statut === 'en attente' ? 'pending' : voyage.statut === 'termine' ? 'success' : voyage.statut === 'annule' ? 'rejected' : 'active' }}">
+                            {{ voyage.statut || 'En attente' }}
+                        </span>
+                    </td>
+                    <td style="text-align: right;">
+                        <div class="action-btn-group" style="justify-content: flex-end;">
+                            <button class="table-action-btn" (click)="editVoyage(voyage)" title="Modifier">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            @if (voyage.statut === 'en cours' || voyage.statut === 'en voyage') {
+                            <button class="table-action-btn" (click)="markAsTerminated(voyage)" title="Terminer" style="color: var(--color-primary);">
+                                <mat-icon>check_circle</mat-icon>
+                            </button>
+                            }
+                            <button class="table-action-btn delete" title="Supprimer">
+                                <mat-icon>delete_outline</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">event_busy</mat-icon>
+                            <p style="font-weight: 700; color: var(--color-text-muted)">{{ searchTerm() ? 'Aucun voyage ne correspond à votre recherche.' : 'Aucun voyage programmé pour le moment.' }}</p>
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
+
+    <gev-pagination [totalItems]="filteredVoyages().length" [pageSize]="pageSize()"
+        [currentPage]="currentPage()" (pageChange)="currentPage.set($any($event))">
+    </gev-pagination>
     }
 </div>
