@@ -1,19 +1,19 @@
-<div class="buses-container">
-    <div class="header">
+<div class="page-container">
+    <div class="page-header">
         <div class="header-title">
-            <h1><mat-icon>directions_bus</mat-icon> Mes Bus</h1>
-            <p>Consultez tous vos véhicules</p>
+            <h1 class="page-title">Mes Bus</h1>
+            <p class="page-subtitle">Visualisez et gérez votre flotte de véhicules</p>
         </div>
     </div>
 
     @if (isLoading()) {
-    <div class="loading">
-        <div class="spinner"></div>
-        <p>Chargement des bus...</p>
+    <div class="loading-state">
+        <mat-icon class="spin large-icon" style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
+        <p>Chargement de votre flotte...</p>
     </div>
     } @else if (buses().length === 0) {
     <div class="empty-state">
-        <mat-icon>directions_bus</mat-icon>
+        <mat-icon style="font-size: 4rem; width: 64px; height: 64px; color: var(--color-border);">directions_bus</mat-icon>
         <h3>Aucun bus</h3>
         <p>Vous n'avez pas encore de bus enregistrés</p>
     </div>
@@ -25,14 +25,8 @@
                 <h3>{{ bus.marque }} {{ bus.modele }}</h3>
                 <span class="plate">{{ bus.immatriculation }}</span>
             </div>
+
             <div class="card-body">
-                <div class="info-item">
-                    <mat-icon>badge</mat-icon>
-                    <div>
-                        <span class="label">Immatriculation</span>
-                        <span class="value">{{ bus.immatriculation }}</span>
-                    </div>
-                </div>
                 <div class="info-item">
                     <mat-icon>event_seat</mat-icon>
                     <div>
@@ -40,13 +34,20 @@
                         <span class="value">{{ bus.nb_places }} places</span>
                     </div>
                 </div>
+
                 <div class="info-item">
-                    <mat-icon>check_circle</mat-icon>
+                    <mat-icon>info</mat-icon>
                     <div>
                         <span class="label">Statut</span>
-                        <span class="value" [class.active]="bus.statut === 'ACTIF'">
-                            {{ bus.statut }}
-                        </span>
+                        <span class="value" [class.active]="bus.statut === 'ACTIF'">{{ bus.statut || 'Actif' }}</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <mat-icon>business</mat-icon>
+                    <div>
+                        <span class="label">Agence</span>
+                        <span class="value">{{ bus.agence_nom || '...' }}</span>
                     </div>
                 </div>
             </div>

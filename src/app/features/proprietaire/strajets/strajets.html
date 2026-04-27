@@ -1,19 +1,19 @@
-<div class="routes-container">
-    <div class="header">
+<div class="page-container">
+    <div class="page-header">
         <div class="header-title">
-            <h1><mat-icon>route</mat-icon> Mes Trajets</h1>
-            <p>Consultez tous vos trajets disponibles</p>
+            <h1 class="page-title">Mes Trajets</h1>
+            <p class="page-subtitle">Consultez tous vos trajets disponibles</p>
         </div>
     </div>
 
     @if (isLoading()) {
-    <div class="loading">
-        <div class="spinner"></div>
+    <div class="loading-state">
+        <mat-icon class="spin large-icon" style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
         <p>Chargement des trajets...</p>
     </div>
     } @else if (routes().length === 0) {
     <div class="empty-state">
-        <mat-icon>route</mat-icon>
+        <mat-icon style="font-size: 4rem; width: 64px; height: 64px; color: var(--color-border);">route</mat-icon>
         <h3>Aucun trajet</h3>
         <p>Vous n'avez pas encore de trajets configurés</p>
     </div>
@@ -22,22 +22,24 @@
         @for (route of routes(); track route.id) {
         <div class="route-card">
             <div class="route-path">
-                <div class="location depart">
+                <div class="location">
                     <mat-icon>location_on</mat-icon>
                     <div>
                         <span class="city">{{ route.depart || 'N/A' }}</span>
                         <span class="detail">Départ</span>
                     </div>
                 </div>
+                
                 <div class="arrow">
-                    <mat-icon>trending_flat</mat-icon>
+                    <mat-icon>east</mat-icon>
                 </div>
-                <div class="location arrivee">
-                    <mat-icon>location_on</mat-icon>
+
+                <div class="location" style="text-align: right;">
                     <div>
                         <span class="city">{{ route.arrivee || 'N/A' }}</span>
                         <span class="detail">Arrivée</span>
                     </div>
+                    <mat-icon>location_on</mat-icon>
                 </div>
             </div>
 
@@ -49,11 +51,20 @@
                         <span class="value">{{ route.distance_km || '- ' }} km</span>
                     </div>
                 </div>
+
                 <div class="info-item">
-                    <mat-icon>local_taxi</mat-icon>
+                    <mat-icon>payments</mat-icon>
                     <div>
                         <span class="label">Tarif</span>
                         <span class="value">{{ route.prix || '- ' }} FCFA</span>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <mat-icon>business</mat-icon>
+                    <div>
+                        <span class="label">Agence</span>
+                        <span class="value">{{ route.agence_nom || '...' }}</span>
                     </div>
                 </div>
             </div>

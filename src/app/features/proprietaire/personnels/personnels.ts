@@ -15,6 +15,9 @@ import { Station } from '../../../models/station';
   styleUrl: './personnels.css',
 })
 export class Personnels {
+editingGerant() {
+throw new Error('Method not implemented.');
+}
   private proprietaireService = inject(ProprietaireService);
   private fb = inject(FormBuilder);
 

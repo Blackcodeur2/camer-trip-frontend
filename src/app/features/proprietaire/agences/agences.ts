@@ -8,6 +8,7 @@ import { ProprietaireService } from '../../../services/proprietaire/proprietaire
 import { Station } from '../../../models/station';
 import { CommonModule } from '@angular/common';
 import { AgenceService } from '../../../services/agence/agence-service';
+import { HttpClient } from '@angular/common/http';
 
 type FormMode = 'none' | 'agence' | 'gare';
 @Component({
@@ -34,11 +35,17 @@ export class Agences {
   // Agence dépliée pour voir les stations
   expandedAgenceId = signal<number | null>(null);
 
+  private http = inject(HttpClient);
+  allVillesData = signal<{ nom: string }[]>([]);
+  filteredVilles = signal<string[]>([]);
+  showAutocomplete = signal(false);
+
   agenceForm = this.fb.nonNullable.group({
-    nom: ['', [Validators.required, Validators.minLength(2)]], // Correspond au backend
-    email: ['', [Validators.required, Validators.email]], // Correspond au backend
+    nom: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
     telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
-    adresse: [''], // Correspond au backend
+    adresse: [''],
+    ville: ['', [Validators.required]], // Nouveau champ Ville
   });
 
   gareForm = this.fb.nonNullable.group({
@@ -57,6 +64,14 @@ export class Agences {
   ngOnInit() {
     this.loadAgencies();
     this.loadVilles();
+    this.loadVillesFromJson();
+  }
+
+  loadVillesFromJson() {
+    this.http.get<{ nom: string }[]>('assets/villes.json').subscribe({
+      next: (data) => this.allVillesData.set(data),
+      error: (err) => console.error('Erreur chargement villes.json', err)
+    });
   }
 
   loadVilles() {
@@ -89,16 +104,37 @@ export class Agences {
     if (agence) {
       this.editingAgence.set(agence);
       this.agenceForm.patchValue({
-        nom: agence.nom, // Correspond au backend
-        email: agence.email, // Correspond au backend
+        nom: agence.nom,
+        email: agence.email,
         telephone: agence.telephone,
-        adresse: agence.adresse ?? '', // Correspond au backend
+        adresse: agence.adresse ?? '',
+        ville: (agence as any).ville ?? '', 
       });
     } else {
       this.editingAgence.set(null);
       this.agenceForm.reset();
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  onVilleInput(event: any) {
+    const val = event.target.value.toLowerCase();
+    if (val.length < 1) {
+      this.filteredVilles.set([]);
+      this.showAutocomplete.set(false);
+      return;
+    }
+    const filtered = this.allVillesData()
+      .filter(v => v.nom.toLowerCase().includes(val))
+      .map(v => v.nom)
+      .slice(0, 10);
+    this.filteredVilles.set(filtered);
+    this.showAutocomplete.set(filtered.length > 0);
+  }
+
+  selectVille(ville: string) {
+    this.agenceForm.patchValue({ ville });
+    this.showAutocomplete.set(false);
   }
 
   closeForm() {

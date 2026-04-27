@@ -60,6 +60,25 @@
             </div>
 
             <div class="field">
+                <label for="ville">Ville *</label>
+                <div class="input-wrap autocomplete-wrap">
+                    <mat-icon>location_city</mat-icon>
+                    <input id="ville" type="text" formControlName="ville" (input)="onVilleInput($event)" placeholder="Commencez à saisir une ville...">
+                    
+                    @if (showAutocomplete()) {
+                    <ul class="autocomplete-list">
+                        @for (v of filteredVilles(); track v) {
+                        <li (click)="selectVille(v)">{{ v }}</li>
+                        }
+                    </ul>
+                    }
+                </div>
+                @if (shouldShowError('agence', 'ville')) {
+                <span class="field-error">{{ errorMessage('agence', 'ville') }}</span>
+                }
+            </div>
+
+            <div class="field">
                 <label for="adresse">Adresse</label>
                 <div class="input-wrap">
                     <mat-icon>markunread_mailbox</mat-icon>

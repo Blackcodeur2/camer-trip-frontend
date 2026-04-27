@@ -1,19 +1,19 @@
-<div class="voyages-container">
-    <div class="header">
+<div class="page-container">
+    <div class="page-header">
         <div class="header-title">
-            <h1><mat-icon>flight_takeoff</mat-icon> Mes Voyages</h1>
-            <p>Suivez tous vos voyages programmés</p>
+            <h1 class="page-title">Mes Voyages</h1>
+            <p class="page-subtitle">Suivez tous vos voyages programmés</p>
         </div>
     </div>
 
     @if (isLoading()) {
-    <div class="loading">
-        <div class="spinner"></div>
+    <div class="loading-state">
+        <mat-icon class="spin large-icon" style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
         <p>Chargement des voyages...</p>
     </div>
     } @else if (voyages().length === 0) {
     <div class="empty-state">
-        <mat-icon>flight_takeoff</mat-icon>
+        <mat-icon style="font-size: 4rem; width: 64px; height: 64px; color: var(--color-border);">flight_takeoff</mat-icon>
         <h3>Aucun voyage</h3>
         <p>Vous n'avez pas encore de voyages programmés</p>
     </div>
@@ -32,7 +32,7 @@
                         {{ voyage.date_depart | date: 'dd/MM/yyyy HH:mm' }}
                     </p>
                 </div>
-                <span class="badge" [ngClass]="getStatusColor(voyage.statut)">
+                <span class="badge" [ngClass]="'status-' + (voyage.statut?.toLowerCase() || 'unknown')">
                     {{ voyage.statut || 'N/A' }}
                 </span>
             </div>
@@ -50,8 +50,7 @@
                         <mat-icon>person</mat-icon>
                         <div>
                             <span class="label">Chauffeur</span>
-                            <span class="value">{{ voyage.chauffeur?.nom }} {{ voyage.chauffeur?.prenom || 'N/A'
-                                }}</span>
+                            <span class="value">{{ voyage.chauffeur?.nom }} {{ voyage.chauffeur?.prenom || 'N/A' }}</span>
                         </div>
                     </div>
                 </div>
@@ -65,10 +64,20 @@
                         </div>
                     </div>
                     <div class="info-item">
-                        <mat-icon>monetization_on</mat-icon>
+                        <mat-icon>payments</mat-icon>
                         <div>
                             <span class="label">Tarif</span>
-                            <span class="value">{{ voyage.prix || '- ' }} FCFA</span>
+                            <span class="value">{{ voyage.prix || '- ' | number }} FCFA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="info-item">
+                        <mat-icon>business</mat-icon>
+                        <div>
+                            <span class="label">Agence</span>
+                            <span class="value">{{ voyage.agence_nom || '...' }}</span>
                         </div>
                     </div>
                 </div>
