@@ -65,19 +65,16 @@ export class Agences {
     this.loadAgencies();
     this.loadVilles();
     this.loadVillesFromJson();
-
-    // Utiliser valueChanges pour l'autocomplete (plus robuste que (input))
     this.agenceForm.controls.ville.valueChanges.subscribe(val => {
       this.filterVilles(val || '');
     });
   }
 
   loadVillesFromJson() {
-    // Utilisation d'un chemin absolu (/assets/...) pour éviter les problèmes de routes relatives
+
     this.http.get<{ nom: string }[]>('assets/villes.json').subscribe({
       next: (data) => {
         this.allVillesData.set(data);
-        // Si l'utilisateur a déjà commencé à saisir, on filtre
         const currentVal = this.agenceForm.controls.ville.value;
         if (currentVal) {
           this.filterVilles(currentVal);

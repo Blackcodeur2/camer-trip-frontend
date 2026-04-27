@@ -23,6 +23,7 @@ export class Kyc {
 
   // Modal de prévisualisation
   previewDocument = signal<{ url: SafeResourceUrl | string, rawUrl: string, type: string, comment: string, isPdf: boolean } | null>(null);
+  selectedSubmission = signal<KycGroupedByUser | null>(null);
 
   ngOnInit() {
     this.loadPendingKyc();
@@ -122,6 +123,14 @@ export class Kyc {
       comment: doc.commentaire,
       isPdf: isPdf
     });
+  }
+
+  openSubmission(sub: KycGroupedByUser) {
+    this.selectedSubmission.set(sub);
+  }
+
+  closeSubmission() {
+    this.selectedSubmission.set(null);
   }
 
   closePreview() {

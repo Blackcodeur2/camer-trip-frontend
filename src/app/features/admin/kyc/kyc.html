@@ -22,59 +22,114 @@
     }
 
     @if (!isLoading() && submissions().length > 0) {
-    <div class="submissions-list">
-        @for (sub of submissions(); track sub.user.id) {
-        <div class="submission-card">
-            <div class="card-header">
+    <div class="table-container">
+        <table class="premium-table">
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Type de compte</th>
+                    <th>Statut Global</th>
+                    <th>Date</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (sub of submissions(); track sub.user.id) {
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                {{ (sub.user.prenom?.[0] ?? '') + (sub.user.nom?.[0] ?? '') | uppercase }}
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name">{{ sub.user.prenom }} {{ sub.user.nom }}</span>
+                                <span class="user-email">{{ sub.user.email }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="account-type-badge" [class.business]="sub.isBusiness">
+                            {{ sub.isBusiness ? 'Entreprise' : 'Particulier' }}
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge status--{{ sub.statutGlobal === 'en attente' ? 'pending' : sub.statutGlobal === 'approuve' ? 'success' : 'rejected' }}">
+                            {{ sub.statutGlobal }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="date-text">{{ sub.documents[0].created_at | date:'dd/MM/yyyy' }}</span>
+                    </td>
+                    <td>
+                        <div class="action-btn-group" style="justify-content: flex-end;">
+                            <button class="table-action-btn" title="Voir les documents" (click)="openSubmission(sub)">
+                                <mat-icon>folder_open</mat-icon>
+                            </button>
+                            @if (sub.statutGlobal === 'en attente') {
+                                <button class="table-action-btn success" title="Approuver tout" (click)="approve(sub)">
+                                    <mat-icon>check_circle</mat-icon>
+                                </button>
+                                <button class="table-action-btn delete" title="Rejeter tout" (click)="reject(sub)">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+
+    <!-- Modal pour afficher les documents d'un utilisateur -->
+    @if (selectedSubmission()) {
+    <div class="modal-overlay" (click)="closeSubmission()">
+        <div class="modal-content large" (click)="$event.stopPropagation()">
+            <div class="modal-header">
                 <div class="user-info">
-                    <div class="avatar">
-                        {{ (sub.user.prenom?.[0] ?? '') + (sub.user.nom?.[0] ?? '') | uppercase }}
+                    <div class="user-avatar">
+                        {{ (selectedSubmission()!.user.prenom?.[0] ?? '') + (selectedSubmission()!.user.nom?.[0] ?? '') | uppercase }}
                     </div>
                     <div>
-                        <h3>{{ sub.user.prenom }} {{ sub.user.nom }}</h3>
-                        <span class="user-meta">{{ sub.user.email }}</span>
+                        <h3 style="margin: 0;">Documents de {{ selectedSubmission()!.user.prenom }} {{ selectedSubmission()!.user.nom }}</h3>
+                        <span class="user-meta">{{ selectedSubmission()!.user.email }}</span>
                     </div>
                 </div>
-                <div class="badges-row">
-                    <div class="account-type-badge" [class.business]="sub.isBusiness">
-                        {{ sub.isBusiness ? 'Entreprise' : 'Particulier' }}
-                    </div>
-                    <span class="status-badge status--{{ sub.statutGlobal === 'en attente' ? 'pending' : sub.statutGlobal === 'approuve' ? 'success' : 'rejected' }}">
-                        {{ sub.statutGlobal }}
-                    </span>
-                </div>
+                <button class="table-action-btn" (click)="closeSubmission()">
+                    <mat-icon>close</mat-icon>
+                </button>
             </div>
+            <div class="modal-body">
+                <div class="documents-grid">
+                    @for (doc of selectedSubmission()!.documents; track doc.id) {
+                    <div class="document-item" (click)="viewDocument(doc)">
+                        <div class="doc-icon">
+                            <mat-icon>{{ doc.chemin_fichier.toLowerCase().endsWith('.pdf') ? 'picture_as_pdf' : 'image' }}</mat-icon>
+                        </div>
+                        <div class="doc-details">
+                            <span class="doc-type">{{ getDocLabel(doc.type) }}</span>
+                            <span class="status-badge status--{{ doc.statut === 'en attente' ? 'pending' : doc.statut === 'approuve' ? 'success' : 'rejected' }}" style="font-size: 0.65rem; padding: 2px 8px;">
+                                {{ doc.statut }}
+                            </span>
+                        </div>
+                        <mat-icon style="color: var(--color-text-muted); font-size: 20px;">visibility</mat-icon>
+                    </div>
+                    }
+                </div>
 
-            <div class="documents-grid">
-                @for (doc of sub.documents; track doc.id) {
-                <div class="document-item" (click)="viewDocument(doc)">
-                    <div class="doc-icon">
-                        <mat-icon>{{ doc.chemin_fichier.toLowerCase().endsWith('.pdf') ? 'picture_as_pdf' : 'image'
-                            }}</mat-icon>
-                    </div>
-                    <div class="doc-details">
-                        <span class="doc-type">{{ getDocLabel(doc.type) }}</span>
-                        <span class="status-badge status--{{ doc.statut === 'en attente' ? 'pending' : doc.statut === 'approuve' ? 'success' : 'rejected' }}" style="font-size: 0.65rem; padding: 2px 8px;">
-                            {{ doc.statut }}
-                        </span>
-                    </div>
-                    <mat-icon style="color: var(--color-text-muted); font-size: 20px;">visibility</mat-icon>
+                @if (selectedSubmission()!.statutGlobal === 'en attente') {
+                <div class="modal-actions">
+                    <button class="btn-reject" (click)="reject(selectedSubmission()!); closeSubmission()" [disabled]="isProcessing()">
+                        <mat-icon>close</mat-icon> Rejeter le dossier
+                    </button>
+                    <button class="btn-approve" (click)="approve(selectedSubmission()!); closeSubmission()" [disabled]="isProcessing()">
+                        <mat-icon>check</mat-icon> Approuver le dossier
+                    </button>
                 </div>
                 }
             </div>
-
-            @if (sub.statutGlobal === 'en attente') {
-            <div class="card-actions">
-                <button class="btn-reject" (click)="reject(sub)" [disabled]="isProcessing()">
-                    <mat-icon>close</mat-icon> Rejeter
-                </button>
-                <button class="btn-approve" (click)="approve(sub)" [disabled]="isProcessing()">
-                    <mat-icon>check</mat-icon> Approuver
-                </button>
-            </div>
-            }
         </div>
-        }
     </div>
     }
 

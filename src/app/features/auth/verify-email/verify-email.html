@@ -1,0 +1,59 @@
+<div class="verify-container">
+  <div class="verify-card animate-in">
+    <div class="card-header">
+      <div class="logo">
+        <span class="logo-accent">CAMER</span>TRIP
+      </div>
+    </div>
+
+    <div class="card-body">
+      @if (loading) {
+        <div class="status-view">
+          <div class="icon-wrapper loading-spin">
+            <mat-icon>sync</mat-icon>
+          </div>
+          <h2>Vérification en cours...</h2>
+          <p>Nous validons votre adresse email. Veuillez patienter un instant.</p>
+        </div>
+      }
+
+      @if (success) {
+        <div class="status-view">
+          <div class="icon-wrapper status-success scale-in">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+          <h2 class="text-success">Email Vérifié !</h2>
+          <p>{{ message || 'Votre compte a été activé avec succès. Vous pouvez maintenant profiter de tous nos services.' }}</p>
+          
+          <div class="actions">
+            <a routerLink="/login" class="btn-primary">
+              Se connecter <mat-icon>arrow_forward</mat-icon>
+            </a>
+          </div>
+          <p class="auto-redirect">Redirection automatique dans quelques secondes...</p>
+        </div>
+      }
+
+      @if (error) {
+        <div class="status-view">
+          <div class="icon-wrapper status-error scale-in">
+            <mat-icon>error_outline</mat-icon>
+          </div>
+          <h2 class="text-error">Oups !</h2>
+          <p>{{ message || 'Le lien de vérification semble être invalide ou a expiré.' }}</p>
+          
+          <div class="actions">
+            <button (click)="resendVerification()" class="btn-secondary">
+              Renvoyer l'email <mat-icon>send</mat-icon>
+            </button>
+            <a routerLink="/login" class="btn-text">Retour à la connexion</a>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="card-footer">
+      <p>&copy; 2026 Camer Trip. Tous droits réservés.</p>
+    </div>
+  </div>
+</div>

@@ -68,25 +68,37 @@
     gap: 1rem;
 }
 
-.avatar {
-    width: 48px;
-    height: 48px;
-    background: var(--color-dark);
-    color: white;
-    border-radius: 14px;
+.user-avatar {
+    width: 44px;
+    height: 44px;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 1rem;
+    border: 1px solid var(--color-border);
 }
 
-.user-info h3 {
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
     font-family: var(--font-display);
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 800;
     color: var(--color-dark);
     margin: 0;
+}
+
+.user-email {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
 }
 
 .user-meta {
@@ -259,6 +271,30 @@
     width: 100%;
     border-radius: 20px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modal-actions {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.modal-actions button {
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.modal-content.large {
+    max-width: 600px;
+}
+
+.date-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
 }
 
 /* States */

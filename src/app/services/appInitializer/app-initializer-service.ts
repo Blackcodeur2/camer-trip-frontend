@@ -15,34 +15,9 @@ export class AppInitializerService {
    */
   initializeApp(): Promise<boolean> {
     return new Promise((resolve) => {
-      // verifier si l'utilisateur est connecte
-      if (this.authService.isLoggedIn()) {
-        this.redirectToUserDashboard();
-        resolve(true);
-      } else {
-        //redirection vers splash
-        this.router.navigate(['/splash']);
-        resolve(true);
-      }
-    })
-  }
-
-  /**
-   * Redirige l'utilisateur vers son dashboard selon son rôle
-   */
-  private redirectToUserDashboard(): void {
-    const role = localStorage.getItem('role');
-
-    const roleRoutes: { [key: string]: string } = {
-      'ADMIN': '/admin/dashboard',
-      'CHEF_AGENCE': '/chef_agence/dashboard',
-      'CHAUFFEUR': '/chauffeur/dashboard',
-      'AGENT': '/agent/dashboard',
-      'PROPRIETAIRE': '/proprietaire/dashboard',
-      'CLIENT': '/landing'
-    };
-
-    const redirectPath = roleRoutes[role || ''] || '/splash';
-    this.router.navigate([redirectPath]);
+      // On laisse le Router et les Guards gérer la navigation initiale
+      // L'initialiseur ne doit pas forcer de redirection pour permettre le deep-linking (ex: verify-email)
+      resolve(true);
+    });
   }
 }

@@ -83,10 +83,11 @@ export class Login {
       error: (error) => {
         console.error('Login error', error);
         this.isLoading.set(false);
+        const errorMessage = error.error?.message || 'Identifiants incorrects ou serveur indisponible. Veuillez réessayer.';
         Swal.fire({
           icon: 'error',
           title: 'Échec de la connexion',
-          text: 'Identifiants incorrects ou serveur indisponible. Veuillez réessayer.',
+          text: errorMessage,
           confirmButtonColor: '#3b82f6',
         });
       }
