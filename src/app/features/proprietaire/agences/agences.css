@@ -297,14 +297,14 @@
     font-size: 3rem !important;
     width: 48px;
     height: 48px;
-    color: #7c3aed;
+    color: #ffffff;
 }
 
 .empty-state mat-icon {
     font-size: 4rem !important;
     width: 64px;
     height: 64px;
-    color: #c4b5fd;
+    color: #ffffff;
 }
 
 .empty-state h2 {

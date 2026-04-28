@@ -1,9 +1,7 @@
 import { Voyage } from './voyage';
 
 export interface Station {
-agence_nom: any;
-ville_nom: any;
-  ville: any;
+  ville: string;
   quartier: any;
   id: number;
   agence_id?: number;

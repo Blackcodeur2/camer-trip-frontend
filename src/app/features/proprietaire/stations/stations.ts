@@ -31,7 +31,7 @@ export class Stations {
 
   gareForm = this.fb.nonNullable.group({
     agence_id: [0, Validators.required],
-    ville_id: [0, Validators.required],
+    ville: ['', Validators.required],
     quartier: ['', Validators.required],
     telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
   });
@@ -43,10 +43,7 @@ export class Stations {
   }
 
   loadVilles() {
-    this.proprietaireService.getVilles().subscribe({
-      next: (data) => this.villes.set(data),
-      error: () => this.villes.set([])
-    });
+ 
   }
 
 
@@ -71,7 +68,7 @@ export class Stations {
       this.editingGare.set(gare);
       this.gareForm.patchValue({
         agence_id: gare.agence_id,
-        ville_id: 1,
+        ville: gare.ville,
         quartier: gare.adresse,
         telephone: gare.telephone,
       });

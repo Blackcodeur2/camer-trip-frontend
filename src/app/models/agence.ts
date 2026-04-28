@@ -1,8 +1,7 @@
 import { Station } from './station';
 
 export interface Agence {
-statut: any;
-gares: any;
+statut: string;
   id: number;
   proprietaire_id?: number;
   nom: string;
@@ -10,6 +9,7 @@ gares: any;
   telephone?: string;
   adresse?: string;
   logo?: string;
+  ville: string;
   stations?: Station[];
 }
 

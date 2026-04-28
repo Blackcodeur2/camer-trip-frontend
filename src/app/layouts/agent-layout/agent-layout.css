@@ -35,7 +35,7 @@
 .brand-logo-wrap {
   width: 40px;
   height: 40px;
-  background: var(--color-primary);
+  background: var(--color-surface);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -44,11 +44,6 @@
   box-shadow: 0 4px 10px rgba(0, 102, 68, 0.3);
 }
 
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
 .app-name {
   font-family: var(--font-display);
   font-weight: 800;

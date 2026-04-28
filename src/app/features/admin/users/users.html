@@ -51,15 +51,14 @@
                     <td>
                         <div class="user-cell">
                             <div class="user-avatar">
-                                @if (userAvatarUrl()) {
-                                <img [src]="userAvatarUrl()" alt="Photo de profil" class="avatar-img" />
+                                @if (getAvatarUrl(user)) {
+                                <img [src]="getAvatarUrl(user)!" alt="Photo de profil" class="avatar-img" />
                                 } @else {
                                 <div class="avatar-initials">{{ getUserInitials(user) }}</div>
                                 }
                             </div>
                             <div>
                                 <div class="user-name">{{ user.prenom }} {{ user.nom }}</div>
-                                <div class="user-sub">ID #{{ user.id }}</div>
                             </div>
                         </div>
                     </td>

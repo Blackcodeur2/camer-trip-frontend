@@ -1,1 +1,183 @@
-<p>gerants works!</p>
+<div class="page-container">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <div class="header-text">
+      <h1>Gestion des Gérants</h1>
+      <p>Créez et gérez les chefs d'agences de votre réseau.</p>
+    </div>
+    @if (!showForm()) {
+      <button class="btn-primary" (click)="openForm()">
+        <mat-icon>person_add</mat-icon> Nouveau gérant
+      </button>
+    }
+  </header>
+
+  <!-- ─── FORMULAIRE GÉRANT ─── -->
+  @if (showForm()) {
+    <div class="form-card animate-in">
+      <div class="form-card__header">
+        <h2><mat-icon>person_add</mat-icon> Créer un gérant</h2>
+        <button class="icon-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
+      </div>
+
+      <form [formGroup]="gerantForm" (ngSubmit)="onSubmit()" class="form-grid">
+
+        <div class="form-section-title field--full">Informations personnelles</div>
+
+        <div class="field">
+          <label for="g-prenom">Prénom *</label>
+          <div class="input-wrap">
+            <mat-icon>person</mat-icon>
+            <input id="g-prenom" type="text" formControlName="prenom" placeholder="Jean">
+          </div>
+          @if (shouldShowError('prenom')) { <span class="field-error">{{ errorMessage('prenom') }}</span> }
+        </div>
+
+        <div class="field">
+          <label for="g-nom">Nom *</label>
+          <div class="input-wrap">
+            <mat-icon>person</mat-icon>
+            <input id="g-nom" type="text" formControlName="nom" placeholder="Dupont">
+          </div>
+          @if (shouldShowError('nom')) { <span class="field-error">{{ errorMessage('nom') }}</span> }
+        </div>
+
+        <div class="field">
+          <label for="g-email">Email *</label>
+          <div class="input-wrap">
+            <mat-icon>email</mat-icon>
+            <input id="g-email" type="email" formControlName="email" placeholder="gerant@exemple.com">
+          </div>
+          @if (shouldShowError('email')) { <span class="field-error">{{ errorMessage('email') }}</span> }
+        </div>
+
+        <div class="field">
+          <label for="g-tel">Téléphone *</label>
+          <div class="input-wrap">
+            <mat-icon>phone</mat-icon>
+            <input id="g-tel" type="tel" formControlName="telephone" placeholder="6xx xxx xxx">
+          </div>
+          @if (shouldShowError('telephone')) { <span class="field-error">{{ errorMessage('telephone') }}</span> }
+        </div>
+
+        <div class="field">
+          <label for="g-cni">Numéro CNI *</label>
+          <div class="input-wrap">
+            <mat-icon>badge</mat-icon>
+            <input id="g-cni" type="text" formControlName="num_cni" placeholder="Ex: 20240001">
+          </div>
+          @if (shouldShowError('num_cni')) { <span class="field-error">{{ errorMessage('num_cni') }}</span> }
+        </div>
+
+        <div class="field">
+          <label for="g-naissance">Date de naissance *</label>
+          <div class="input-wrap">
+            <mat-icon>cake</mat-icon>
+            <input id="g-naissance" type="date" formControlName="date_naissance">
+          </div>
+          @if (shouldShowError('date_naissance')) { <span class="field-error">{{ errorMessage('date_naissance') }}</span> }
+        </div>
+
+        <div class="form-section-title field--full">Affectation & Accès</div>
+
+        <div class="field field--full">
+          <label for="g-gare">Gare à gérer *</label>
+          <div class="input-wrap">
+            <mat-icon>location_city</mat-icon>
+            <select id="g-gare" formControlName="gare_id">
+              <option value="0" disabled>-- Sélectionner une gare --</option>
+              @for (gare of gares(); track gare.id) {
+                <option [value]="gare.id">{{ gare.nom || (gare.ville + ' - ' + gare.quartier) }}</option>
+              }
+            </select>
+          </div>
+          @if (shouldShowError('gare_id')) { <span class="field-error">Veuillez sélectionner une gare.</span> }
+          @if (gares().length === 0) {
+            <span class="field-hint">⚠️ Aucune gare disponible. <a routerLink="/proprietaire/gares">Créez d'abord une gare.</a></span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="g-password">Mot de passe *</label>
+          <div class="input-wrap">
+            <mat-icon>lock</mat-icon>
+            <input id="g-password" [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password" placeholder="••••••••">
+            <button type="button" class="toggle-pw" (click)="togglePassword()">
+              <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+          @if (shouldShowError('password')) { <span class="field-error">{{ errorMessage('password') }}</span> }
+        </div>
+
+        <div class="field">
+          <label for="g-confirm">Confirmer le mot de passe *</label>
+          <div class="input-wrap">
+            <mat-icon>lock</mat-icon>
+            <input id="g-confirm" [type]="showPassword() ? 'text' : 'password'"
+              formControlName="password_confirmation" placeholder="••••••••">
+          </div>
+          @if (shouldShowError('password_confirmation')) { <span class="field-error">{{ errorMessage('password_confirmation') }}</span> }
+        </div>
+
+        <div class="form-actions field--full">
+          <button type="button" class="btn-secondary" (click)="closeForm()">Annuler</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
+            @if (isSubmitting()) { <mat-icon class="spin">sync</mat-icon> Création en cours... }
+            @else { <mat-icon>how_to_reg</mat-icon> Créer le gérant }
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <!-- ─── LOADING ─── -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <mat-icon class="spin large-icon">sync</mat-icon>
+      <p>Chargement des gérants...</p>
+    </div>
+  }
+
+  <!-- ─── EMPTY STATE ─── -->
+  @if (!isLoading() && managers().length === 0 && !showForm()) {
+    <div class="empty-state">
+      <mat-icon>group_off</mat-icon>
+      <h2>Aucun gérant pour le moment</h2>
+      <p>Ajoutez des gérants pour déléguer la gestion de vos agences.</p>
+      <button class="btn-primary" (click)="openForm()">
+        <mat-icon>person_add</mat-icon> Recruter un gérant
+      </button>
+    </div>
+  }
+
+  <!-- ─── LISTE DES GÉRANTS ─── -->
+  @if (!isLoading() && managers().length > 0) {
+    <div class="managers-list">
+      @for (manager of managers(); track manager.id) {
+        <div class="manager-card">
+          <div class="manager-avatar">{{ getInitials(manager) }}</div>
+          <div class="manager-info">
+            <h3>{{ manager.prenom }} {{ manager.nom }}</h3>
+            <div class="manager-meta">
+              <span><mat-icon>email</mat-icon>{{ manager.email }}</span>
+              <span><mat-icon>phone</mat-icon>{{ manager.telephone }}</span>
+              @if (manager.station_id) {
+                <span class="agency-badge">
+                  <mat-icon>location_city</mat-icon>
+                  {{ gareName(manager.station_id) }}
+                </span>
+              }
+            </div>
+          </div>
+          <div class="manager-actions">
+            <button class="action-btn action-btn--delete" (click)="removeManager(manager)">
+              <mat-icon>person_remove</mat-icon> Retirer
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

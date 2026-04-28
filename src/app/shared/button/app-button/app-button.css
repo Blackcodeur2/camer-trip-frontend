@@ -38,18 +38,18 @@
 }
 
 .primary {
-  background: #3b82f6;
+  background: var(--color-dark);
   color: white;
 }
 
 .primary:hover:not(:disabled) {
-  background: #2563eb;
+  background: var(--color-dark-hover);
 }
 
 .secondary {
   background: white;
-  color: #3b82f6;
-  border-color: #3b82f6;
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary);
 }
 
 .secondary:hover:not(:disabled) {

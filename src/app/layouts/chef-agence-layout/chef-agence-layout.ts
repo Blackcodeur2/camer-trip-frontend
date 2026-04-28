@@ -2,11 +2,10 @@ import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth-service';
 import { MatIconModule } from '@angular/material/icon';
-import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-chef-agence-layout',
-  imports: [MatIconModule, RouterModule, RouterLink, TitleCasePipe],
+  imports: [MatIconModule, RouterModule, RouterLink],
   templateUrl: './chef-agence-layout.html',
   styleUrl: './chef-agence-layout.css',
 })
@@ -17,7 +16,7 @@ export class ChefAgenceLayout {
 
   protected readonly currentUserRole = computed(() => {
     const role = this.currentUser()?.role_user;
-    return role ? role.toUpperCase() : 'CHEF_AGENCE';
+    return role ? role.toUpperCase() : 'CHEF_AGENCE'; 
   });
 
   protected readonly userInitials = computed(() => {

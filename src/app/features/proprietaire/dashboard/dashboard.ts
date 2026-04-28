@@ -110,26 +110,19 @@ export class Dashboard {
     });
   }
 
-  loadStats() {
+ loadStats() {
     this.isLoading.set(true);
-    
-    // Simulation des données en attendant que la route soit disponible
-    setTimeout(() => {
-      const mockStats: Stats = {
-        agences: 1,
-        gares: 2,
-        buses: 6,
-        trajets: 5,
-        voyages: 7,
-        utilisateurs: 13,
-        chauffeurs: 5,
-        agents: 3
-      };
-      
-      this.stats.set(mockStats);
-      this.isLoading.set(false);
-      setTimeout(() => this.initChart(), 0);
-    }, 800);
+    this.proprietaireService.getMyStatistics().subscribe({
+      next: (data) => {
+        const statsData = data.data || data;
+        this.stats.set(statsData);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+        Swal.fire('Erreur', 'Impossible de charger les statistiques.', 'error');
+      }
+    });
   }
 
   getStatValue(key: string): number {

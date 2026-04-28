@@ -16,7 +16,7 @@
 
 .page-title {
     font-family: var(--font-display);
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     font-weight: 900;
     color: var(--color-dark);
     margin: 0;
@@ -25,7 +25,7 @@
 
 .page-subtitle {
     color: var(--color-text-muted);
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     font-weight: 500;
     margin-top: 0.5rem;
 }
@@ -56,9 +56,9 @@
 }
 
 .agence-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
     background: var(--color-surface);
     color: var(--color-primary);
     display: flex;
@@ -70,7 +70,7 @@
 .agence-name {
     font-weight: 800;
     color: var(--color-dark);
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     letter-spacing: -0.01em;
 }
 

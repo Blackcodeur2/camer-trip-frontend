@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, HostListener } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatIconModule } from "@angular/material/icon";
 import Swal from 'sweetalert2';
 import { Agence } from '../../../models/agence';
@@ -23,6 +23,7 @@ export class Agences {
   agencies = signal<Agence[]>([]);
   villes = signal<Ville[]>([]);
 
+
   isLoading = signal(true);
   isSubmitting = signal(false);
   formMode = signal<FormMode>('none');
@@ -39,8 +40,31 @@ export class Agences {
   filteredVilles = signal<string[]>([]);
   showAutocomplete = signal(false);
 
+  private fileValidator(allowedTypes: string[], maxSizeMB: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const file = control.value as File;
+      if (!file) return null;
+
+      const isValidType = allowedTypes.some(type => {
+        if (type === 'image/*') return file.type.startsWith('image/');
+        return file.type === type;
+      });
+
+      if (!isValidType) {
+        return { fileType: true };
+      }
+
+      const sizeMB = file.size / (1024 * 1024);
+      if (sizeMB > maxSizeMB) {
+        return { fileSize: { maxSize: maxSizeMB, actualSize: sizeMB } };
+      }
+
+      return null;
+    };
+  }
   agenceForm = this.fb.nonNullable.group({
     nom: ['', [Validators.required, Validators.minLength(2)]],
+    logo: [null as File | null, [this.fileValidator(['image/*'], 5)]],
     email: ['', [Validators.required, Validators.email]],
     telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
     adresse: [''],
@@ -49,7 +73,7 @@ export class Agences {
 
   gareForm = this.fb.nonNullable.group({
     agence_id: [0, Validators.required],
-    ville_id: [0, Validators.required],
+    ville: ['', Validators.required],
     quartier: ['', Validators.required],
     telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
   });
@@ -62,9 +86,11 @@ export class Agences {
 
   ngOnInit() {
     this.loadAgencies();
-    this.loadVilles();
     this.loadVillesFromJson();
     this.agenceForm.controls.ville.valueChanges.subscribe(val => {
+      this.filterVilles(val || '');
+    });
+    this.gareForm.controls.ville.valueChanges.subscribe(val => {
       this.filterVilles(val || '');
     });
   }
@@ -88,8 +114,10 @@ export class Agences {
   }
 
   onVilleFocus() {
+    this.filterVilles(this.gareForm.controls.ville.value || '');
     this.filterVilles(this.agenceForm.controls.ville.value || '');
   }
+
 
   filterVilles(val: string) {
     const search = this.normalizeString(val);
@@ -114,13 +142,6 @@ export class Agences {
     if (!target.closest('.autocomplete-wrap')) {
       this.showAutocomplete.set(false);
     }
-  }
-
-  loadVilles() {
-    this.proprietaireService.getVilles().subscribe({
-      next: (data) => this.villes.set(data),
-      error: () => this.villes.set([])
-    });
   }
 
 
@@ -150,7 +171,7 @@ export class Agences {
         email: agence.email,
         telephone: agence.telephone,
         adresse: agence.adresse ?? '',
-        ville: (agence as any).ville ?? '', 
+        ville: (agence as any).ville ?? '',
       });
     } else {
       this.editingAgence.set(null);
@@ -160,7 +181,8 @@ export class Agences {
   }
 
   selectVille(ville: string) {
-    this.agenceForm.controls.ville.setValue(ville, { emitEvent: false });
+    this.agenceForm.controls.ville.setValue(ville, );
+    this.gareForm.controls.ville.setValue(ville, { emitEvent: false })
     this.showAutocomplete.set(false);
   }
 

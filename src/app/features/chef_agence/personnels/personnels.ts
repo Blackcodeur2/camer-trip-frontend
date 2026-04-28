@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { AppButton } from '../../../shared/button/app-button/app-button';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
 import { User } from '../../../models/user';
 import { AuthService } from '../../../services/auth/auth-service';
+import { ChefAgenceService } from '../../../services/chef_agence/chef-agence-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-personnels',
@@ -13,8 +15,9 @@ import { AuthService } from '../../../services/auth/auth-service';
   templateUrl: './personnels.html',
   styleUrl: './personnels.css',
 })
-export class Personnels {
+export class Personnels implements OnInit {
   private fb = inject(FormBuilder);
+  private chefAgenceService = inject(ChefAgenceService);
   private authService = inject(AuthService);
 
   staffMembers = signal<User[]>([]);
@@ -48,7 +51,7 @@ export class Personnels {
     telephone: ['', Validators.required],
     role_user: ['AGENT', Validators.required],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    gare_id: [null as number | null | undefined],
+    station_id: [null as number | null | undefined],
   });
 
   ngOnInit() {
@@ -56,7 +59,12 @@ export class Personnels {
   }
 
   loadStaff() {
-        this.staffMembers.set([]);
+    this.chefAgenceService.getStaff().subscribe({
+      next: (data: User[]) => {
+        this.staffMembers.set(data || []);
+      },
+      error: () => this.staffMembers.set([])
+    });
   }
 
   toggleForm() {
@@ -84,7 +92,7 @@ export class Personnels {
         num_cni: member.num_cni,
         telephone: member.telephone,
         role_user: member.role_user,
-        gare_id: member.station_id
+        station_id: member.station_id
     });
     // Password is not required when editing
     this.staffForm.get('password')?.clearValidators();
@@ -93,8 +101,53 @@ export class Personnels {
     this.showForm.set(true);
   }
 
-  onSubmit() {
-    
+onSubmit() {
+    if (this.staffForm.invalid) return;
+    this.isSubmitting.set(true);
+
+    const formValue = this.staffForm.getRawValue();
+    const payload = {
+      ...formValue,
+      id: this.editId(),
+      station_id: this.editId() ? formValue.station_id : this.authService.currentUser()?.station_id,
+    };
+
+    // If password is empty during edit, Remove it from payload
+    if (this.isEditing() && !payload.password) {
+      delete (payload as any).password;
+    }
+
+    const request = this.isEditing()
+      ? this.chefAgenceService.updateStaff(payload)
+      : this.chefAgenceService.addStaff(payload);
+
+    request.subscribe({
+      next: (res: User) => {
+        if (this.isEditing()) {
+          this.staffMembers.update((list: User[]) => list.map((m: User) => m.id === this.editId() ? res : m));
+          Swal.fire({ icon: 'success', title: 'Succès', text: 'Personnel mis à jour', timer: 2000, showConfirmButton: false });
+        } else {
+          this.staffMembers.update((list: User[]) => [res, ...list]);
+          Swal.fire({ icon: 'success', title: 'Succès', text: 'Personnel ajouté', timer: 2000, showConfirmButton: false });
+        }
+
+        this.showForm.set(false);
+        this.isSubmitting.set(false);
+        this.isEditing.set(false);
+        this.editId.set(null);
+        this.staffForm.reset({ role_user: 'AGENT' });
+      },
+      error: (error) => {
+        this.isSubmitting.set(false);
+        let errorMsg = 'Impossible d\'enregistrer le personnel';
+        if (error.status === 422 && error.error?.errors) {
+          errorMsg = Object.entries(error.error.errors)
+            .map(([key, value]: [string, any]) => `${key}: ${value.join(', ')}`)
+            .join('\n');
+        }
+        Swal.fire({ icon: 'error', title: 'Erreur', text: errorMsg });
+      }
+    });
   }
 
   downloadPdf() {

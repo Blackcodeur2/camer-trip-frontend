@@ -14,12 +14,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
 }
 
 .page-title {
     font-family: var(--font-display);
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     font-weight: 900;
     color: var(--color-dark);
     margin: 0;
@@ -28,7 +28,7 @@
 
 .page-subtitle {
     color: var(--color-text-muted);
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     font-weight: 500;
     margin-top: 0.5rem;
 }
@@ -66,6 +66,91 @@
     text-transform: uppercase;
     margin-bottom: 8px;
     letter-spacing: 0.05em;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field--full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* ── Input Wrap ── */
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrap mat-icon:first-child {
+    position: absolute;
+    left: 0.875rem;
+    color: #94a3b8;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+
+.input-wrap input,
+.input-wrap select {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background: white;
+    transition: all 0.2s;
+}
+
+.input-wrap input:focus,
+.input-wrap select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(0, 102, 68, 0.1);
+}
+
+.autocomplete-wrap {
+    position: relative;
+}
+
+.autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    margin-top: 5px;
+    padding: 8px 0;
+    list-style: none;
+    z-index: 100;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.autocomplete-list li {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.autocomplete-list li:hover {
+    background: var(--color-surface);
+    color: var(--color-primary);
 }
 
 .form-control {

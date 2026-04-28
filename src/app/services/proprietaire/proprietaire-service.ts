@@ -13,6 +13,7 @@ export interface CreateAgencePayload {
   nom: string; // Correspond au backend
   email: string; // Correspond au backend
   telephone: string;
+  //logo?: File; 
   adresse?: string; // Correspond au backend
 }
 
@@ -30,7 +31,7 @@ export interface CreateGerantPayload {
 
 export interface CreateStationPayload {
   agence_id: number;
-  ville_id: number;
+  ville: string;
   quartier: string;
   telephone: string;
 }
@@ -46,12 +47,6 @@ export class ProprietaireService {
   // ── Profil & Gérants ──
   updateGerant(id: number, payload: Partial<CreateGerantPayload>): Observable<User> {
     return this.http.put<User>(`${this.API}/proprietaire/gerants/${id}`, payload);
-  }
-
-
-  // ── Recherche & Villes ──
-  getVilles(): Observable<Ville[]> {
-    return this.http.get<Ville[]>(`${this.API}/villes`);
   }
 
   // ── Agences ──

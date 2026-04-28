@@ -3,11 +3,10 @@
   <aside class="sidebar">
     <div class="sidebar-brand">
       <div class="brand-logo-wrap">
-        <mat-icon>storefront</mat-icon>
+        <img src="/ico.png" alt="">
       </div>
       <div class="brand-text">
-        <span class="app-name">Espace <strong>Agence</strong></span>
-        <span class="role-badge">Chef d'Agence</span>
+        <span class="app-name">Camer <strong>Trip</strong></span>
       </div>
     </div>
 
@@ -40,7 +39,6 @@
           <div class="avatar">{{ userInitials() }}</div>
           <div class="avatar-info">
             <span class="user-name-chip">{{ currentUser()?.prenom || 'Chef' }} {{ currentUser()?.nom || 'd\'Agence' }}</span>
-            <span class="user-role-chip">{{ currentUserRole() | titlecase }}</span>
           </div>
           <mat-icon class="chevron" [class.rotated]="isUserMenuOpen">expand_more</mat-icon>
         </div>

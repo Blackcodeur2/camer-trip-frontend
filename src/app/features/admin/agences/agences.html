@@ -25,10 +25,9 @@
                     <th style="width: 60px;"></th>
                     <th>Agence</th>
                     <th>Ville</th>
-                    <th>Adresse / BP</th>
-                    <th>Email</th>
+                    <th>Adresse</th>
                     <th>Téléphone</th>
-                    <th>Gares</th>
+                    <th>Stations</th>
                     <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
@@ -51,9 +50,8 @@
                             <div class="agence-name">{{ agence.nom }}</div>
                         </div>
                     </td>
-                    <td>—</td>
+                    <td>{{ agence.ville || '—' }}</td>
                     <td>{{ agence.adresse || '—' }}</td>
-                    <td>{{ agence.email }}</td>
                     <td>{{ agence.telephone }}</td>
                     <td>
                         <span class="gares-count-badge" [class.has-gares]="(agence.stations?.length ?? 0) > 0">
@@ -77,7 +75,7 @@
                         <div class="gares-panel">
                             <div class="gares-panel-header">
                                 <mat-icon>location_city</mat-icon>
-                                <span>Gares de <strong>{{ agence.nom }}</strong></span>
+                                <span>Station de <strong>{{ agence.nom }}</strong></span>
                             </div>
                             @if (agence.stations && agence.stations.length > 0) {
                             <div class="gares-grid">

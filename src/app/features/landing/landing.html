@@ -112,8 +112,8 @@
                 <div class="voyage-main">
                   <strong>{{ voyage.num_voyage || 'N° inconnu' }}</strong>
                   <span class="voyage-route">
-                    {{ voyage.trajet?.villeDepart?.nom || 'Départ' }} →
-                    {{ voyage.trajet?.villeArrivee?.nom || 'Arrivée' }}
+                    {{ voyage.trajet?.depart }} →
+                    {{ voyage.trajet?.arrivee }}
                   </span>
                 </div>
                 <div class="voyage-meta">

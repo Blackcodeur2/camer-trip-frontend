@@ -7,6 +7,7 @@ import { PaginationComponent } from '../../../shared/pagination/pagination-compo
 import Swal from 'sweetalert2';
 import { AuthService } from '../../../services/auth/auth-service';
 import { Bus } from '../../../models/bus';
+import { ChefAgenceService } from '../../../services/chef_agence/chef-agence-service';
 
 @Component({
   selector: 'app-bus',
@@ -15,7 +16,7 @@ import { Bus } from '../../../models/bus';
   styleUrl: './bus.css',
 })
 export class BusPage {
-  //private agencyService = inject(AgencyOpsService);
+  private chefAgenceService = inject(ChefAgenceService)
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   currentUser = this.authService.currentUser;
@@ -36,8 +37,8 @@ export class BusPage {
     const list = this.buses();
     if (!Array.isArray(list)) return [];
     if (!query) return list;
-    return list.filter(bus => 
-      bus.immatriculation?.toLowerCase().includes(query) || 
+    return list.filter(bus =>
+      bus.immatriculation?.toLowerCase().includes(query) ||
       bus.code_bus?.toLowerCase().includes(query)
     );
   });
@@ -55,27 +56,32 @@ export class BusPage {
     type_bus: ['gros porteur', Validators.required],
     classe_bus: ['classique', Validators.required],
     nb_places: [70, [Validators.required]],
-    gare_id: [null as number | null | undefined, [Validators.required]],
+    station_id: [null as number | null | undefined, [Validators.required]],
     statut: ['disponible', Validators.required]
   });
 
   ngOnInit() {
     const user = this.authService.currentUser();
     if (user) {
-      this.busForm.patchValue({ gare_id: user.station_id });
+      this.busForm.patchValue({ station_id: user.station_id });
     }
     this.loadBuses();
   }
 
   loadBuses() {
-        this.buses.set([]);
+    this.chefAgenceService.getBuses().subscribe({
+      next: (data: Bus[]) => {
+        this.buses.set(data || []);
+      },
+      error: () => this.buses.set([])
+    });
   }
 
   toggleForm() {
     if (this.showForm()) {
       this.isEditing.set(false);
       this.editId.set(null);
-      this.busForm.reset({ nb_places: 70, statut: 'disponible', gare_id: this.currentUser()?.station_id });
+      this.busForm.reset({ nb_places: 70, statut: 'disponible', station_id: this.currentUser()?.station_id });
     }
     this.showForm.update(v => !v);
   }
@@ -89,14 +95,48 @@ export class BusPage {
       type_bus: '',
       classe_bus: '',
       nb_places: 80,
-      gare_id: 1,
+      station_id: 1,
       statut: ''
     });
     this.showForm.set(true);
   }
 
   onSubmit() {
-    
+    if (this.busForm.invalid) return;
+    this.isSubmitting.set(true);
+
+    const busData = this.busForm.value as any;
+    const request = this.isEditing()
+      ? this.chefAgenceService.updateBus({ ...busData, id: this.editId() })
+      : this.chefAgenceService.createBus(busData);
+
+    request.subscribe({
+      next: (res: Bus) => {
+        if (this.isEditing()) {
+          this.buses.update((list: Bus[]) => list.map((b: Bus) => b.id === this.editId() ? res : b));
+          Swal.fire({ icon: 'success', title: 'Succès', text: 'Bus mis à jour', timer: 2000, showConfirmButton: false });
+        } else {
+          this.buses.update((list: Bus[]) => [res, ...list]);
+          Swal.fire({ icon: 'success', title: 'Succès', text: 'Bus ajouté', timer: 2000, showConfirmButton: false });
+        }
+
+        this.showForm.set(false);
+        this.isSubmitting.set(false);
+        this.isEditing.set(false);
+        this.editId.set(null);
+        this.busForm.reset({ nb_places: 70, statut: 'disponible', station_id: this.currentUser()?.station_id });
+      },
+      error: (error) => {
+        this.isSubmitting.set(false);
+        let errorMsg = this.isEditing() ? 'Impossible de modifier le bus' : 'Impossible d\'ajouter le bus';
+        if (error.status === 422 && error.error?.errors) {
+          errorMsg = Object.entries(error.error.errors)
+            .map(([key, value]: [string, any]) => `${key}: ${value.join(', ')}`)
+            .join('\n');
+        }
+        Swal.fire({ icon: 'error', title: 'Erreur', text: errorMsg });
+      }
+    });
   }
 
   downloadPdf() {

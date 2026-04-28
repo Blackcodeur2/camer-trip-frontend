@@ -40,8 +40,8 @@ export class Landing {
           .join(' ');
         const voyageMatch = station.voyages?.some((voyage) => {
           const trajetLabel = [
-            voyage.trajet?.villeDepart?.nom,
-            voyage.trajet?.villeArrivee?.nom,
+            voyage.trajet?.depart,
+            voyage.trajet?.arrivee,
           ]
             .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
             .join(' ');

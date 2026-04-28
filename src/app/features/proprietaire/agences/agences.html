@@ -2,10 +2,6 @@
 
     <!-- HEADER -->
     <header class="page-header">
-        <div class="header-text">
-            <h1>Mes Agences</h1>
-            <p>Gérez vos agences de transport et leurs gares.</p>
-        </div>
         @if (formMode() === 'none') {
         <button class="btn-primary" (click)="openAgenceForm()">
             <mat-icon>add</mat-icon> Nouvelle agence
@@ -26,7 +22,7 @@
 
         <form [formGroup]="agenceForm" (ngSubmit)="onSubmitAgence()" class="form-grid">
 
-            <div class="field field--full">
+            <div class="field">
                 <label for="nom">Nom de l'agence *</label>
                 <div class="input-wrap">
                     <mat-icon>business</mat-icon>
@@ -34,6 +30,16 @@
                 </div>
                 @if (shouldShowError('agence', 'nom')) {
                 <span class="field-error">{{ errorMessage('agence', 'nom') }}</span>
+                }
+            </div>
+            <div class="field">
+                <label for="logo">Logo de l'agence *</label>
+                <div class="input-wrap">
+                    <mat-icon>image</mat-icon>
+                    <input id="logo" type="file" formControlName="logo">
+                </div>
+                @if (shouldShowError('agence', 'logo')) {
+                <span class="field-error">{{ errorMessage('agence', 'logo') }}</span>
                 }
             </div>
 
@@ -103,7 +109,7 @@
         <div class="form-card__header">
             <h2>
                 <mat-icon>add_location_alt</mat-icon>
-                Nouvelle gare — <span class="accent">{{ agenceForGare()?.nom }}</span>
+                Nouvelle Station — <span class="accent">{{ agenceForGare()?.nom }}</span>
             </h2>
             <button class="icon-btn" (click)="closeForm()"><mat-icon>close</mat-icon></button>
         </div>
@@ -111,18 +117,21 @@
         <form [formGroup]="gareForm" (ngSubmit)="onSubmitGare()" class="form-grid">
 
             <div class="field">
-                <label for="gare-ville">Ville *</label>
-                <div class="input-wrap">
+                <label for="ville">Ville *</label>
+                <div class="input-wrap autocomplete-wrap">
                     <mat-icon>location_city</mat-icon>
-                    <select id="gare-ville" formControlName="ville_id" class="form-control">
-                        <option value="0">-- Sélectionner une ville --</option>
-                        @for (ville of villes(); track ville.id) {
-                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
+                    <input id="ville" type="text" formControlName="ville" (focus)="onVilleFocus()" placeholder="Commencez à saisir une ville...">
+                    
+                    @if (showAutocomplete()) {
+                    <ul class="autocomplete-list">
+                        @for (v of filteredVilles(); track v) {
+                        <li (click)="selectVille(v)">{{ v }}</li>
                         }
-                    </select>
+                    </ul>
+                    }
                 </div>
-                @if (shouldShowError('gare', 'ville_id')) {
-                <span class="field-error">{{ errorMessage('gare', 'ville_id') }}</span>
+                @if (shouldShowError('gare', 'ville')) {
+                <span class="field-error">{{ errorMessage('gare', 'ville') }}</span>
                 }
             </div>
 
@@ -204,7 +213,7 @@
             <div class="agency-card__footer">
                 <div class="gare-count">
                     <mat-icon>store</mat-icon>
-                    <span>{{ agence.stations?.length ?? 0 }} gare(s)</span>
+                    <span>{{ agence.stations?.length ?? 0 }} Stations(s)</span>
                     @if ((agence.stations?.length ?? 0) > 0) {
                     <button class="toggle-gares-btn" (click)="toggleExpand(agence.id)">
                         {{ expandedAgenceId() === agence.id ? 'Masquer' : 'Voir' }}
@@ -214,7 +223,7 @@
                 </div>
                 <div class="agency-actions">
                     <button class="action-btn action-btn--add" (click)="openGareForm(agence)" title="Ajouter une gare">
-                        <mat-icon>add_location_alt</mat-icon> Ajouter gare
+                        <mat-icon>add_location_alt</mat-icon> Ajouter Station
                     </button>
                     <button class="action-btn action-btn--edit" (click)="openAgenceForm(agence)" title="Modifier">
                         <mat-icon>edit</mat-icon>
@@ -226,9 +235,9 @@
             </div>
 
             <!-- Gares dépliées -->
-            @if (expandedAgenceId() === agence.id && (agence.gares?.length ?? 0) > 0) {
+            @if (expandedAgenceId() === agence.id && (agence.stations?.length ?? 0) > 0) {
             <div class="gares-list animate-in">
-                @for (gare of agence.gares!; track gare.id) {
+                @for (gare of agence.stations!; track gare.id) {
                 <div class="gare-item">
                     <mat-icon>location_on</mat-icon>
                     <div>

@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth-service';
+import { ChefAgenceService } from '../../../services/chef_agence/chef-agence-service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,7 @@ import { AuthService } from '../../../services/auth/auth-service';
 })
 export class Dashboard {
   private authService = inject(AuthService);
+  private chefAgenceService = inject(ChefAgenceService);
   private router = inject(Router);
 
   isLoading = signal(true);
@@ -101,8 +103,16 @@ export class Dashboard {
 
   private loadStats() {
     this.isLoading.set(true);
-    this.dashboardData.set([]);
-    this.recentReservations.set([]);
-    this.isLoading.set(false);
+
+    this.chefAgenceService.getDashboardStats().subscribe({
+      next: (data: any) => {
+        this.dashboardData.set(data);
+        this.recentReservations.set(data.recent_reservations);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      }
+    });
   }
 }

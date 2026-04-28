@@ -2,6 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Bus } from '../../models/bus';
+import { Trajet } from '../../models/trajet';
+import { User } from '../../models/user';
 
 @Injectable({
   providedIn: 'root',
@@ -22,10 +25,56 @@ export class ChefAgenceService {
       .pipe(map(response => response.data));
   }
 
-  // ── Bus ──
-  getBuses(): Observable<any[]> {
-    return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/chef-agence/buses`)
-      .pipe(map(response => response.data));
+  // Buses
+  getBuses(): Observable<Bus[]> {
+    return this.http.get<{ statut: boolean; data: Bus[] }>(`${this.API}/chef-agence/buses`)
+      .pipe(map((response: { statut: boolean; data: Bus[] }) => response.data));
+  }
+
+  getBusesDispo(): Observable<Bus[]> {
+    return this.http.get<{ statut: boolean; data: Bus[] }>(`${this.API}/chef-agence/buses/dispo`)
+      .pipe(map((response: { statut: boolean; data: Bus[] }) => response.data));
+  }
+
+  createBus(bus: Partial<Bus>): Observable<Bus> {
+    return this.http.post<Bus>(`${this.API}/chef-agence/buses`, bus);
+  }
+
+  updateBus(bus: Partial<Bus>): Observable<Bus> {
+    return this.http.put<Bus>(`${this.API}/chef-agence/buses/${bus.id}`, bus);
+  }
+
+  // Routes
+  getRoutes(): Observable<Trajet[]> {
+    return this.http.get<{ statut: boolean; data: Trajet[] }>(`${this.API}/chef-agence/trajets`)
+      .pipe(map((response: { statut: boolean; data: Trajet[] }) => response.data));
+  }
+
+  createRoute(route: Partial<Trajet>): Observable<Trajet> {
+    return this.http.post<Trajet>(`${this.API}/chef-agence/trajets`, route);
+  }
+
+  updateRoute(route: Partial<Trajet>): Observable<Trajet> {
+    return this.http.put<Trajet>(`${this.API}/chef-agence/trajets/${route.id}`, route);
+  }
+
+  // Staff
+  getStaff(): Observable<User[]> {
+    return this.http.get<{ statut: boolean; data: User[] }>(`${this.API}/chef-agence/utilisateurs`)
+      .pipe(map((response: { statut: boolean; data: User[] }) => response.data));
+  }
+
+  getChauffeurs(): Observable<User[]> {
+    return this.http.get<{ statut: boolean; data: User[] }>(`${this.API}/chef-agence/utilisateurs`)
+      .pipe(map((response: { statut: boolean; data: User[] }) => response.data.filter((user: User) => user.role_user === 'CHAUFFEUR')));
+  }
+
+  addStaff(staff: any): Observable<User> {
+    return this.http.post<User>(`${this.API}/chef-agence/staff`, staff);
+  }
+
+  updateStaff(staff: any): Observable<User> {
+    return this.http.put<User>(`${this.API}/chef-agence/staff/${staff.id}`, staff);
   }
 
   // ── Voyages ──

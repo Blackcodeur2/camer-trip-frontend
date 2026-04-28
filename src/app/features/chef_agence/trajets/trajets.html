@@ -23,31 +23,51 @@
         </div>
         <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
             <div class="form-grid">
-                <div class="form-group">
-                    <label>Ville de départ</label>
-                    <select formControlName="ville_depart" class="form-control">
-                        <option value="">-- Sélectionnez une ville --</option>
-                        @for (ville of villes(); track ville.id) {
-                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
+                <div class="field">
+                    <label for="depart">Ville de depart *</label>
+                    <div class="input-wrap autocomplete-wrap">
+                        <mat-icon>location_city</mat-icon>
+                        <input id="depart" type="text" formControlName="depart" (focus)="onVilleDepartFocus()"
+                            placeholder="Commencez à saisir une ville...">
+
+                        @if (showAutocomplete()) {
+                        <ul class="autocomplete-list">
+                            @for (v of filteredVilles(); track v) {
+                            <li (click)="selectVilleDepart(v)">{{ v }}</li>
+                            }
+                        </ul>
                         }
-                    </select>
+                    </div>
+                    @if (shouldShowError('trajet', 'depart')) {
+                    <span class="field-error">{{ errorMessage('trajet', 'depart') }}</span>
+                    }
                 </div>
-                <div class="form-group">
-                    <label>Ville d'arrivée</label>
-                    <select formControlName="ville_arrive" class="form-control">
-                        <option value="">-- Sélectionnez une ville --</option>
-                        @for (ville of villes(); track ville.id) {
-                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
+                <div class="field">
+                    <label for="arrivee">Ville d'arrivee *</label>
+                    <div class="input-wrap autocomplete-wrap">
+                        <mat-icon>location_city</mat-icon>
+                        <input id="arrivee" type="text" formControlName="arrivee" (focus)="onVilleArriveeFocus()"
+                            placeholder="Commencez à saisir une ville...">
+
+                        @if (showAutocomplete()) {
+                        <ul class="autocomplete-list">
+                            @for (v of filteredVilles(); track v) {
+                            <li (click)="selectVilleArrivee(v)">{{ v }}</li>
+                            }
+                        </ul>
                         }
-                    </select>
+                    </div>
+                    @if (shouldShowError('trajet', 'arrivee')) {
+                    <span class="field-error">{{ errorMessage('trajet', 'arrivee') }}</span>
+                    }
                 </div>
                 <div class="form-group">
                     <label>Prix (XAF)</label>
                     <input type="number" formControlName="prix" class="form-control" placeholder="Ex: 5000" />
                 </div>
                 <div class="form-group">
-                    <label>Distance (Km)</label>
-                    <input type="number" formControlName="distance_km" class="form-control" placeholder="Ex: 30" />
+                    <label>Duree (Heure)</label>
+                    <input type="number" formControlName="duree_heure" class="form-control" placeholder="Ex: 30" />
                 </div>
                 <div class="form-group">
                     <label>Type de Trajet</label>
@@ -72,7 +92,7 @@
                 <tr>
                     <th style="width: 100px; text-align: center;">Réf</th>
                     <th>Trajet</th>
-                    <th>Distance</th>
+                    <th>Duree (Heure)</th>
                     <th>Prix</th>
                     <th>Type</th>
                     <th style="text-align: right;">Actions</th>
@@ -101,8 +121,8 @@
                     </td>
                     <td>
                         <div class="distance-info">
-                            <mat-icon>route</mat-icon>
-                            <span>{{ route.distance_km || '--' }} Km</span>
+                            <mat-icon>history</mat-icon>
+                            <span>{{ route.duree_heure || '--' }} heures</span>
                         </div>
                     </td>
                     <td>
@@ -112,7 +132,8 @@
                         </div>
                     </td>
                     <td>
-                        <span class="status-badge status--{{ route.type_trajet?.toLowerCase() === 'vip' ? 'success' : 'active' }}">
+                        <span
+                            class="status-badge status--{{ route.type_trajet?.toLowerCase() === 'vip' ? 'success' : 'active' }}">
                             {{ route.type_trajet }}
                         </span>
                     </td>
@@ -131,8 +152,10 @@
                 <tr>
                     <td colspan="6">
                         <div class="empty-state">
-                            <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">no_roads</mat-icon>
-                            <p style="font-weight: 700; color: var(--color-text-muted)">Aucune ligne n'a été configurée pour le moment.</p>
+                            <mat-icon
+                                style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">no_roads</mat-icon>
+                            <p style="font-weight: 700; color: var(--color-text-muted)">Aucune ligne n'a été configurée
+                                pour le moment.</p>
                         </div>
                     </td>
                 </tr>

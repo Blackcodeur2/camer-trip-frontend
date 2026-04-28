@@ -72,11 +72,11 @@ export class AdminService {
   }
 
   approveKyc(doc_id: number): Observable<any> {
-    return this.http.put(`${this.API}/admin/kyc/${doc_id}/approve`, {});
+    return this.http.put(`${this.API}/admin/documents/${doc_id}/approuver`, {});
   }
 
   rejectKyc(doc_id: number, reason: string): Observable<any> {
-    return this.http.post(`${this.API}/admin/kyc/${doc_id}/reject`, { reason });
+    return this.http.post(`${this.API}/admin/documents/${doc_id}/rejeter`, { reason });
   }
 
   // ── Abonnements ──

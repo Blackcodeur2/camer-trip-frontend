@@ -150,9 +150,8 @@ export class Kyc {
     }).then((result) => {
       if (result.isConfirmed) {
         this.isProcessing.set(true);
-        // On approuve chaque document un par un (ou via une boucle)
         const pendingDocs = sub.documents.filter(d => d.statut === 'en attente');
-        const requests = pendingDocs.map(d => this.adminService.approveKyc(d.id).toPromise());
+        const requests = pendingDocs.map(d => this.adminService.approveKyc(d.user_id).toPromise());
 
         Promise.all(requests).then(() => {
           this.isProcessing.set(false);

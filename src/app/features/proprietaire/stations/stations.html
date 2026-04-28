@@ -59,7 +59,7 @@
         @for (gare of gares(); track gare.id) {
         <div class="gare-card">
             <div class="card-header">
-                <h3>{{ gare.agence_nom || 'Gare' }}</h3>
+                <h3>{{ gare.nom || 'Gare' }}</h3>
 
                 <div class="action-btn-group">
                     <button class="icon-btn" (click)="openForm(gare)" title="Modifier">
@@ -76,7 +76,7 @@
                     <mat-icon>location_on</mat-icon>
                     <div>
                         <span class="label">Emplacement</span>
-                        <span class="value">{{ gare.ville_nom }} - {{ gare.quartier }}</span>
+                        <span class="value">{{ gare.ville }} - {{ gare.quartier }}</span>
                     </div>
                 </div>
                 <div class="info-item">

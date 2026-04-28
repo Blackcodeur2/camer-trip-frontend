@@ -10,48 +10,6 @@
     </button>
   </header>
 
-  <!-- Stats Cards -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon revenue">
-        <mat-icon>payments</mat-icon>
-      </div>
-      <div class="stat-info">
-        <span class="stat-label">Revenu Total</span>
-        <span class="stat-value">{{ stats().revenue | currency:'XAF':'code':'1.0-0' }}</span>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-icon active">
-        <mat-icon>check_circle</mat-icon>
-      </div>
-      <div class="stat-info">
-        <span class="stat-label">En cours</span>
-        <span class="stat-value">{{ stats().active }}</span>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-icon expired">
-        <mat-icon>history</mat-icon>
-      </div>
-      <div class="stat-info">
-        <span class="stat-label">Terminés</span>
-        <span class="stat-value">{{ stats().expired }}</span>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-icon total">
-        <mat-icon>group</mat-icon>
-      </div>
-      <div class="stat-info">
-        <span class="stat-label">Total Souscriptions</span>
-        <span class="stat-value">{{ stats().total }}</span>
-      </div>
-    </div>
-  </div>
 
   <!-- Content -->
   <div class="content-card">
