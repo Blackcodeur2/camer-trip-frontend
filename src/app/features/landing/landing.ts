@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, HostListener, computed, inject, sig
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AgenceService } from '../../services/agence/agence-service';
+import { ClientService } from '../../services/client/client-service';
 import { Agence } from '../../models/agence';
 import { MatIcon } from "@angular/material/icon";
 
@@ -14,7 +14,8 @@ import { MatIcon } from "@angular/material/icon";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Landing {
-  private readonly agenceService = inject(AgenceService);
+  private readonly clientService = inject(ClientService);
+
 
   isScrolled = false;
   agences = signal<Agence[]>([]);
@@ -66,7 +67,7 @@ export class Landing {
 
   loadAgences(): void {
     this.loading.set(true);
-    this.agenceService.getAgences().subscribe({
+    this.clientService.getAgences().subscribe({
       next: (agences) => {
         this.agences.set(agences);
         this.loading.set(false);

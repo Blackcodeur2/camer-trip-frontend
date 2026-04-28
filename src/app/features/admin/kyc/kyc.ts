@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { environment } from '../../../../environments/environment';
-import { DocumentService } from '../../../services/documents/document-service';
+import { AdminService } from '../../../services/admin/admin-service';
 import { DocumentKYC, KycGroupedByUser, KycStatus } from '../../../models/document-kyc';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './kyc.css',
 })
 export class Kyc {
-   private kycService = inject(DocumentService);
+   private adminService = inject(AdminService);
+
   private sanitizer = inject(DomSanitizer);
 
   submissions = signal<KycGroupedByUser[]>([]);
@@ -31,7 +32,7 @@ export class Kyc {
 
   loadPendingKyc() {
     this.isLoading.set(true);
-    this.kycService.getPendingKyc().subscribe({
+    this.adminService.getPendingKyc().subscribe({
       next: (data: DocumentKYC[]) => {
         const list = Array.isArray(data) ? data : (data as any).data ?? [];
         this.submissions.set(this.groupDocumentsByUser(list));
@@ -150,9 +151,8 @@ export class Kyc {
       if (result.isConfirmed) {
         this.isProcessing.set(true);
         // On approuve chaque document un par un (ou via une boucle)
-        // Note: Idéalement le backend devrait avoir un endpoint de validation globale
         const pendingDocs = sub.documents.filter(d => d.statut === 'en attente');
-        const requests = pendingDocs.map(d => this.kycService.approveKyc(d.id).toPromise());
+        const requests = pendingDocs.map(d => this.adminService.approveKyc(d.id).toPromise());
 
         Promise.all(requests).then(() => {
           this.isProcessing.set(false);
@@ -187,7 +187,7 @@ export class Kyc {
       if (result.isConfirmed && result.value) {
         this.isProcessing.set(true);
         const pendingDocs = sub.documents.filter(d => d.statut === 'en attente');
-        const requests = pendingDocs.map(d => this.kycService.rejectKyc(d.id, result.value).toPromise());
+        const requests = pendingDocs.map(d => this.adminService.rejectKyc(d.id, result.value).toPromise());
 
         Promise.all(requests).then(() => {
           this.isProcessing.set(false);

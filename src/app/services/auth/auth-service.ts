@@ -64,6 +64,19 @@ export class AuthService {
     return this.http.post(`${this.API}/change-password`, data);
   }
 
+  updateProfile(data: FormData): Observable<any> {
+    return this.http.post<any>(`${this.API}/user/update-profile`, data).pipe(
+      tap(response => {
+        if (response && response.data) {
+          const user = response.data;
+          localStorage.setItem('user', JSON.stringify(user));
+          this.currentUser.set(user);
+        }
+      })
+    );
+  }
+
+
   getToken(): string | null {
     return localStorage.getItem('token');
   }

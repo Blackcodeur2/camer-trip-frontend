@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
 import { Ville } from '../../../models/ville';
-import { AgenceService } from '../../../services/agence/agence-service';
+import { ProprietaireService } from '../../../services/proprietaire/proprietaire-service';
 import { Station } from '../../../models/station';
 
 type FormMode = 'none' | 'form';
@@ -15,7 +15,8 @@ type FormMode = 'none' | 'form';
   styleUrl: './stations.css',
 })
 export class Stations {
-  private agenceService = inject(AgenceService);
+  private proprietaireService = inject(ProprietaireService);
+
   private fb = inject(FormBuilder);
 
   gares = signal<Station[]>([]);
@@ -42,7 +43,7 @@ export class Stations {
   }
 
   loadVilles() {
-    this.agenceService.getVilles().subscribe({
+    this.proprietaireService.getVilles().subscribe({
       next: (data) => this.villes.set(data),
       error: () => this.villes.set([])
     });
@@ -51,7 +52,7 @@ export class Stations {
 
   loadGares() {
     this.isLoading.set(true);
-    this.agenceService.getMyGares().subscribe({
+    this.proprietaireService.getMyStations().subscribe({
       next: (data) => {
         const list = Array.isArray(data) ? data : (data as any).data ?? [];
         this.gares.set(list);
@@ -95,8 +96,8 @@ export class Stations {
     const payload = this.gareForm.getRawValue();
 
     const request = this.editingGare()
-      ? this.agenceService.updateGare(this.editingGare()!.id, payload)
-      : this.agenceService.createGare(payload);
+      ? this.proprietaireService.updateStation(this.editingGare()!.id, payload)
+      : this.proprietaireService.createStation(payload);
 
     request.subscribe({
       next: () => {
@@ -122,7 +123,7 @@ export class Stations {
       cancelButtonText: 'Annuler'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.agenceService.deleteGare(id).subscribe({
+        this.proprietaireService.deleteStation(id).subscribe({
           next: () => {
             Swal.fire('Supprimée', 'Gare supprimée avec succès', 'success');
             this.loadGares();

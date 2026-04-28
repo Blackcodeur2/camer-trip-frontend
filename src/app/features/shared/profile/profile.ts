@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth/auth-service';
 import Swal from 'sweetalert2';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -28,6 +29,17 @@ export class Profile implements OnInit {
     const u = this.currentUser();
     if (!u) return '?';
     return `${u.prenom?.[0] || ''}${u.nom?.[0] || ''}`.toUpperCase();
+  });
+
+  protected readonly userAvatarUrl = computed(() => {
+    const preview = this.avatarPreview();
+    if (preview) return preview;
+
+    const avatar = this.currentUser()?.profil_url;
+    if (avatar) {
+      return avatar.startsWith('http') ? avatar : `${environment.storageUrl}/${avatar}`;
+    }
+    return null;
   });
 
   protected readonly userRoleLabel = computed(() => {
@@ -105,8 +117,30 @@ export class Profile implements OnInit {
     const reader = new FileReader();
     reader.onload = (e) => this.avatarPreview.set(e.target?.result as string);
     reader.readAsDataURL(file);
-    // TODO: upload to API
+
+    // Upload to API
+    this.isLoading.set(true);
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    this.authService.updateProfile(formData).subscribe({
+      next: (response) => {
+        this.isLoading.set(false);
+        Swal.fire({
+          icon: 'success',
+          title: 'Photo de profil mise à jour !',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        console.error('Erreur upload avatar:', err);
+        Swal.fire('Erreur', 'Impossible de mettre à jour la photo de profil.', 'error');
+      }
+    });
   }
+
 
   onChangePassword(): void {
     if (this.passwordForm.invalid) {

@@ -7,7 +7,6 @@ import { Ville } from '../../../models/ville';
 import { ProprietaireService } from '../../../services/proprietaire/proprietaire-service';
 import { Station } from '../../../models/station';
 import { CommonModule } from '@angular/common';
-import { AgenceService } from '../../../services/agence/agence-service';
 import { HttpClient } from '@angular/common/http';
 
 type FormMode = 'none' | 'agence' | 'gare';
@@ -19,8 +18,8 @@ type FormMode = 'none' | 'agence' | 'gare';
 })
 export class Agences {
   private proprietaireService = inject(ProprietaireService);
-  private agenceService = inject(AgenceService);
   private fb = inject(FormBuilder);
+
   agencies = signal<Agence[]>([]);
   villes = signal<Ville[]>([]);
 
@@ -118,7 +117,7 @@ export class Agences {
   }
 
   loadVilles() {
-    this.agenceService.getVilles().subscribe({
+    this.proprietaireService.getVilles().subscribe({
       next: (data) => this.villes.set(data),
       error: () => this.villes.set([])
     });

@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { AgenceService } from '../../../services/agence/agence-service';
-import { UserService } from '../../../services/users/user-service';
+import { AdminService } from '../../../services/admin/admin-service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import Chart from 'chart.js/auto';
@@ -13,8 +12,8 @@ import Chart from 'chart.js/auto';
   styleUrls: ['./dashboard.css'],
 })
 export class Dashboard {
-  private userService = inject(UserService);
-  private agenceService = inject(AgenceService);
+  private adminService = inject(AdminService);
+
 
   totalUsers = signal(0);
   totalAgencies = signal(0);
@@ -32,8 +31,8 @@ export class Dashboard {
     this.isLoading.set(true);
 
     forkJoin({
-      users: this.userService.getUsers(),
-      agencies: this.agenceService.getAgences()
+      users: this.adminService.getUsers(),
+      agencies: this.adminService.getAgences()
     }).subscribe({
       next: (res: any) => {
         const usersList = Array.isArray(res.users) ? res.users : (res.users?.data || []);

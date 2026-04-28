@@ -81,7 +81,7 @@ export const routes: Routes = [
             },
             {
                 path: 'abonnements',
-                loadComponent: () => import('./features/admin/abonnement/abonnement').then(m => m.Abonnement),
+                loadComponent: () => import('./features/admin/abonnements/abonnements').then(m => m.Abonnements),
             },
             {
                 path: 'profile',

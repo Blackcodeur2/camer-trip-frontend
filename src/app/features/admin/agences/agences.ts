@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { Agence } from '../../../models/agence';
-import { AgenceService } from '../../../services/agence/agence-service';
+import { AdminService } from '../../../services/admin/admin-service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
@@ -15,7 +15,8 @@ import { AppButton } from '../../../shared/button/app-button/app-button';
   styleUrl: './agences.css',
 })
 export class Agences {
-  private agenceService = inject(AgenceService);
+  private adminService = inject(AdminService);
+
 
   agences = signal<Agence[]>([]);
   isLoading = signal<boolean>(true);
@@ -45,7 +46,7 @@ export class Agences {
   loadAgences() {
     this.isLoading.set(true);
     this.error.set(null);
-    this.agenceService.getAllAgences().subscribe({
+    this.adminService.getAgences().subscribe({
       next: (data: any) => {
         const list = Array.isArray(data) ? data : (data.data || []);
         this.agences.set(list);

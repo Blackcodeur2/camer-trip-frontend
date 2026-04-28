@@ -1,0 +1,112 @@
+<div class="abonnements-container">
+  <header class="page-header">
+    <div class="header-content">
+      <h1>Gestion des Abonnements</h1>
+      <p>Suivi des souscriptions des propriétaires d'agences</p>
+    </div>
+    <button class="refresh-btn" (click)="loadAbonnements()" [disabled]="isLoading()">
+      <mat-icon [class.spin]="isLoading()">refresh</mat-icon>
+      Actualiser
+    </button>
+  </header>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon revenue">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Revenu Total</span>
+        <span class="stat-value">{{ stats().revenue | currency:'XAF':'code':'1.0-0' }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon active">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">En cours</span>
+        <span class="stat-value">{{ stats().active }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon expired">
+        <mat-icon>history</mat-icon>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Terminés</span>
+        <span class="stat-value">{{ stats().expired }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon total">
+        <mat-icon>group</mat-icon>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">Total Souscriptions</span>
+        <span class="stat-value">{{ stats().total }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-card">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement des abonnements...</p>
+      </div>
+    } @else if (error()) {
+      <div class="error-state">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ error() }}</p>
+        <button (click)="loadAbonnements()">Réessayer</button>
+      </div>
+    } @else if (abonnements().length === 0) {
+      <div class="empty-state">
+        <mat-icon>subtitles_off</mat-icon>
+        <p>Aucun abonnement enregistré pour le moment.</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="abonnements-table">
+          <thead>
+            <tr>
+              <th>Propriétaire</th>
+              <th>Montant</th>
+              <th>Durée</th>
+              <th>Date Début</th>
+              <th>Date Fin</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (abo of abonnements(); track abo.id) {
+              <tr>
+                <td>
+                  <div class="owner-info">
+                    <span class="owner-name">{{ abo.proprietaire?.nom }} {{ abo.proprietaire?.prenom }}</span>
+                    <span class="owner-email">{{ abo.proprietaire?.email }}</span>
+                  </div>
+                </td>
+                <td class="amount">{{ abo.montant | currency:'XAF':'code':'1.0-0' }}</td>
+                <td>{{ abo.duree }} mois</td>
+                <td>{{ abo.date_debut | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ abo.date_fin | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="status-badge" [ngClass]="getStatusClass(abo.statut)">
+                    {{ abo.statut }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

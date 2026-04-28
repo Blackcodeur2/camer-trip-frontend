@@ -9,11 +9,12 @@ export interface User {
     date_naissance?: string;
     telephone: string;
     station_id: number;
-    role_user: 'ADMIN' | 'CLIENT' | 'CHEF_AGENCE' | 'CHAUFFEUR' | 'AGENT' | 'CONTROLEUR' | 'PROPRIETAIRE';
+    role_user: 'ADMIN' | 'CLIENT' | 'CHEF_AGENCE' | 'CHAUFFEUR' | 'AGENT'| 'PROPRIETAIRE';
     sexe: 'M' | 'F' | string;
     statut?: string,
     is_subscribed: number;
     subscription_expires_at: string;
     kyc_status?: string;
+    profil_url?: string;
     updated_at?: string;
 }

@@ -6,6 +6,7 @@ import { Agence } from '../../models/agence';
 import { User } from '../../models/user';
 import { AuthService } from '../auth/auth-service';
 import { Station } from '../../models/station';
+import { Ville } from '../../models/ville';
 
 
 export interface CreateAgencePayload {
@@ -38,24 +39,20 @@ export interface CreateStationPayload {
   providedIn: 'root',
 })
 export class ProprietaireService {
-  updateGerant(id: number, payload: Partial<CreateGerantPayload>): Observable<User> {
-    return this.http.put<User>(`${this.API}/proprietaire/gerants/${id}`, payload);
-  }
-  getMyGares() {
-    throw new Error('Method not implemented.');
-  }
-  updateGare(id: any, payload: { agence_id: number; ville_id: number; quartier: string; telephone: string; }) {
-    throw new Error('Method not implemented.');
-  }
-  createGare(payload: { agence_id: number; ville_id: number; quartier: string; telephone: string; }) {
-    throw new Error('Method not implemented.');
-  }
-  deleteGare(id: number) {
-    throw new Error('Method not implemented.');
-  }
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private readonly API = environment.apiUrl;
+
+  // ── Profil & Gérants ──
+  updateGerant(id: number, payload: Partial<CreateGerantPayload>): Observable<User> {
+    return this.http.put<User>(`${this.API}/proprietaire/gerants/${id}`, payload);
+  }
+
+
+  // ── Recherche & Villes ──
+  getVilles(): Observable<Ville[]> {
+    return this.http.get<Ville[]>(`${this.API}/villes`);
+  }
 
   // ── Agences ──
   getMyAgences(): Observable<Agence[]> {

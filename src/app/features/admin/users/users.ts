@@ -4,28 +4,30 @@ import { MatIconModule } from "@angular/material/icon";
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
-import Swal from 'sweetalert2';
 import { Agence } from '../../../models/agence';
 import { User } from '../../../models/user';
-import { AgenceService } from '../../../services/agence/agence-service';
-import { UserService } from '../../../services/users/user-service';
+import { AdminService } from '../../../services/admin/admin-service';
 import { Station } from '../../../models/station';
+import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../../services/auth/auth-service';
+
 
 @Component({
   selector: 'app-users',
-  imports: [CommonModule, MatIconModule, DatePipe, ReactiveFormsModule, AppButton, PaginationComponent],
+  imports: [CommonModule, MatIconModule, DatePipe, ReactiveFormsModule, PaginationComponent],
   templateUrl: './users.html',
   styleUrl: './users.css',
 })
 export class Users {
-  private userService = inject(UserService);
-  private agenceService = inject(AgenceService);
+  private adminService = inject(AdminService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+
 
   users = signal<User[]>([]);
   agences = signal<Agence[]>([]);
   garesDisponibles = signal<Station[]>([]);
-
+  protected readonly currentUser = this.authService.currentUser;
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
 
@@ -33,7 +35,7 @@ export class Users {
   currentPage = signal<number>(1);
   totalItems = signal<number>(0);
   pageSize = signal<number>(20);
-
+  avatarPreview = signal<string | null>(null);
   showCreateForm = signal<boolean>(false);
   isCreating = signal<boolean>(false);
 
@@ -44,7 +46,7 @@ export class Users {
     return role ? this.users().filter(u => u.role_user === role) : this.users();
   });
 
-  roles = ['ADMIN', 'CHEF_AGENCE', 'AGENT', 'CHAUFFEUR', 'CONTROLEUR', 'CLIENT', 'PROPRIETAIRE'];
+  roles = ['ADMIN', 'CHEF_AGENCE', 'AGENT', 'CHAUFFEUR', 'CLIENT', 'PROPRIETAIRE'];
 
   userForm = this.fb.group({
     nom: ['', Validators.required],
@@ -91,15 +93,26 @@ export class Users {
   loadUsers(page: number = 1) {
     this.isLoading.set(true);
     this.error.set(null);
-    this.userService.getUsers(page).subscribe({
-      next: (response) => {
-        // Structure: { statut: true, data: { current_page, data: [...], total, per_page } }
-        const paginated = response?.data;
-        const list = paginated?.data ?? [];
-        this.users.set(list);
-        this.totalItems.set(paginated?.total ?? 0);
-        this.pageSize.set(paginated?.per_page ?? 20);
-        this.currentPage.set(paginated?.current_page ?? 1);
+    this.adminService.getUsers(page).subscribe({
+      next: (response: any) => {
+        const data = response?.data;
+        
+        if (Array.isArray(data)) {
+          // Cas d'une liste simple (non paginée)
+          this.users.set(data);
+          this.totalItems.set(data.length);
+          this.pageSize.set(data.length);
+          this.currentPage.set(1);
+        } else if (data && Array.isArray(data.data)) {
+          // Cas de la pagination Laravel standard
+          this.users.set(data.data);
+          this.totalItems.set(data.total ?? 0);
+          this.pageSize.set(data.per_page ?? 20);
+          this.currentPage.set(data.current_page ?? 1);
+        } else {
+          this.users.set([]);
+        }
+        
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -116,13 +129,24 @@ export class Users {
   }
 
   loadAgences() {
-    this.agenceService.getAgences().subscribe({
+    this.adminService.getAgences().subscribe({
       next: (data: any) => {
         const list = Array.isArray(data) ? data : (data.data || []);
         this.agences.set(list);
       }
     });
   }
+
+    protected readonly userAvatarUrl = computed(() => {
+    const preview = this.avatarPreview();
+    if (preview) return preview;
+
+    const avatar = this.currentUser()?.profil_url;
+    if (avatar) {
+      return avatar.startsWith('http') ? avatar : `${environment.storageUrl}/${avatar}`;
+    }
+    return null;
+  });
 
   toggleForm() {
     this.showCreateForm.update(v => !v);
@@ -140,7 +164,6 @@ export class Users {
       CHEF_AGENCE: 'Chef d\'agence',
       AGENT: 'Agent',
       CHAUFFEUR: 'Chauffeur',
-      CONTROLEUR: 'Contrôleur',
       CLIENT: 'Client',
       PROPRIETAIRE: 'Propriétaire'
     };
@@ -151,39 +174,14 @@ export class Users {
     return this.users().filter(u => u.role_user === role).length;
   }
 
-  onSubmitUser() {
-    if (this.userForm.invalid) {
-      this.userForm.markAllAsTouched();
-      return;
-    }
+  getAvatarUrl(user: User): string | null {
+    if (!user.profil_url) return null;
+    return user.profil_url.startsWith('http') ? user.profil_url : `${environment.storageUrl}/${user.profil_url}`;
+  }
 
-    this.isCreating.set(true);
-    const formData = this.userForm.getRawValue() as any;
-
-    this.userService.createUser(formData).subscribe({
-      next: (newUser) => {
-        this.users.update(users => [newUser, ...users]);
-        this.totalItems.update(t => t + 1);
-        this.isCreating.set(false);
-        this.toggleForm();
-        Swal.fire({
-          icon: 'success',
-          title: 'Utilisateur créé',
-          text: 'Le nouvel utilisateur a été enregistré avec succès.',
-          timer: 2000,
-          showConfirmButton: false
-        });
-      },
-      error: (err) => {
-        console.error(err);
-        this.isCreating.set(false);
-        Swal.fire({
-          icon: 'error',
-          title: 'Erreur',
-          text: 'Vérifiez les données (téléphone ou CNI peut-être déjà utilisés ?).',
-          confirmButtonColor: '#3b82f6',
-        });
-      }
-    });
+  getUserInitials(user: User): string {
+    const first = user.prenom?.trim().charAt(0) ?? '';
+    const last = user.nom?.trim().charAt(0) ?? '';
+    return `${first || 'U'}${last || 'S'}`.toUpperCase();
   }
 }
