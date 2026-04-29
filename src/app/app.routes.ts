@@ -23,6 +23,14 @@ export const routes: Routes = [
         path: 'landing',
         loadComponent: () => import('./features/landing/landing').then(m => m.Landing)
     },
+    {
+        path: 'terms',
+        loadComponent: () => import('./features/legal/terms/terms').then(m => m.Terms)
+    },
+    {
+        path: 'privacy',
+        loadComponent: () => import('./features/legal/privacy/privacy').then(m => m.Privacy)
+    },
 
     {
         path: 'verify-email',
