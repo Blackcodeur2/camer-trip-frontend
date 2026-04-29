@@ -102,6 +102,7 @@ export class Gerants implements OnInit {
         this.managers.update(list => [newManager, ...list]);
         Swal.fire({ icon: 'success', title: 'Gérant créé !', text: 'Le gérant a accès à son espace et peut se connecter.', confirmButtonColor: '#7c3aed' });
         this.closeForm();
+        this.loadData();
       },
       error: (err) => {
         this.isSubmitting.set(false);

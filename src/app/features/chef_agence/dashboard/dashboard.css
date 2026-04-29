@@ -254,6 +254,172 @@ h1 {
     color: var(--color-primary);
 }
 
+/* Trip List */
+.list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.trip-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 4px;
+}
+
+.occupancy {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.occupancy.full {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+/* Recent Reservations */
+.recent-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-primary-light);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.name {
+    font-weight: 700;
+    color: var(--color-dark);
+}
+
+.route-small {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+/* Alerts */
+.alert-item {
+    padding: 1.25rem;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.alert-item p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.alert-item.warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-left: 4px solid #ffc107;
+    color: #856404;
+}
+
+.alert-item.info {
+    background: rgba(13, 110, 253, 0.1);
+    border-left: 4px solid #0d6efd;
+    color: #084298;
+}
+
+/* Fleet Status Widget */
+.fleet-status-widget {
+    margin-top: 1rem;
+}
+
+.progress-bar-container {
+    height: 12px;
+    background: var(--color-surface);
+    border-radius: 100px;
+    display: flex;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.segment {
+    height: 100%;
+    transition: width 1s ease-in-out;
+}
+
+.legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.legend-item .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.legend-item .name {
+    flex: 1;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.legend-item .count {
+    font-weight: 800;
+    color: var(--color-dark);
+}
+
+/* Chart Bars Additional */
+.bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.day-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+    background: var(--color-surface);
+    border-radius: 16px;
+    margin-top: 1rem;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }

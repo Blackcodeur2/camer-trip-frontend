@@ -55,12 +55,12 @@ export class ProprietaireService {
     return this.http.get<Agence[]>(`${this.API}/proprietaire/mes-agences/${user?.id}`);
   }
 
-  createAgence(payload: CreateAgencePayload): Observable<Agence> {
+  createAgence(payload: FormData | CreateAgencePayload): Observable<Agence> {
     return this.http.post<Agence>(`${this.API}/proprietaire/agences`, payload);
   }
 
-  updateAgence(id: number, payload: Partial<CreateAgencePayload>): Observable<Agence> {
-    return this.http.put<Agence>(`${this.API}/proprietaire/agences/${id}`, payload);
+  updateAgence(id: number, payload: FormData | Partial<CreateAgencePayload>): Observable<Agence> {
+    return this.http.post<Agence>(`${this.API}/proprietaire/agences/${id}`, payload);
   }
 
   deleteAgence(id: number): Observable<any> {
@@ -117,7 +117,7 @@ export class ProprietaireService {
 
   // ── Gérants (CHEF_AGENCE) ──
   getMyGerants(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.API}/proprietaire/gerants`);
+    return this.http.get<{ statut: boolean; data: User[] }>(`${this.API}/proprietaire/gerants`).pipe(map(response => response.data));
   }
 
   createGerant(payload: CreateGerantPayload): Observable<User> {

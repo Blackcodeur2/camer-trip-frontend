@@ -33,7 +33,7 @@ export class Trajets {
   private http = inject(HttpClient);
   allVillesData = signal<{ nom: string }[]>([]);
   filteredVilles = signal<string[]>([]);
-  showAutocomplete = signal(false);
+  activeAutocompleteField = signal<'depart' | 'arrivee' | null>(null);
   currentPage = signal(1);
   pageSize = signal(5);
 
@@ -66,21 +66,21 @@ export class Trajets {
     this.loadTrajets();
     this.loadVillesFromJson();
     this.routeForm.controls.depart.valueChanges.subscribe(val => {
-      this.filterVilles(val || '');
+      if (this.activeAutocompleteField() === 'depart') this.filterVilles(val || '');
     });
     this.routeForm.controls.arrivee.valueChanges.subscribe(val => {
-      this.filterVilles(val || '');
+      if (this.activeAutocompleteField() === 'arrivee') this.filterVilles(val || '');
     });
   }
 
   selectVilleDepart(ville: string) {
     this.routeForm.controls.depart.setValue(ville,);
-    this.showAutocomplete.set(false);
+    this.activeAutocompleteField.set(null);
   }
 
   selectVilleArrivee(ville: string) {
     this.routeForm.controls.arrivee.setValue(ville,)
-    this.showAutocomplete.set(false);
+    this.activeAutocompleteField.set(null);
   }
 
   loadVillesFromJson() {
@@ -105,10 +105,12 @@ export class Trajets {
   }
 
   onVilleDepartFocus() {
+    this.activeAutocompleteField.set('depart');
     this.filterVilles(this.routeForm.controls.depart.value || '');
   }
 
   onVilleArriveeFocus() {
+    this.activeAutocompleteField.set('arrivee');
     this.filterVilles(this.routeForm.controls.arrivee.value || '');
   }
 
@@ -117,7 +119,6 @@ export class Trajets {
     const search = this.normalizeString(val);
     if (search.length < 1) {
       this.filteredVilles.set([]);
-      this.showAutocomplete.set(false);
       return;
     }
 
@@ -127,14 +128,13 @@ export class Trajets {
       .slice(0, 10);
 
     this.filteredVilles.set(filtered);
-    this.showAutocomplete.set(filtered.length > 0);
   }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     const target = event.target as HTMLElement;
     if (!target.closest('.autocomplete-wrap')) {
-      this.showAutocomplete.set(false);
+      this.activeAutocompleteField.set(null);
     }
   }
 

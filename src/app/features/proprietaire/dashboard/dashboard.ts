@@ -36,10 +36,8 @@ export class Dashboard {
 
   statItems = [
     { key: 'agences', label: 'Agences', icon: 'business' },
-    { key: 'gares', label: 'Gares', icon: 'location_on' },
-    { key: 'buses', label: 'Bus', icon: 'directions_bus' },
-    { key: 'trajets', label: 'Trajets', icon: 'route' },
-    { key: 'voyages', label: 'Voyages', icon: 'flight_takeoff' },
+    { key: 'stations', label: 'Stations', icon: 'location_on' },
+    { key: 'buses', label: 'Flotte de Bus', icon: 'directions_bus' },
     { key: 'utilisateurs', label: 'Utilisateurs', icon: 'people' },
   ];
 
@@ -117,6 +115,7 @@ export class Dashboard {
         const statsData = data.data || data;
         this.stats.set(statsData);
         this.isLoading.set(false);
+        setTimeout(() => this.initCharts(), 100);
       },
       error: () => {
         this.isLoading.set(false);
@@ -132,8 +131,14 @@ export class Dashboard {
   }
 
   chart: any;
+  doughnutChart: any;
 
-  initChart() {
+  initCharts() {
+    this.initActivityChart();
+    this.initPersonnelChart();
+  }
+
+  initActivityChart() {
     const ctx = document.getElementById('activityChart') as HTMLCanvasElement;
     if (!ctx) return;
 
@@ -187,6 +192,76 @@ export class Dashboard {
           x: {
             grid: { display: false },
             ticks: { font: { size: 11 } }
+          }
+        }
+      }
+    });
+  }
+
+  initPersonnelChart() {
+    const ctx = document.getElementById('personnelChart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    if (this.doughnutChart) {
+      this.doughnutChart.destroy();
+    }
+
+    const chauffeurs = this.getStatValue('chauffeurs');
+    const agents = this.getStatValue('agents');
+    const chefsAgences = this.getStatValue('chefs_agence');
+
+    // S'il n'y a aucune donnée, on met des valeurs fictives légères pour ne pas avoir un chart vide
+    const dataValues = (chauffeurs === 0 && agents === 0 && chefsAgences === 0) ? [1, 1, 1] : [chauffeurs, agents, chefsAgences];
+
+    this.doughnutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Chauffeurs', 'Agents', 'Chefs d\'Agences'],
+        datasets: [{
+          data: dataValues,
+          backgroundColor: [
+            '#12674bff', // Blue
+            '#d63547ff', // Purple
+            '#f1db18ff'  // Yellow
+          ],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '75%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 20,
+              font: { size: 13, family: "'Inter', sans-serif" }
+            }
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            padding: 12,
+            cornerRadius: 12,
+            callbacks: {
+              label: function(context) {
+                let label = context.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.raw !== null) {
+                  // Si données fictives, on affiche 0
+                  if (chauffeurs === 0 && agents === 0) {
+                     label += 0;
+                  } else {
+                     label += context.raw;
+                  }
+                }
+                return label;
+              }
+            }
           }
         }
       }

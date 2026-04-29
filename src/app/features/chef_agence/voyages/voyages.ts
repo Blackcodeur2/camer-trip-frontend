@@ -4,44 +4,54 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
-import { Trajets } from '../trajets/trajets';
+import { ChefAgenceService } from '../../../services/chef_agence/chef-agence-service';
 import { Bus } from '../../../models/bus';
 import { Trajet } from '../../../models/trajet';
 import { User } from '../../../models/user';
 import { Voyage } from '../../../models/voyage';
-import { AuthService } from '../../../services/auth/auth-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-voyages',
+  standalone: true,
   imports: [CommonModule, MatIconModule, ReactiveFormsModule, AppButton, PaginationComponent, DatePipe],
   templateUrl: './voyages.html',
   styleUrl: './voyages.css',
 })
 export class Voyages {
-  downloadPdf() {
-    throw new Error('Method not implemented.');
-  }
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
+  private chefService = inject(ChefAgenceService);
 
   buses = signal<Bus[]>([]);
   routesList = signal<Trajet[]>([]);
-  voyages = signal<Voyage[]>([]);
+  voyages = signal<any[]>([]);
   chauffeurs = signal<User[]>([]);
   showForm = signal(false);
   isLoading = signal(true);
   isSubmitting = signal(false);
   isEditing = signal(false);
-  isExporting = signal(false);
   editId = signal<number | null>(null);
 
   searchTerm = signal('');
   currentPage = signal(1);
-  pageSize = signal(5);
+  pageSize = signal(10);
+
+  voyageForm = this.fb.group({
+    date_depart: ['', Validators.required],
+    heure_depart: ['', Validators.required],
+    date_arrivee: [{ value: '', disabled: true }],
+    duree_heure: [{ value: 0, disabled: true }],
+    trajet_id: [null as number | null, Validators.required],
+    bus_id: [null as number | null, Validators.required],
+    prix: [0, [Validators.required, Validators.min(0)]],
+    chauffeur_id: [null as number | null, Validators.required],
+    promo: [0],
+    statut: ['en attente'],
+  });
 
   statsTotalToday = computed(() => {
     const today = new Date().toISOString().split('T')[0];
-    return this.voyages().filter(v => v.date_depart?.startsWith(today)).length;
+    return this.voyages().filter(v => v.date_depart === today).length;
   });
 
   statsEnCours = computed(() => {
@@ -58,11 +68,10 @@ export class Voyages {
 
     return this.voyages().filter(v =>
       v.num_voyage?.toLowerCase().includes(term) ||
-      v.ville_depart?.nom?.toLowerCase().includes(term) ||
-      v.ville_arrivee?.nom?.toLowerCase().includes(term) ||
+      v.trajet?.depart?.toLowerCase().includes(term) ||
+      v.trajet?.arrivee?.toLowerCase().includes(term) ||
       v.chauffeur?.nom?.toLowerCase().includes(term) ||
-      v.chauffeur?.prenom?.toLowerCase().includes(term) ||
-      v.vehicule_immatriculation?.toLowerCase().includes(term)
+      v.bus?.immatriculation?.toLowerCase().includes(term)
     );
   });
 
@@ -72,73 +81,123 @@ export class Voyages {
     return this.filteredVoyages().slice(start, end);
   });
 
-  voyageForm = this.fb.group({
-    date_depart: ['', Validators.required],
-    date_arrivee: [''],
-    duree_heure: [null as number | null],
-    trajet_id: [null as number | null, Validators.required],
-    bus_id: [null as number | null, Validators.required],
-    prix: [0, Validators.required],
-    chauffeur_id: [null as number | null, Validators.required],
-    statut: ['en attente'],
-    gare_id: [null as number | null],
-  });
-
-
   ngOnInit() {
+    this.loadAllData();
+    this.setupFormListeners();
+  }
+
+  loadAllData() {
     this.loadVoyages();
     this.loadBuses();
     this.loadRoutes();
     this.loadChauffeurs();
+  }
 
-    this.voyageForm.get('trajet_id')?.valueChanges.subscribe((value: string | number | null) => {
-      if (value === null || value === '') {
-        return;
-      }
-      const route = this.routesList().find(r => r.id === Number(value));
-      if (route) {
-        this.voyageForm.patchValue({ prix: route.prix ?? 0 });
+  setupFormListeners() {
+    this.voyageForm.get('trajet_id')?.valueChanges.subscribe(id => {
+      if (id) {
+        const trajet = this.routesList().find(t => t.id === Number(id));
+        if (trajet) {
+          this.voyageForm.patchValue({
+            prix: trajet.prix,
+            duree_heure: trajet.duree_heure
+          }, { emitEvent: false });
+          this.calculateArrival();
+        }
       }
     });
+
+    this.voyageForm.get('date_depart')?.valueChanges.subscribe(() => this.calculateArrival());
+    this.voyageForm.get('heure_depart')?.valueChanges.subscribe(() => this.calculateArrival());
+  }
+
+  calculateArrival() {
+    const date = this.voyageForm.get('date_depart')?.value;
+    const time = this.voyageForm.get('heure_depart')?.value;
+    const duration = this.voyageForm.get('duree_heure')?.value || 0;
+
+    if (date && time && duration) {
+      const departure = new Date(`${date}T${time}`);
+      const arrival = new Date(departure.getTime() + (duration * 60 * 60 * 1000));
+      
+      const year = arrival.getFullYear();
+      const month = String(arrival.getMonth() + 1).padStart(2, '0');
+      const day = String(arrival.getDate()).padStart(2, '0');
+      const hours = String(arrival.getHours()).padStart(2, '0');
+      const mins = String(arrival.getMinutes()).padStart(2, '0');
+      
+      this.voyageForm.patchValue({
+        date_arrivee: `${day}/${month}/${year} ${hours}:${mins}`
+      }, { emitEvent: false });
+    }
   }
 
   loadBuses() {
-    this.buses.set([]);
+    this.chefService.getBusesDispo().subscribe(data => this.buses.set(data));
   }
 
   loadChauffeurs() {
-    this.chauffeurs.set([]);
+    this.chefService.getChauffeurs().subscribe(data => this.chauffeurs.set(data));
   }
 
   loadRoutes() {
-    this.routesList.set([]);
+    this.chefService.getRoutes().subscribe(data => this.routesList.set(data));
   }
 
   loadVoyages() {
     this.isLoading.set(true);
-    this.voyages.set([]);
-    this.isLoading.set(false);
+    this.chefService.getVoyages().subscribe({
+      next: (data) => {
+        this.voyages.set(data);
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false)
+    });
   }
 
   toggleForm() {
-    if (this.showForm()) {
-      this.isEditing.set(false);
-      this.editId.set(null);
-      this.voyageForm.reset({ statut: 'en attente', prix: 0 });
-      this.loadBuses(); // Reset to dispo buses
-    }
     this.showForm.update(v => !v);
-  }
-
-  editVoyage(voyage: Voyage) {
-    this.isEditing.set(true);
+    if (!this.showForm()) {
+      this.voyageForm.reset({ statut: 'en attente', prix: 0, promo: 0 });
+    } else {
+      this.loadBuses();
+    }
   }
 
   onSubmit() {
+    if (this.voyageForm.invalid) return;
 
+    this.isSubmitting.set(true);
+    const formValue = this.voyageForm.getRawValue();
+
+    this.chefService.createVoyage(formValue).subscribe({
+      next: () => {
+        Swal.fire('Succès', 'Voyage créé avec succès', 'success');
+        this.isSubmitting.set(false);
+        this.toggleForm();
+        this.loadVoyages();
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        Swal.fire('Erreur', err.error?.message || 'Erreur lors de la création', 'error');
+      }
+    });
   }
 
-  markAsTerminated(voyage: Voyage) {
-
+  markAsTerminated(voyage: any) {
+    Swal.fire({
+      title: 'Terminer le voyage ?',
+      text: "Le bus sera de nouveau disponible.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, terminer'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.chefService.updateVoyageStatus(voyage.id, 'termine').subscribe(() => {
+          Swal.fire('Terminé', 'Le voyage est fini.', 'success');
+          this.loadVoyages();
+        });
+      }
+    });
   }
 }

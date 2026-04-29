@@ -27,9 +27,7 @@
                         <th>Expéditeur</th>
                         <th>Colis</th>
                         <th>Destinataire</th>
-                        <th>Trajet (Gares)</th>
-                        <th>Coût & Poids</th>
-                        <th>Date</th>
+                        <th>Trajet</th>
                         <th>Statut</th>
                         <th style="text-align: right;">Actions</th>
                     </tr>
@@ -58,24 +56,13 @@
                         <td>
                             @if (colis.voyage) {
                             <div class="voyage-info">
-                                <span class="trip-id">Voyage #{{ colis.voyage.num_voyage || colis.voyage.id }}</span>
                                 <div class="path">
-                                    {{ colis.gareProvenance?.ville?.nom || colis.gareProvenance?.nom || '...' }}
+                                    {{ colis.voyage.trajet?.depart }}
                                     &rarr;
-                                    {{ colis.gareDestination?.ville?.nom || colis.gareDestination?.nom || '...' }}
+                                    {{ colis.voyage.trajet?.arrivee }}
                                 </div>
                             </div>
                             }
-                        </td>
-                        <td>
-                            <div class="price-cell">
-                                <span class="amount">{{ colis.prix | number:'1.0-0' }}</span>
-                                <span class="currency">FCFA</span>
-                            </div>
-                            <span class="weight-tag">{{ colis.poids || 0 }} kg</span>
-                        </td>
-                        <td class="date-cell">
-                            {{ colis.created_at | date:'dd MMM yyyy, HH:mm' }}
                         </td>
                         <td>
                             <span class="status-badge status--{{ colis.statut === 'retire' ? 'success' : 'pending' }}">

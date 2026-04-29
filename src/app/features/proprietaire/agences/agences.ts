@@ -162,6 +162,14 @@ export class Agences {
 
   // ── Agence Form ──
 
+  onLogoChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.agenceForm.patchValue({ logo: file });
+      this.agenceForm.get('logo')?.updateValueAndValidity();
+    }
+  }
+
   openAgenceForm(agence?: Agence) {
     this.formMode.set('agence');
     if (agence) {
@@ -203,9 +211,26 @@ export class Agences {
     const payload = this.agenceForm.getRawValue();
     const editing = this.editingAgence();
 
+    const formData = new FormData();
+    formData.append('nom', payload.nom);
+    formData.append('email', payload.email);
+    formData.append('telephone', payload.telephone);
+    formData.append('ville', payload.ville);
+    if (payload.adresse) {
+      formData.append('adresse', payload.adresse);
+    }
+    
+    if (payload.logo && payload.logo instanceof File) {
+      formData.append('logo', payload.logo);
+    }
+
+    if (editing) {
+      formData.append('_method', 'PUT');
+    }
+
     const req$ = editing
-      ? this.proprietaireService.updateAgence(editing.id, payload)
-      : this.proprietaireService.createAgence(payload);
+      ? this.proprietaireService.updateAgence(editing.id, formData)
+      : this.proprietaireService.createAgence(formData);
 
     req$.subscribe({
       next: (result) => {

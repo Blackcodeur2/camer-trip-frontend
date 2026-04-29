@@ -47,8 +47,8 @@
                 <div class="info-item">
                     <mat-icon>route</mat-icon>
                     <div>
-                        <span class="label">Distance</span>
-                        <span class="value">{{ route.distance_km || '- ' }} km</span>
+                        <span class="label">Duree (Heures)</span>
+                        <span class="value">{{ route.duree_heure || '- ' }} heures</span>
                     </div>
                 </div>
 
@@ -57,14 +57,6 @@
                     <div>
                         <span class="label">Tarif</span>
                         <span class="value">{{ route.prix || '- ' }} FCFA</span>
-                    </div>
-                </div>
-
-                <div class="info-item">
-                    <mat-icon>business</mat-icon>
-                    <div>
-                        <span class="label">Agence</span>
-                        <span class="value">{{ route.agence_nom || '...' }}</span>
                     </div>
                 </div>
             </div>

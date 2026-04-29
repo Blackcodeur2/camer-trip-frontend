@@ -30,7 +30,7 @@
                         <input id="depart" type="text" formControlName="depart" (focus)="onVilleDepartFocus()"
                             placeholder="Commencez à saisir une ville...">
 
-                        @if (showAutocomplete()) {
+                        @if (activeAutocompleteField() === 'depart' && filteredVilles().length > 0) {
                         <ul class="autocomplete-list">
                             @for (v of filteredVilles(); track v) {
                             <li (click)="selectVilleDepart(v)">{{ v }}</li>
@@ -49,7 +49,7 @@
                         <input id="arrivee" type="text" formControlName="arrivee" (focus)="onVilleArriveeFocus()"
                             placeholder="Commencez à saisir une ville...">
 
-                        @if (showAutocomplete()) {
+                        @if (activeAutocompleteField() === 'arrivee' && filteredVilles().length > 0) {
                         <ul class="autocomplete-list">
                             @for (v of filteredVilles(); track v) {
                             <li (click)="selectVilleArrivee(v)">{{ v }}</li>
@@ -62,7 +62,7 @@
                     }
                 </div>
                 <div class="form-group">
-                    <label>Prix (XAF)</label>
+                    <label>Prix (FCFA)</label>
                     <input type="number" formControlName="prix" class="form-control" placeholder="Ex: 5000" />
                 </div>
                 <div class="form-group">
@@ -121,14 +121,14 @@
                     </td>
                     <td>
                         <div class="distance-info">
-                            <mat-icon>history</mat-icon>
+                            <mat-icon>timer</mat-icon>
                             <span>{{ route.duree_heure || '--' }} heures</span>
                         </div>
                     </td>
                     <td>
                         <div class="price-info">
                             <span class="amount">{{ route.prix | number }}</span>
-                            <span class="currency">XAF</span>
+                            <span class="currency">FCFA</span>
                         </div>
                     </td>
                     <td>

@@ -203,10 +203,6 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/chef_agence/reservations/reservations').then(m => m.Reservations)
             },
             {
-                path: 'validate',
-                loadComponent: () => import('./features/agent/validation/validation').then(m => m.Validation)
-            },
-            {
                 path: 'colis',
                 loadComponent: () => import('./features/chef_agence/colis/colis').then(m => m.ColisPage),
             },

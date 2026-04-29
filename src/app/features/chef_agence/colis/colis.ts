@@ -7,6 +7,7 @@ import { Subject, debounceTime, distinctUntilChanged, switchMap, of, catchError 
 import Swal from 'sweetalert2';
 import { Colis } from '../../../models/colis';
 import { AppButton } from "../../../shared/button/app-button/app-button";
+import { AgentService } from '../../../services/agent/agent-service';
 
 @Component({
   selector: 'app-colis',
@@ -15,6 +16,7 @@ import { AppButton } from "../../../shared/button/app-button/app-button";
   styleUrl: './colis.css',
 })
 export class ColisPage {
+  private agentService = inject(AgentService);
   private fb = inject(FormBuilder);
 
   viewMode = signal<'list' | 'create'>('list');
@@ -47,7 +49,6 @@ export class ColisPage {
       tel_destinataire: ['', Validators.required],
       nom_destinataire: ['', Validators.required],
       voyage_id: ['', Validators.required],
-      destination: ['', Validators.required], // Hidden field derived from voyage
       prix: [0, [Validators.min(0)]],
       poids: [0, [Validators.min(0)]]
     });
@@ -58,7 +59,7 @@ export class ColisPage {
       distinctUntilChanged(),
       switchMap(query => {
         if (!query || query.length < 2) return of([]);
-        return [];
+        return this.agentService.searchClients(query).pipe(catchError(() => of([])));
       })
     ).subscribe(results => {
       this.clientSearchResults.set(results);
@@ -82,13 +83,27 @@ export class ColisPage {
 
   loadColis() {
     this.isLoading.set(true);
-        this.colisList.set([]);
+    this.agentService.getColis().subscribe({
+      next: (data) => {
+        this.colisList.set(data);
         this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Erreur chargement colis:', err);
         this.isLoading.set(false);
+      }
+    });
   }
 
   loadVoyages() {
-        this.availableVoyages.set([]);
+    this.agentService.getVoyages().subscribe({
+      next: (voyages) => {
+        // Keep upcoming voyages where the agent's gare is the departure point (which getVoyages naturally filters by).
+        const upcomingVoyages = voyages.filter((v: any) => v.statut === 'en attente' || v.statut === 'en cours');
+        this.availableVoyages.set(upcomingVoyages);
+      },
+      error: (err) => console.error('Erreur voyages:', err)
+    });
   }
 
   onVoyageChange() {
@@ -96,8 +111,14 @@ export class ColisPage {
     const selectedVoyage = this.availableVoyages().find(v => v.id == voyageId);
     
     if (selectedVoyage) {
+        // Le backend retourne souvent gare_id dans le trajet ou l'ID de la gare d'arrivée directement
+        // Dans notre cas, nous avons besoin de la gare d'arrivée pour la destination du colis.
+        // Si le trajet est de A -> B, la destination du colis est la gare de B.
+        // Note: Dans ce système, la destination est liée à la gare de destination du trajet.
         const destinationId = selectedVoyage.trajet?.gare_id; // À vérifier si c'est bien la gare de destination
         
+        // Si le trajet n'a pas explicitement d'ID de gare d'arrivée, on peut avoir besoin d'une autre logique
+        // Pour l'instant, on suppose que le trajet sélectionné définit la destination.
         if (destinationId) {
             this.colisForm.patchValue({ destination: destinationId });
         }
@@ -124,10 +145,58 @@ export class ColisPage {
   }
 
   markAsRetrieved(id: number) {
-
+    Swal.fire({
+      title: 'Confirmer le retrait',
+      text: 'Voulez-vous marquer ce colis comme retiré par le destinataire ?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#10B981',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, confirmer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.agentService.updateColisStatus(id, 'retire').subscribe({
+          next: () => {
+            this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: 'retire' } : c));
+            Swal.fire('Validé !', 'Le colis a été marqué comme retiré.', 'success');
+          },
+          error: (err) => {
+            Swal.fire('Erreur', err.error?.message || 'Une erreur est survenue.', 'error');
+          }
+        });
+      }
+    });
   }
 
   onSubmitColis() {
+    if (this.colisForm.invalid || !this.selectedClient()) return;
+
+    this.isSubmitting.set(true);
+    const formValue = this.colisForm.value;
     
+    const payload: Partial<Colis> = {
+      user_id: this.selectedClient().id,
+      nom_colis: formValue.nom_colis,
+      tel_destinataire: formValue.tel_destinataire,
+      nom_destinataire: formValue.nom_destinataire,
+      voyage_id: formValue.voyage_id,
+      prix: formValue.prix,
+      poids: formValue.poids
+    };
+
+    this.agentService.createColis(payload).subscribe({
+      next: (newColis) => {
+        this.isSubmitting.set(false);
+        Swal.fire('Succès', 'Colis enregistré avec succès', 'success');
+        this.colisList.update(list => [newColis, ...list]);
+        this.toggleViewMode();
+      },
+      error: (err) => {
+        console.error('Registration error', err);
+        this.isSubmitting.set(false);
+        Swal.fire('Erreur', err.error?.message || 'Erreur lors de l\'enregistrement.', 'error');
+      }
+    });
   }
 }

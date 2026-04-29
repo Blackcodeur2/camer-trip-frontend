@@ -91,7 +91,11 @@
                         <div class="user-cell"
                             style="display: flex;justify-content: space-between;align-items: center;">
                             <div class="user-avatar avatar-{{ member?.role_user?.toLowerCase() }}">
-                                {{ (member?.prenom?.[0] ?? '') + (member?.nom?.[0] ?? '') | uppercase }}
+                                @if (member?.profil_url) {
+                                    <img [src]="member.profil_url" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                } @else {
+                                    {{ (member?.prenom?.[0] ?? '') + (member?.nom?.[0] ?? '') | uppercase }}
+                                }
                             </div>
                             <div class="member-meta">
                                 <span class="name">{{ member?.nom }} {{ member?.prenom }}</span>

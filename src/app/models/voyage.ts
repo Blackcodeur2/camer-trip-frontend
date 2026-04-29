@@ -3,11 +3,9 @@ import { Trajet } from './trajet';
 import { User } from './user';
 
 export interface Voyage {
-  code_bus: any;
-  places_disponibles: any;
-  ville_depart: any;
-  ville_arrivee: any;
-  vehicule_immatriculation: any;
+  code_bus: string;
+  places_disponibles: number;
+  vehicule_immatriculation: string;
   id: number;
   num_voyage?: string;
   station_id?: number;
@@ -18,7 +16,7 @@ export interface Voyage {
   heure_depart?: string;
   date_arrivee?: string;
   prix?: number;
-  statut?: string;
+  statut: string;
   promo?: boolean;
   trajet?: Trajet;
   bus?: Bus;

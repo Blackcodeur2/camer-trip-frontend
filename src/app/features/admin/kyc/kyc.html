@@ -39,7 +39,11 @@
                     <td>
                         <div class="user-info">
                             <div class="user-avatar">
-                                {{ (sub.user.prenom?.[0] ?? '') + (sub.user.nom?.[0] ?? '') | uppercase }}
+                                @if (sub.user.profil_url) {
+                                    <img [src]="sub.user.profil_url" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                } @else {
+                                    {{ (sub.user.prenom?.[0] ?? '') + (sub.user.nom?.[0] ?? '') | uppercase }}
+                                }
                             </div>
                             <div class="user-details">
                                 <span class="user-name">{{ sub.user.prenom }} {{ sub.user.nom }}</span>
@@ -89,7 +93,11 @@
             <div class="modal-header">
                 <div class="user-info">
                     <div class="user-avatar">
-                        {{ (selectedSubmission()!.user.prenom?.[0] ?? '') + (selectedSubmission()!.user.nom?.[0] ?? '') | uppercase }}
+                        @if (selectedSubmission()!.user.profil_url) {
+                            <img [src]="selectedSubmission()!.user.profil_url" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        } @else {
+                            {{ (selectedSubmission()!.user.prenom?.[0] ?? '') + (selectedSubmission()!.user.nom?.[0] ?? '') | uppercase }}
+                        }
                     </div>
                     <div>
                         <h3 style="margin: 0;">Documents de {{ selectedSubmission()!.user.prenom }} {{ selectedSubmission()!.user.nom }}</h3>

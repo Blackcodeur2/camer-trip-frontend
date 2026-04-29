@@ -35,7 +35,7 @@
 
             <div class="route-display">
                 <div class="city-group">
-                    <span class="city-name">{{ nextTrip.ville_depart?.nom }}</span>
+                    <span class="city-name">{{ nextTrip.trajet?.depart }}</span>
                     <span class="time">{{ nextTrip.heure_depart }}</span>
                 </div>
                 <div class="route-line">
@@ -44,7 +44,7 @@
                     <mat-icon>location_on</mat-icon>
                 </div>
                 <div class="city-group align-right">
-                    <span class="city-name">{{ nextTrip.ville_arrivee?.nom }}</span>
+                    <span class="city-name">{{ nextTrip.trajet?.arrivee }}</span>
                     <span class="info">Arrivée prévue</span>
                 </div>
             </div>
@@ -99,8 +99,8 @@
                         <span class="month">{{ voyage.date_depart | date:'MMM' }}</span>
                     </div>
                     <div class="trip-details">
-                        <div class="trip-path">{{ voyage.ville_depart?.nom }} <mat-icon>arrow_forward</mat-icon> {{
-                            voyage.ville_arrivee?.nom }}</div>
+                        <div class="trip-path">{{ voyage.trajet?.depart }} <mat-icon>arrow_forward</mat-icon> {{
+                            voyage.trajet?.arrivee }}</div>
                         <div class="trip-meta">
                             <span><mat-icon>schedule</mat-icon> {{ voyage.heure_depart }}</span>
                             <span><mat-icon>directions_bus</mat-icon> {{ voyage.vehicule_immatriculation }}</span>

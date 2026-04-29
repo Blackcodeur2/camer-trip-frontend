@@ -6,7 +6,7 @@ import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-proprietaire-layout',
-  imports: [MatIconModule, RouterModule, TitleCasePipe],
+  imports: [MatIconModule, RouterModule],
   templateUrl: './proprietaire-layout.html',
   styleUrl: './proprietaire-layout.css',
 })

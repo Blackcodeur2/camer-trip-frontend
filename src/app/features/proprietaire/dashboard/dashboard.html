@@ -6,30 +6,57 @@
       <p>Chargement des statistiques...</p>
     </div>
   } @else if (stats()) {
-    <!-- Dashboard Stats Grid (the rest of the original content) -->
+    <!-- Welcome Banner -->
+    <div class="welcome-banner animate-fade-in">
+      <div class="banner-content">
+        <h1>Bonjour, <span class="highlight">{{ userName() }}</span> ! 👋</h1>
+        <p>Voici l'état de votre réseau d'agences et vos performances globales.</p>
+      </div>
+      <div class="banner-actions">
+        <div class="kyc-badge" [class.verified]="kycStatus() === 'approuve'">
+          <mat-icon>{{ kycStatus() === 'approuve' ? 'verified_user' : 'gpp_maybe' }}</mat-icon>
+          <span>{{ kycStatus() === 'approuve' ? 'Compte Vérifié' : 'En attente KYC' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Stats Grid -->
     <div class="stats-grid">
       @for (item of statItems; track item.key) {
-        <div class="stat-card">
+        <div class="stat-card animate-fade-in" style="animation-delay: 0.1s;">
+          <div class="stat-icon" [ngClass]="item.key">
+            <mat-icon>{{ item.icon }}</mat-icon>
+          </div>
           <div class="stat-info">
             <span class="value">{{ getStatValue(item.key) }}</span>
             <span class="label">{{ item.label }}</span>
-          </div>
-          <div class="stat-icon">
-            <mat-icon>{{ item.icon }}</mat-icon>
           </div>
         </div>
       }
     </div>
 
-    <!-- Activity Chart -->
-    <section class="panel chart-card animate-fade-in">
-      <div class="panel-header">
-        <h2>Activité de mes Agences</h2>
-        <span class="badge badge-soft">Cette année</span>
-      </div>
-      <div class="chart-container">
-        <canvas id="activityChart"></canvas>
-      </div>
-    </section>
+    <!-- Charts Grid -->
+    <div class="charts-grid animate-fade-in" style="animation-delay: 0.2s;">
+      <section class="panel chart-card activity-chart">
+        <div class="panel-header">
+          <div>
+            <h2>Activité de vos Agences</h2>
+            <p class="subtitle">Évolution des réservations</p>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="activityChart"></canvas>
+        </div>
+      </section>
+
+      <section class="panel chart-card personnel-chart">
+        <div class="panel-header">
+          <h2>Ressources Humaines</h2>
+        </div>
+        <div class="chart-container" style="height: 300px; display: flex; justify-content: center; align-items: center;">
+          <canvas id="personnelChart"></canvas>
+        </div>
+      </section>
+    </div>
   }
 </div>

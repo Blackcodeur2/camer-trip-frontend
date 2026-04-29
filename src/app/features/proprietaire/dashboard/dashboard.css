@@ -198,37 +198,59 @@
   color: var(--color-primary);
 }
 
-/* Welcome Section */
-.welcome-section {
+/* Welcome Banner */
+.welcome-banner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-radius: 24px;
+  padding: 1.5rem 2rem;
+  color: white;
+  box-shadow: 0 20px 40px rgba(0, 102, 68, 0.2);
+  position: relative;
+  overflow: hidden;
 }
 
-.welcome-text h1 {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+  border-radius: 50%;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 1;
+}
+
+.banner-content h1 {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
-  color: var(--color-dark);
   margin-bottom: 0.5rem;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
-.welcome-text h1 mat-icon {
-  font-size: 36px;
-  width: 36px;
-  height: 36px;
-  color: var(--color-primary);
+.banner-content .highlight {
+  color: #fbbf24; /* Amber/Gold */
 }
 
-.welcome-text p {
-  color: var(--color-text-muted);
-  font-size: 1.1rem;
+.banner-content p {
+  font-size: 0.8rem;
+  opacity: 0.9;
   font-weight: 500;
+  margin: 0;
+}
+
+.banner-actions {
+  position: relative;
+  z-index: 1;
 }
 
 .kyc-badge {
@@ -241,20 +263,17 @@
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
 }
 
-.kyc-badge--not_started {
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-}
-
-.kyc-badge--verified,
-.kyc-badge--approuve {
-  background: rgba(0, 102, 68, 0.1);
-  color: var(--color-primary);
-  border: 1px solid rgba(0, 102, 68, 0.2);
+.kyc-badge.verified {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-primary-dark);
+  border: none;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
 /* Stats Grid */
@@ -267,13 +286,12 @@
 
 .stat-card {
   background: white;
-  padding: 1rem 1.25rem;
+  padding: 1.5rem;
   border-radius: 24px;
   border: 1px solid var(--color-border);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
@@ -287,21 +305,34 @@
 }
 
 .stat-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  background: var(--stat-bg, rgba(0,0,0,0.05));
-  color: var(--stat-color, var(--color-primary));
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-dark);
+  transition: all 0.3s ease;
 }
 
 .stat-icon mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+/* Colors for specific icons */
+.stat-icon.agences { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.stat-icon.stations { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.stat-icon.buses { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
+.stat-icon.trajets { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.stat-icon.voyages { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.stat-icon.utilisateurs { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+
+.stat-card:hover .stat-icon {
+  transform: scale(1.1);
 }
 
 .stat-info {
@@ -319,12 +350,25 @@
 }
 
 .stat-info .label {
-  margin-top: 6px;
+  margin-top: 4px;
   color: var(--color-text-muted);
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-size: 0.85rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Chart Card */
@@ -344,11 +388,18 @@
 
 .panel-header h2 {
   font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 800;
   color: var(--color-dark);
   letter-spacing: -0.02em;
   margin: 0;
+}
+
+.panel-header .subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 4px;
 }
 
 @keyframes fadeIn {

@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { Route } from '@angular/router';
 import { debounceTime, distinctUntilChanged, tap, switchMap, of, catchError, finalize } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Trajet } from '../../../models/trajet';
 import { Voyage } from '../../../models/voyage';
 import { AuthService } from '../../../services/auth/auth-service';
+import { AgentService } from '../../../services/agent/agent-service';
 
 @Component({
   selector: 'app-new-reservation',
@@ -16,8 +16,10 @@ import { AuthService } from '../../../services/auth/auth-service';
   styleUrl: './new-reservation.css',
 })
 export class NewReservation {
+  private agentService = inject(AgentService);
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  //private ticketService = inject(TicketService);
 
   // -- State --
   currentStep = signal(1); // 1: Trip, 2: Voyage, 3: Client, 4: Seat, 5: Review
@@ -25,7 +27,7 @@ export class NewReservation {
   voyages = signal<Voyage[]>([]);
   clientsSearch = signal<any[]>([]);
   availableSeats = signal<string[]>([]);
-
+  
   submitting = signal(false);
   loadingVoyages = signal(false);
   searchingClients = signal(false);
@@ -44,7 +46,7 @@ export class NewReservation {
   });
 
   clientSearchControl = new FormControl('');
-
+  
   clientForm = this.fb.group({
     nom: ['', Validators.required],
     prenom: ['', Validators.required],
@@ -65,7 +67,9 @@ export class NewReservation {
       tap(() => this.searchingClients.set(true)),
       switchMap(query => {
         if (!query || query.length < 2) return of([]);
-        return [];
+        return this.agentService.searchClients(query).pipe(
+          catchError(() => of([]))
+        );
       }),
       tap(() => this.searchingClients.set(false))
     ).subscribe((results: any[]) => this.clientsSearch.set(results));
@@ -76,7 +80,9 @@ export class NewReservation {
   }
 
   loadRoutes() {
-    this.routes.set([]);
+    this.agentService.getRoutes().pipe(
+      catchError(() => of([] as Trajet[]))
+    ).subscribe((routes: Trajet[]) => this.routes.set(routes));
   }
 
   // -- Step Navigation --
@@ -104,12 +110,24 @@ export class NewReservation {
 
   // -- Functional Logic --
   searchVoyages() {
+    if (this.tripForm.invalid) return;
     
+    this.loadingVoyages.set(true);
+    const { route_id, date } = this.tripForm.value;
+    
+    this.agentService.getVoyagesByRoute(Number(route_id), date!).pipe(
+      finalize(() => this.loadingVoyages.set(false))
+    ).subscribe((res: Voyage[]) => {
+      this.voyages.set(res);
+      this.loadingVoyages.set(false);
+      this.currentStep.set(2);
+      this.selectedRoute.set(this.routes().find(r => r.id === Number(route_id)) || null);
+    });
   }
 
   isVoyageDisabled(voyage: Voyage): boolean {
     const disabledStatuses = ['en cours', 'termine', 'terminé', 'en voyage', 'annule', 'annulé'];
-    return false;
+    return disabledStatuses.includes(voyage.statut?.toLowerCase());
   }
 
   selectVoyage(voyage: Voyage) {
@@ -130,13 +148,37 @@ export class NewReservation {
   }
 
   submitNewClient() {
-    
+    if (this.clientForm.invalid) {
+      this.clientForm.markAllAsTouched();
+      return;
+    }
+
+    this.submitting.set(true);
+    this.agentService.createClient(this.clientForm.value).subscribe({
+      next: (client: any) => {
+        this.selectedClient.set(client);
+        this.isNewClient.set(false);
+        this.submitting.set(false);
+        this.loadSeats();
+      },
+      error: (err) => {
+        this.submitting.set(false);
+        Swal.fire('Erreur', err.error?.message || 'Impossible de créer le client', 'error');
+      }
+    });
   }
 
   loadSeats() {
-        this.availableSeats.set([]);
+    if (!this.selectedVoyage()) return;
+    this.loadingSeats.set(true);
+    this.agentService.getAvailableSeats(this.selectedVoyage()!.id).subscribe({
+      next: (seats: string[]) => {
+        this.availableSeats.set(seats);
         this.loadingSeats.set(false);
         this.currentStep.set(4);
+      },
+      error: () => this.loadingSeats.set(false)
+    });
   }
 
   selectSeat(seat: string) {
@@ -153,12 +195,25 @@ export class NewReservation {
     const payload = {
       voyage_id: this.selectedVoyage()?.id,
       user_id: this.selectedClient()?.id,
-      gare_id: this.authService.currentUser()?.station_id,
+      station_id: this.authService.currentUser()?.station_id,
       place: Number(this.selectedSeat()),
       // Client info for display if needed
       client_name: `${this.selectedClient()?.prenom} ${this.selectedClient()?.nom}`,
       telephone: this.selectedClient()?.telephone
     };
+
+    this.agentService.createBooking(payload).subscribe({
+      next: () => {
+        this.submitting.set(false);
+        Swal.fire('Succès', 'Réservation enregistrée avec succès !', 'success').then(() => {
+          this.resetBooking();
+        });
+      },
+      error: (err) => {
+        this.submitting.set(false);
+        Swal.fire('Erreur', err.error?.message || 'Erreur lors de la réservation', 'error');
+      }
+    });
   }
 
   resetBooking() {

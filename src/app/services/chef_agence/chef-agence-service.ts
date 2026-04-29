@@ -66,7 +66,7 @@ export class ChefAgenceService {
 
   getChauffeurs(): Observable<User[]> {
     return this.http.get<{ statut: boolean; data: User[] }>(`${this.API}/chef-agence/utilisateurs`)
-      .pipe(map((response: { statut: boolean; data: User[] }) => response.data.filter((user: User) => user.role_user === 'CHAUFFEUR')));
+      .pipe(map((response: { statut: boolean; data: User[] }) => response.data.filter((user: User) => user.role_user === 'CHAUFFEUR' && user.statut === 'inactif')));
   }
 
   addStaff(staff: any): Observable<User> {
@@ -81,6 +81,14 @@ export class ChefAgenceService {
   getVoyages(): Observable<any[]> {
     return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/chef-agence/voyages`)
       .pipe(map(response => response.data));
+  }
+
+  createVoyage(voyage: any): Observable<any> {
+    return this.http.post<any>(`${this.API}/chef-agence/voyages`, voyage);
+  }
+
+  updateVoyageStatus(id: number, statut: string): Observable<any> {
+    return this.http.put<any>(`${this.API}/chef-agence/voyages/${id}`, { statut });
   }
 
   // ── Reservations ──

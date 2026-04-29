@@ -85,14 +85,14 @@
           <label for="g-gare">Gare à gérer *</label>
           <div class="input-wrap">
             <mat-icon>location_city</mat-icon>
-            <select id="g-gare" formControlName="gare_id">
+            <select id="g-gare" formControlName="station_id">
               <option value="0" disabled>-- Sélectionner une gare --</option>
               @for (gare of gares(); track gare.id) {
                 <option [value]="gare.id">{{ gare.nom || (gare.ville + ' - ' + gare.quartier) }}</option>
               }
             </select>
           </div>
-          @if (shouldShowError('gare_id')) { <span class="field-error">Veuillez sélectionner une gare.</span> }
+          @if (shouldShowError('station_id')) { <span class="field-error">Veuillez sélectionner une gare.</span> }
           @if (gares().length === 0) {
             <span class="field-hint">⚠️ Aucune gare disponible. <a routerLink="/proprietaire/gares">Créez d'abord une gare.</a></span>
           }
@@ -157,7 +157,13 @@
     <div class="managers-list">
       @for (manager of managers(); track manager.id) {
         <div class="manager-card">
-          <div class="manager-avatar">{{ getInitials(manager) }}</div>
+          <div class="manager-avatar">
+            @if (manager.profil_url) {
+              <img [src]="manager.profil_url" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            } @else {
+              {{ getInitials(manager) }}
+            }
+          </div>
           <div class="manager-info">
             <h3>{{ manager.prenom }} {{ manager.nom }}</h3>
             <div class="manager-meta">

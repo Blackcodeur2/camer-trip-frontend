@@ -9,6 +9,7 @@ statut: string;
   telephone?: string;
   adresse?: string;
   logo?: string;
+  logo_url?: string;
   ville: string;
   stations?: Station[];
 }

@@ -36,7 +36,13 @@
 
       <div class="user-menu">
         <div class="avatar-chip" (click)="toggleUserMenu()">
-          <div class="avatar">{{ userInitials() }}</div>
+          <div class="avatar" style="overflow: hidden;">
+            @if (currentUser()?.profil_url) {
+              <img [src]="currentUser()?.profil_url" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+            } @else {
+              {{ userInitials() }}
+            }
+          </div>
           <div class="avatar-info">
             <span class="user-name-chip">{{ currentUser()?.prenom || 'Chef' }} {{ currentUser()?.nom || 'd\'Agence' }}</span>
           </div>
