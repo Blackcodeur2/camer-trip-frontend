@@ -18,8 +18,12 @@
     </div>
 
     <div class="navbar__actions">
-      <a routerLink="/auth/login" class="btn-ghost">Connexion</a>
-      <a routerLink="/auth/register" class="btn-primary">Inscription</a>
+      @if (authService.isLoggedIn()) {
+        <a [routerLink]="dashboardLink()" class="btn-primary">Mon Dashboard</a>
+      } @else {
+        <a routerLink="/auth/login" class="btn-ghost">Connexion</a>
+        <a routerLink="/auth/register" class="btn-primary">Inscription</a>
+      }
     </div>
   </div>
 </nav>

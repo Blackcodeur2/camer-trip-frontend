@@ -25,6 +25,7 @@ export class Gerants implements OnInit {
   isSubmitting = signal(false);
   showForm = signal(false);
   showPassword = signal(false);
+  selectedManager = signal<User | null>(null);
 
   gerantForm = this.fb.nonNullable.group({
     prenom:               ['', Validators.required],
@@ -34,8 +35,8 @@ export class Gerants implements OnInit {
     num_cni:              ['', Validators.required],
     date_naissance:       ['', Validators.required],
     station_id:              [0,  Validators.required],
-    password:             ['', [Validators.required, Validators.minLength(8)]],
-    password_confirmation: ['', Validators.required],
+    password:             [''],
+    password_confirmation: [''],
   }, { validators: this.passwordMatchValidator });
 
   private passwordMatchValidator(ctrl: any) {
@@ -56,31 +57,53 @@ export class Gerants implements OnInit {
     this.isLoading.set(true);
     this.proprietaireService.getMyGerants().subscribe({
       next: (data) => {
-        this.managers.set(Array.isArray(data) ? data : (data as any).data ?? []);
+        this.managers.set(data);
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
     });
     this.proprietaireService.getMyAgences().subscribe({
       next: (data) => {
-        this.agencies.set(Array.isArray(data) ? data : (data as any).data ?? []);
+        this.agencies.set(data);
       }
     });
     this.proprietaireService.getMyStations().subscribe({
       next: (data) => {
-        this.gares.set(Array.isArray(data) ? data : (data as any).data ?? []);
+        this.gares.set(data);
       }
     });
   }
 
-  openForm() {
+  openForm(manager?: User) {
+    this.selectedManager.set(manager ?? null);
     this.showForm.set(true);
-    this.gerantForm.reset();
+    
+    if (manager) {
+      this.gerantForm.patchValue({
+        prenom: manager.prenom ?? '',
+        nom: manager.nom ?? '',
+        email: manager.email ?? '',
+        telephone: manager.telephone ?? '',
+        num_cni: manager.num_cni ?? '',
+        date_naissance: manager.date_naissance ?? '',
+        station_id: manager.station_id ?? 0,
+        password: '',
+        password_confirmation: ''
+      });
+      // En édition, le mot de passe n'est pas obligatoire
+      this.gerantForm.get('password')?.setValidators([Validators.minLength(8)]);
+    } else {
+      this.gerantForm.reset();
+      this.gerantForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
+    }
+    
+    this.gerantForm.get('password')?.updateValueAndValidity();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   closeForm() {
     this.showForm.set(false);
+    this.selectedManager.set(null);
     this.gerantForm.reset();
   }
 
@@ -95,12 +118,26 @@ export class Gerants implements OnInit {
     }
     this.isSubmitting.set(true);
     const payload = this.gerantForm.getRawValue();
+    
+    // Si pas de password saisi en édition, on le retire du payload
+    if (this.selectedManager() && !payload.password) {
+      delete (payload as any).password;
+      delete (payload as any).password_confirmation;
+    }
 
-    this.proprietaireService.createGerant(payload).subscribe({
-      next: (newManager) => {
+    const request = this.selectedManager()
+      ? this.proprietaireService.updateGerant(this.selectedManager()!.id, payload)
+      : this.proprietaireService.createGerant(payload);
+
+    request.subscribe({
+      next: (updatedManager) => {
         this.isSubmitting.set(false);
-        this.managers.update(list => [newManager, ...list]);
-        Swal.fire({ icon: 'success', title: 'Gérant créé !', text: 'Le gérant a accès à son espace et peut se connecter.', confirmButtonColor: '#7c3aed' });
+        Swal.fire({ 
+          icon: 'success', 
+          title: this.selectedManager() ? 'Gérant mis à jour !' : 'Gérant créé !', 
+          text: this.selectedManager() ? 'Les modifications ont été enregistrées.' : 'Le gérant a maintenant accès à son espace.', 
+          confirmButtonColor: '#006644' 
+        });
         this.closeForm();
         this.loadData();
       },
@@ -109,8 +146,8 @@ export class Gerants implements OnInit {
         const errors = err.error?.errors;
         const message = errors
           ? Object.values(errors).flat().join('\n')
-          : (err.error?.message || 'Impossible de créer le gérant.');
-        Swal.fire({ icon: 'error', title: 'Erreur', text: message, confirmButtonColor: '#7c3aed' });
+          : (err.error?.message || 'Une erreur est survenue.');
+        Swal.fire({ icon: 'error', title: 'Erreur', text: message, confirmButtonColor: '#ef4444' });
       }
     });
   }

@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ClientService } from '../../services/client/client-service';
 import { Agence } from '../../models/agence';
 import { MatIcon } from "@angular/material/icon";
+import { AuthService } from '../../services/auth/auth-service';
 
 @Component({
   selector: 'app-landing',
@@ -15,6 +16,20 @@ import { MatIcon } from "@angular/material/icon";
 })
 export class Landing {
   private readonly clientService = inject(ClientService);
+  protected readonly authService = inject(AuthService);
+
+  dashboardLink = computed(() => {
+    const role = this.authService.getRole();
+    switch (role) {
+      case 'ADMIN': return '/admin/dashboard';
+      case 'PROPRIETAIRE': return '/proprietaire/dashboard';
+      case 'CHEF_AGENCE': return '/chef_agence/dashboard';
+      case 'AGENT': return '/agent/dashboard';
+      case 'CHAUFFEUR': return '/chauffeur/dashboard';
+      case 'CLIENT': return '/client/home';
+      default: return '/landing';
+    }
+  });
 
 
   isScrolled = false;

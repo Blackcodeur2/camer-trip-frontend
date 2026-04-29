@@ -52,7 +52,8 @@ export class ProprietaireService {
   // ── Agences ──
   getMyAgences(): Observable<Agence[]> {
     const user = this.authService.currentUser();
-    return this.http.get<Agence[]>(`${this.API}/proprietaire/mes-agences/${user?.id}`);
+    return this.http.get<any>(`${this.API}/proprietaire/mes-agences/${user?.id}`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
   }
 
   createAgence(payload: FormData | CreateAgencePayload): Observable<Agence> {
@@ -69,8 +70,8 @@ export class ProprietaireService {
 
   // ── Stations ──
   getMyStations(): Observable<Station[]> {
-    return this.http.get<{ statut: boolean; data: Station[] }>(`${this.API}/proprietaire/stations`)
-      .pipe(map(response => response.data));
+    return this.http.get<any>(`${this.API}/proprietaire/stations`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
   }
 
   createStation(payload: CreateStationPayload): Observable<Station> {
@@ -87,26 +88,26 @@ export class ProprietaireService {
 
   // ── Buses ──
   getMyBuses(): Observable<any[]> {
-    return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/proprietaire/buses`)
-      .pipe(map(response => response.data));
+    return this.http.get<any>(`${this.API}/proprietaire/buses`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
   }
 
   // ── Routes/Trajets ──
   getMyTrajets(): Observable<any[]> {
-    return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/proprietaire/trajets`)
-      .pipe(map(response => response.data));
+    return this.http.get<any>(`${this.API}/proprietaire/trajets`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
   }
 
   // ── Voyages ──
   getMyVoyages(): Observable<any[]> {
-    return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/proprietaire/voyages`)
-      .pipe(map(response => response.data));
+    return this.http.get<any>(`${this.API}/proprietaire/voyages`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
   }
 
   // ── Utilisateurs ──
   getMyUtilisateurs(): Observable<User[]> {
-    return this.http.get<{ statut: boolean; data: User[] }>(`${this.API}/proprietaire/utilisateurs`)
-      .pipe(map(response => response.data));
+    return this.http.get<any>(`${this.API}/proprietaire/utilisateurs`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
   }
 
   // ── Statistiques ──
@@ -117,7 +118,8 @@ export class ProprietaireService {
 
   // ── Gérants (CHEF_AGENCE) ──
   getMyGerants(): Observable<User[]> {
-    return this.http.get<{ statut: boolean; data: User[] }>(`${this.API}/proprietaire/gerants`).pipe(map(response => response.data));
+    return this.http.get<any>(`${this.API}/proprietaire/gerants`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
   }
 
   createGerant(payload: CreateGerantPayload): Observable<User> {

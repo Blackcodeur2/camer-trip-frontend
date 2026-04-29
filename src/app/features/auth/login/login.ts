@@ -64,6 +64,9 @@ export class Login {
             case 'PROPRIETAIRE':
               this.router.navigate(['/proprietaire/dashboard']);
               break;
+            case 'CLIENT':
+              this.router.navigate(['/client/home']);
+              break;
             default:
               console.log('Redirecting to landing (default case)');
               this.router.navigate(['/landing']);

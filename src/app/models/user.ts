@@ -2,6 +2,7 @@ export interface User {
     num_cni: any;
     created_at: string | number | Date;
     id: number;
+    matricule: string;
     nom?: string;
     prenom?: string;
     username?: string;

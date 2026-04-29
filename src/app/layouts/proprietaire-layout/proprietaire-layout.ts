@@ -38,7 +38,7 @@ export class ProprietaireLayout {
     { label: 'Routes', icon: 'route', route: '/proprietaire/trajets', badge: null },
     { label: 'Voyages', icon: 'flight_takeoff', route: '/proprietaire/voyages', badge: null },
     { label: 'Utilisateurs', icon: 'people', route: '/proprietaire/personnels', badge: null },
-    { label: 'Vérification KYC', icon: 'verified_user', route: '/proprietaire/kyc', badge: null },
+    /*{ label: 'Vérification KYC', icon: 'verified_user', route: '/proprietaire/kyc', badge: null },*/
     { label: 'Mon Abonnements', icon: 'money', route: '/proprietaire/abonnements', badge: null },
     { label: 'Mon profil', icon: 'manage_accounts', route: '/proprietaire/profile', badge: null },
   ];

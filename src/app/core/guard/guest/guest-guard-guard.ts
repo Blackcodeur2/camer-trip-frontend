@@ -13,7 +13,8 @@ export const guestGuardGuard: CanActivateFn = () => {
     if (role === 'CHAUFFEUR') return router.createUrlTree(['/chauffeur/dashboard']);
     if (role === 'AGENT') return router.createUrlTree(['/agent/dashboard']);
     if (role === 'CLIENT') return router.createUrlTree(['/client/home']);
-    return false;
+    if (role === 'PROPRIETAIRE') return router.createUrlTree(['/proprietaire/dashboard']);
+    return true;
   }
   
   return true;
