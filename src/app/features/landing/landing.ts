@@ -33,6 +33,7 @@ export class Landing {
 
 
   isScrolled = false;
+  isMobileMenuOpen = signal(false);
   agences = signal<Agence[]>([]);
   search = signal('');
   loading = signal(false);

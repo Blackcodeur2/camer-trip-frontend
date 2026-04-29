@@ -1,71 +1,146 @@
-<div class="client-home">
-    <!-- Welcome Section -->
-    <header class="home-header animate-fade-in">
-        <div class="header-top">
-            <div class="welcome-text">
-                <h1 class="welcome-title">Où souhaitez-vous <span class="highlight">aller ?</span></h1>
-                <p class="subtitle">Réservez votre voyage en quelques clics</p>
-            </div>
+<div class="page-container">
+  <!-- ─── HEADER / BIENVENUE ─── -->
+  <header class="home-header animate-in">
+    <div class="header-content">
+      <div class="user-greeting">
+        <div class="avatar-circle">
+          @if (currentUser()?.profil_url) {
+            <img [src]="currentUser()?.profil_url" alt="Profil">
+          } @else {
+            {{ getInitials(currentUser()) }}
+          }
         </div>
-    </header>
+        <div class="greeting-text">
+          <h1>Salut, {{ currentUser()?.prenom }} ! 👋</h1>
+          <p>Prêt pour votre prochain voyage ?</p>
+        </div>
+      </div>
+      <button class="btn-book" routerLink="/client/new-reservation">
+        <mat-icon>add_circle</mat-icon>
+        Réserver un voyage
+      </button>
+    </div>
+  </header>
 
-    <!-- Active Reservation Card (The Hero) -->
-    <section class="hero-section animate-scale-in" *ngIf="upcomingTrips().length > 0">
-        <div class="section-header">
-            <h3 class="section-title">Prochain voyage</h3>
-            <span class="active-badge">Confirmé</span>
+  <!-- ─── QUICK STATS ─── -->
+  <div class="stats-grid animate-in" style="animation-delay: 0.1s">
+    <div class="stat-card">
+      <div class="stat-icon purple"><mat-icon>confirmation_number</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ stats().active }}</span>
+        <span class="stat-label">Voyages à venir</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><mat-icon>account_balance_wallet</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">{{ stats().spent | number }} <small>FCFA</small></span>
+        <span class="stat-label">Total dépensé</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue"><mat-icon>verified_user</mat-icon></div>
+      <div class="stat-details">
+        <span class="stat-value">Client</span>
+        <span class="stat-label">Statut compte</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── PROCHAIN VOYAGE ─── -->
+  <section class="next-trip-section animate-in" style="animation-delay: 0.2s">
+    <div class="section-header">
+      <h2><mat-icon>directions_bus</mat-icon> Prochain voyage</h2>
+      <a routerLink="/client/reservations" class="view-all">Tout voir</a>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        <mat-icon class="spin">sync</mat-icon>
+        <p>Chargement de vos voyages...</p>
+      </div>
+    } @else if (upcomingTrips().length > 0) {
+      @const next = upcomingTrips()[0];
+      <div class="active-trip-card">
+        <div class="trip-main">
+          <div class="trip-route">
+            <div class="city">
+              <span class="city-name">{{ '' }}</span>
+              <span class="city-time">{{ '' }}</span>
+            </div>
+            <div class="route-connector">
+              <div class="dot"></div>
+              <div class="line">
+                <mat-icon>double_arrow</mat-icon>
+              </div>
+              <div class="dot"></div>
+            </div>
+            <div class="city text-right">
+              <span class="city-name">{{ '' }}</span>
+              <span class="city-time">Arrivée prévue</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="trip-details">
+          <div class="detail-item">
+            <mat-icon>event</mat-icon>
+            <span>{{ '' }}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon>business</mat-icon>
+            <span>{{ 'Express Voyage' }}</span>
+          </div>
+          <div class="detail-item">
+            <mat-icon>event_seat</mat-icon>
+            <span>Siège N° {{ 'Libre' }}</span>
+          </div>
         </div>
 
-        <div class="active-trip-card" (click)="navigate('/client/mes-reservations')">
-            <div class="trip-header">
-                <div class="bus-company">Express Voyage</div>
-                <div class="trip-date">{{ upcomingTrips()[0].voyage.date_depart | date:'dd MMM yyyy' }}</div>
-            </div>
-
-            <div class="trip-route">
-                <div class="city-info">
-                    <span class="city-name">{{ upcomingTrips()[0].voyage.ville_depart }}</span>
-                    <span class="city-code">{{ upcomingTrips()[0].voyage.ville_depart.substring(0,3).toUpperCase()
-                        }}</span>
-                </div>
-                <div class="route-visual">
-                    <div class="dot"></div>
-                    <div class="line">
-                        <mat-icon>directions_bus</mat-icon>
-                    </div>
-                    <div class="dot"></div>
-                </div>
-                <div class="city-info align-right">
-                    <span class="city-name">{{ upcomingTrips()[0].voyage.ville_arrivee }}</span>
-                    <span class="city-code">{{ upcomingTrips()[0].voyage.ville_arrivee.substring(0,3).toUpperCase()
-                        }}</span>
-                </div>
-            </div>
-
-            <div class="trip-footer">
-                <div class="footer-item">
-                    <mat-icon>schedule</mat-icon>
-                    <span>{{ upcomingTrips()[0].voyage.heure_depart }}</span>
-                </div>
-                <div class="footer-item">
-                    <mat-icon>event_seat</mat-icon>
-                    <span>Siège N° {{ upcomingTrips()[0] }}</span>
-                </div>
-                <mat-icon class="qr-preview">qr_code_2</mat-icon>
-            </div>
+        <div class="trip-actions">
+          <div class="qr-preview">
+            <mat-icon>qr_code_2</mat-icon>
+            <span>Voir le billet</span>
+          </div>
+          <button class="btn-details" (click)="navigate('/client/reservations')">
+            Détails <mat-icon>arrow_forward</mat-icon>
+          </button>
         </div>
-    </section>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <div class="empty-icon"><mat-icon>event_busy</mat-icon></div>
+        <h3>Aucun voyage prévu</h3>
+        <p>Vous n'avez pas de réservation active pour le moment.</p>
+        <button class="btn-primary" routerLink="/client/new-reservation">
+          Planifier un voyage
+        </button>
+      </div>
+    }
+  </section>
 
-    <!-- Stats / Balance Section -->
-    <section class="wallet-section animate-fade-in">
-        <div class="wallet-card">
-            <div class="wallet-info">
-                <span class="label">Total dépensé</span>
-                <span class="amount">{{ stats().spent | number }} <small>FCFA</small></span>
-            </div>
-            <div class="wallet-icon">
-                <mat-icon>account_balance_wallet</mat-icon>
-            </div>
+  <!-- ─── RECENT ACTIVITIES / OFFERS ─── -->
+  <section class="offers-section animate-in" style="animation-delay: 0.3s">
+    <div class="section-header">
+      <h2><mat-icon>stars</mat-icon> Offres & Agences</h2>
+    </div>
+    <div class="offers-grid">
+      <div class="offer-card" routerLink="/client/agences">
+        <div class="offer-img" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop')">
+          <div class="offer-overlay">
+            <h3>Explorer les Agences</h3>
+            <p>Trouvez les meilleurs trajets au meilleur prix.</p>
+          </div>
         </div>
-    </section>
+      </div>
+      <div class="offer-card">
+        <div class="offer-img" style="background-image: url('https://images.unsplash.com/photo-1570126688035-1e6adbd61053?q=80&w=2071&auto=format&fit=crop')">
+          <div class="offer-overlay">
+            <h3>Programme Fidélité</h3>
+            <p>Bientôt disponible : gagnez des points à chaque voyage !</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

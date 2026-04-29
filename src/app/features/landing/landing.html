@@ -1,7 +1,7 @@
 <!-- ═══════════════════════════════════════════════════════ -->
 <!--  NAVBAR                                                 -->
 <!-- ═══════════════════════════════════════════════════════ -->
-<nav class="navbar" id="top" [class.scrolled]="isScrolled">
+<nav class="navbar" id="top" [class.scrolled]="isScrolled" [class.mobile-open]="isMobileMenuOpen()">
   <div class="navbar__container">
     <a routerLink="/" class="navbar__brand">
       <div class="brand-logo-wrap">
@@ -10,14 +10,28 @@
       <span class="brand-name">Camer<strong>Trip</strong></span>
     </a>
 
-    <div class="navbar__center">
-      <a routerLink="/landing" fragment="voyages" class="navbar__link">Voyages</a>
-      <a routerLink="/landing" fragment="fonctionnement" class="navbar__link">Tutoriel</a>
-      <a routerLink="/landing" fragment="pour-proprietaires" class="navbar__link">Partenaires</a>
-      <a routerLink="/landing" fragment="contact" class="navbar__link">Contact</a>
+    <!-- Menu Hamburger -->
+    <button class="mobile-toggle" (click)="isMobileMenuOpen.set(!isMobileMenuOpen())" aria-label="Menu">
+      <span class="hamburger"></span>
+    </button>
+
+    <div class="navbar__center" [class.active]="isMobileMenuOpen()">
+      <a routerLink="/landing" fragment="voyages" class="navbar__link" (click)="isMobileMenuOpen.set(false)">Voyages</a>
+      <a routerLink="/landing" fragment="fonctionnement" class="navbar__link" (click)="isMobileMenuOpen.set(false)">Tutoriel</a>
+      <a routerLink="/landing" fragment="pour-proprietaires" class="navbar__link" (click)="isMobileMenuOpen.set(false)">Partenaires</a>
+      <a routerLink="/landing" fragment="contact" class="navbar__link" (click)="isMobileMenuOpen.set(false)">Contact</a>
+      
+      <div class="mobile-only-actions">
+        @if (authService.isLoggedIn()) {
+          <a [routerLink]="dashboardLink()" class="btn-primary" (click)="isMobileMenuOpen.set(false)">Mon Dashboard</a>
+        } @else {
+          <a routerLink="/auth/login" class="btn-ghost" (click)="isMobileMenuOpen.set(false)">Connexion</a>
+          <a routerLink="/auth/register" class="btn-primary" (click)="isMobileMenuOpen.set(false)">Inscription</a>
+        }
+      </div>
     </div>
 
-    <div class="navbar__actions">
+    <div class="navbar__actions desktop-only">
       @if (authService.isLoggedIn()) {
         <a [routerLink]="dashboardLink()" class="btn-primary">Mon Dashboard</a>
       } @else {

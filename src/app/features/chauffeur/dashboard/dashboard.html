@@ -27,16 +27,16 @@
         </div>
 
         <!-- Next Trip / Current Trip (The Hero) -->
-        <div class="next-trip-hero animate-scale-in" *ngIf="nextTrip">
+        <div class="next-trip-hero animate-scale-in" *ngIf="nextTrip() as trip">
             <div class="hero-label">
-                <span class="pulse-dot"></span>
-                PROCHAIN DÉPART
+                <span class="pulse-dot" [class.in-progress]="trip.statut === 'en cours'"></span>
+                {{ trip.statut === 'en cours' ? 'VOYAGE EN COURS' : 'PROCHAIN DÉPART' }}
             </div>
 
             <div class="route-display">
                 <div class="city-group">
-                    <span class="city-name">{{ nextTrip.trajet?.depart }}</span>
-                    <span class="time">{{ nextTrip.heure_depart }}</span>
+                    <span class="city-name">{{ trip.trajet?.depart }}</span>
+                    <span class="time">{{ trip.heure_depart }}</span>
                 </div>
                 <div class="route-line">
                     <mat-icon>directions_bus</mat-icon>
@@ -44,7 +44,7 @@
                     <mat-icon>location_on</mat-icon>
                 </div>
                 <div class="city-group align-right">
-                    <span class="city-name">{{ nextTrip.trajet?.arrivee }}</span>
+                    <span class="city-name">{{ trip.trajet?.arrivee }}</span>
                     <span class="info">Arrivée prévue</span>
                 </div>
             </div>
@@ -52,18 +52,27 @@
             <div class="bus-info">
                 <div class="info-item">
                     <mat-icon>local_shipping</mat-icon>
-                    <span>{{ nextTrip.vehicule_immatriculation }}</span>
+                    <span>{{ trip.bus?.immatriculation }}</span>
                 </div>
                 <div class="info-item">
                     <mat-icon>confirmation_number</mat-icon>
-                    <span>{{ nextTrip.num_voyage }}</span>
+                    <span>{{ trip.num_voyage }}</span>
                 </div>
             </div>
 
-            <button class="action-btn" (click)="demarrerVoyage(nextTrip.id)" [disabled]="isProcessing()">
-                <mat-icon>play_circle_filled</mat-icon>
-                {{ isProcessing() ? 'Chargement...' : 'DÉMARRER LE VOYAGE' }}
-            </button>
+            <div class="hero-actions">
+                @if (trip.statut === 'en attente') {
+                    <button class="action-btn" (click)="demarrerVoyage(trip.id)" [disabled]="isProcessing()">
+                        <mat-icon>play_circle_filled</mat-icon>
+                        {{ isProcessing() ? 'Chargement...' : 'DÉMARRER LE VOYAGE' }}
+                    </button>
+                } @else if (trip.statut === 'en cours') {
+                    <button class="action-btn finish" (click)="terminerVoyage(trip.id)" [disabled]="isProcessing()">
+                        <mat-icon>check_circle</mat-icon>
+                        {{ isProcessing() ? 'Chargement...' : 'TERMINER LE VOYAGE' }}
+                    </button>
+                }
+            </div>
         </div>
 
         <!-- Quick Actions Grid -->
@@ -86,14 +95,14 @@
         </section>
 
         <!-- Upcoming Trips List -->
-        <section class="upcoming-list animate-fade-in" *ngIf="upcomingVoyages.length > 0">
+        <section class="upcoming-list animate-fade-in" *ngIf="upcomingVoyages().length > 0">
             <div class="section-header">
                 <h3 class="section-title">Planning à venir</h3>
-                <span class="count">{{ upcomingVoyages.length }} voyage(s)</span>
+                <span class="count">{{ upcomingVoyages().length }} voyage(s)</span>
             </div>
 
             <div class="trips-stack">
-                <div class="trip-item-card" *ngFor="let voyage of upcomingVoyages">
+                <div class="trip-item-card" *ngFor="let voyage of upcomingVoyages()">
                     <div class="trip-time-box">
                         <span class="day">{{ voyage.date_depart | date:'dd' }}</span>
                         <span class="month">{{ voyage.date_depart | date:'MMM' }}</span>
@@ -103,7 +112,7 @@
                             voyage.trajet?.arrivee }}</div>
                         <div class="trip-meta">
                             <span><mat-icon>schedule</mat-icon> {{ voyage.heure_depart }}</span>
-                            <span><mat-icon>directions_bus</mat-icon> {{ voyage.vehicule_immatriculation }}</span>
+                            <span><mat-icon>directions_bus</mat-icon> {{ voyage.bus?.immatriculation }}</span>
                         </div>
                     </div>
                     <mat-icon class="arrow">chevron_right</mat-icon>
