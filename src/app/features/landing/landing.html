@@ -65,7 +65,7 @@
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <strong>15+</strong>
+          <strong>30+</strong>
           <span>Villes desservies</span>
         </div>
         <div class="stat-divider"></div>
@@ -115,8 +115,8 @@
 
         <p class="agency-meta">{{ agence.adresse || 'Adresse non disponible' }}</p>
         <div class="agency-contact">
-          <span>📧 {{ agence.email || 'Non renseigné' }}</span>
-          <span>📞 {{ agence.telephone || 'Non renseigné' }}</span>
+          <span><mat-icon>mail</mat-icon> {{ agence.email || 'Non renseigné' }}</span>
+          <span><mat-icon>phone</mat-icon> {{ agence.telephone || 'Non renseigné' }}</span>
         </div>
 
         <div class="agency-stations">

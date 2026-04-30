@@ -17,6 +17,9 @@
                     <span class="month">{{ voyage.date_depart | date:'MMM' }}</span>
                 </div>
                 <div class="trip-content">
+                    <div class="type-badge" [class.reservation]="voyage.typeEntry === 'RESERVATION'">
+                        {{ voyage.typeEntry === 'RESERVATION' ? 'RÉSERVATION' : 'MISSION' }}
+                    </div>
                     <div class="path">
                         {{ voyage.trajet?.depart}}
                         <mat-icon>trending_flat</mat-icon>
@@ -29,16 +32,17 @@
                         </div>
                         <div class="meta-item">
                             <mat-icon>directions_bus</mat-icon>
-                            {{ voyage.vehicule_immatriculation }}
+                            {{ voyage.bus?.immatriculation || 'N/A' }}
                         </div>
                     </div>
                 </div>
-                <div class="status-badge">
-                    <mat-icon>check_circle</mat-icon>
+                <div class="status-badge" [class.reservation]="voyage.typeEntry === 'RESERVATION'">
+                    <mat-icon>{{ voyage.typeEntry === 'RESERVATION' ? 'shopping_bag' : 'check_circle' }}</mat-icon>
                 </div>
             </div>
             <div class="card-footer">
                 <span class="trip-id">ID: {{ voyage.num_voyage }}</span>
+                <span class="seat-info" *ngIf="voyage.typeEntry === 'RESERVATION'">Siège: {{ voyage.place }}</span>
                 <button class="detail-btn">Détails <mat-icon>chevron_right</mat-icon></button>
             </div>
         </div>

@@ -1,4 +1,79 @@
-<div class="dashboard-container">
-    <header class="dashboard-header animate-in">
+<div class="reservations-container">
+    <header class="page-header animate-fade-in">
+        <h2 class="title">Mes Billets</h2>
+        <p class="subtitle">Gérez vos réservations et accédez à vos tickets</p>
     </header>
+
+    <div class="filters-bar animate-fade-in">
+        <div class="search-input">
+            <mat-icon>search</mat-icon>
+            <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" 
+                   placeholder="N° Réservation, départ, arrivée...">
+        </div>
+        <div class="filter-chips">
+            <button [class.active]="activeFilter() === 'all'" (click)="setFilter('all')">Tous</button>
+            <button [class.active]="activeFilter() === 'validee'" (click)="setFilter('validee')">Validés</button>
+            <button [class.active]="activeFilter() === 'en attente'" (click)="setFilter('en attente')">En attente</button>
+        </div>
+    </div>
+
+    <div *ngIf="isLoading()" class="loading-state">
+        <div class="skeleton-item" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+
+    <div *ngIf="!isLoading()" class="reservations-list">
+        <div class="reservation-card animate-in" *ngFor="let r of filteredReservations(); let i = index"
+             [style.animation-delay]="(i * 0.05) + 's'">
+            <div class="card-header">
+                <span class="num">#{{ r.num_reservation }}</span>
+                <span class="status-badge" [attr.data-status]="r.statut">{{ r.statut }}</span>
+            </div>
+            
+            <div class="card-body">
+                <div class="trip-path">
+                    <div class="point">
+                        <span class="city">{{ r.voyage.trajet?.depart }}</span>
+                    </div>
+                    <mat-icon>arrow_forward</mat-icon>
+                    <div class="point">
+                        <span class="city">{{ r.voyage.trajet?.arrivee }}</span>
+                    </div>
+                </div>
+
+                <div class="trip-meta">
+                    <div class="meta-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        {{ r.voyage.date_depart | date:'dd MMM yyyy' }}
+                    </div>
+                    <div class="meta-item">
+                        <mat-icon>schedule</mat-icon>
+                        {{ r.voyage.heure_depart }}
+                    </div>
+                    <div class="meta-item">
+                        <mat-icon>airline_seat_recline_normal</mat-icon>
+                        Siège {{ r.place }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <span class="price">{{ r.prix | number }} FCFA</span>
+                <div class="actions">
+                    <button class="pay-btn" *ngIf="r.statut === 'en attente'" (click)="onPayReservation(r)">
+                        Payer <mat-icon>payments</mat-icon>
+                    </button>
+                    <button class="ticket-btn" *ngIf="r.statut === 'validee'">
+                        Ticket <mat-icon>file_download</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty-state" *ngIf="filteredReservations().length === 0">
+            <mat-icon>confirmation_number</mat-icon>
+            <h3>Aucune réservation</h3>
+            <p>Vous n'avez pas encore de réservations correspondant à vos critères.</p>
+            <button class="browse-btn" (click)="goToVoyages()">Explorer les voyages</button>
+        </div>
+    </div>
 </div>

@@ -1,17 +1,14 @@
 <div class="page-container">
     <div class="page-header">
         <div class="header-title">
-            <h1 class="page-title">Mes Gares</h1>
-            <p class="page-subtitle">Gérez toutes vos gares routières</p>
+            <h1 class="page-title">Mes Stations</h1>
+            <p class="page-subtitle">Gérez toutes vos stations</p>
         </div>
-        <button class="btn-primary" (click)="openForm()" [disabled]="formMode() !== 'none'">
-            <mat-icon>add_circle</mat-icon> Nouvelle Gare
-        </button>
     </div>
 
     @if (formMode() === 'form') {
     <div class="form-card">
-        <h2>{{ editingGare() ? 'Modifier Gare' : 'Nouvelle Gare' }}</h2>
+        <h2>{{ editingGare() ? 'Modifier Gare' : '' }}</h2>
         <form [formGroup]="gareForm" (ngSubmit)="onSubmit()">
             <div class="form-grid">
                 <div class="form-group">

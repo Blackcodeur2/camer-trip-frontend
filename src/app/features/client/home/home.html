@@ -1,146 +1,56 @@
-<div class="page-container">
-  <!-- ─── HEADER / BIENVENUE ─── -->
-  <header class="home-header animate-in">
-    <div class="header-content">
-      <div class="user-greeting">
-        <div class="avatar-circle">
-          @if (currentUser()?.profil_url) {
-            <img [src]="currentUser()?.profil_url" alt="Profil">
-          } @else {
-            {{ getInitials(currentUser()) }}
-          }
+<div class="home-container">
+    <header class="welcome-section animate-fade-in">
+        <div class="greeting">
+            <h1>Bon voyage, {{ currentUser()?.prenom }} !</h1>
+            <p>Où allons-nous aujourd'hui ?</p>
         </div>
-        <div class="greeting-text">
-          <h1>Salut, {{ currentUser()?.prenom }} ! 👋</h1>
-          <p>Prêt pour votre prochain voyage ?</p>
-        </div>
-      </div>
-      <button class="btn-book" routerLink="/client/new-reservation">
-        <mat-icon>add_circle</mat-icon>
-        Réserver un voyage
-      </button>
-    </div>
-  </header>
+    </header>
 
-  <!-- ─── QUICK STATS ─── -->
-  <div class="stats-grid animate-in" style="animation-delay: 0.1s">
-    <div class="stat-card">
-      <div class="stat-icon purple"><mat-icon>confirmation_number</mat-icon></div>
-      <div class="stat-details">
-        <span class="stat-value">{{ stats().active }}</span>
-        <span class="stat-label">Voyages à venir</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon green"><mat-icon>account_balance_wallet</mat-icon></div>
-      <div class="stat-details">
-        <span class="stat-value">{{ stats().spent | number }} <small>FCFA</small></span>
-        <span class="stat-label">Total dépensé</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon blue"><mat-icon>verified_user</mat-icon></div>
-      <div class="stat-details">
-        <span class="stat-value">Client</span>
-        <span class="stat-label">Statut compte</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── PROCHAIN VOYAGE ─── -->
-  <section class="next-trip-section animate-in" style="animation-delay: 0.2s">
-    <div class="section-header">
-      <h2><mat-icon>directions_bus</mat-icon> Prochain voyage</h2>
-      <a routerLink="/client/reservations" class="view-all">Tout voir</a>
-    </div>
-
-    @if (isLoading()) {
-      <div class="loading-state">
-        <mat-icon class="spin">sync</mat-icon>
-        <p>Chargement de vos voyages...</p>
-      </div>
-    } @else if (upcomingTrips().length > 0) {
-      @const next = upcomingTrips()[0];
-      <div class="active-trip-card">
-        <div class="trip-main">
-          <div class="trip-route">
-            <div class="city">
-              <span class="city-name">{{ '' }}</span>
-              <span class="city-time">{{ '' }}</span>
+    <div class="quick-actions animate-fade-in">
+        <button class="action-card primary" (click)="goToSearch()">
+            <div class="icon-circle">
+                <mat-icon>search</mat-icon>
             </div>
-            <div class="route-connector">
-              <div class="dot"></div>
-              <div class="line">
-                <mat-icon>double_arrow</mat-icon>
-              </div>
-              <div class="dot"></div>
-            </div>
-            <div class="city text-right">
-              <span class="city-name">{{ '' }}</span>
-              <span class="city-time">Arrivée prévue</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="trip-details">
-          <div class="detail-item">
-            <mat-icon>event</mat-icon>
-            <span>{{ '' }}</span>
-          </div>
-          <div class="detail-item">
-            <mat-icon>business</mat-icon>
-            <span>{{ 'Express Voyage' }}</span>
-          </div>
-          <div class="detail-item">
-            <mat-icon>event_seat</mat-icon>
-            <span>Siège N° {{ 'Libre' }}</span>
-          </div>
-        </div>
-
-        <div class="trip-actions">
-          <div class="qr-preview">
-            <mat-icon>qr_code_2</mat-icon>
-            <span>Voir le billet</span>
-          </div>
-          <button class="btn-details" (click)="navigate('/client/reservations')">
-            Détails <mat-icon>arrow_forward</mat-icon>
-          </button>
-        </div>
-      </div>
-    } @else {
-      <div class="empty-state">
-        <div class="empty-icon"><mat-icon>event_busy</mat-icon></div>
-        <h3>Aucun voyage prévu</h3>
-        <p>Vous n'avez pas de réservation active pour le moment.</p>
-        <button class="btn-primary" routerLink="/client/new-reservation">
-          Planifier un voyage
+            <span>Rechercher un voyage</span>
         </button>
-      </div>
-    }
-  </section>
+        <button class="action-card secondary" routerLink="/client/reservations">
+            <div class="icon-circle">
+                <mat-icon>confirmation_number</mat-icon>
+            </div>
+            <span>Mes Billets</span>
+        </button>
+    </div>
 
-  <!-- ─── RECENT ACTIVITIES / OFFERS ─── -->
-  <section class="offers-section animate-in" style="animation-delay: 0.3s">
-    <div class="section-header">
-      <h2><mat-icon>stars</mat-icon> Offres & Agences</h2>
-    </div>
-    <div class="offers-grid">
-      <div class="offer-card" routerLink="/client/agences">
-        <div class="offer-img" style="background-image: url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop')">
-          <div class="offer-overlay">
-            <h3>Explorer les Agences</h3>
-            <p>Trouvez les meilleurs trajets au meilleur prix.</p>
-          </div>
+    <section class="stats-overview animate-fade-in">
+        <div class="stat-item">
+            <span class="label">Voyages validés</span>
+            <span class="value">{{ stats().active }}</span>
         </div>
-      </div>
-      <div class="offer-card">
-        <div class="offer-img" style="background-image: url('https://images.unsplash.com/photo-1570126688035-1e6adbd61053?q=80&w=2071&auto=format&fit=crop')">
-          <div class="offer-overlay">
-            <h3>Programme Fidélité</h3>
-            <p>Bientôt disponible : gagnez des points à chaque voyage !</p>
-          </div>
+        <div class="stat-item">
+            <span class="label">Total dépensé</span>
+            <span class="value">{{ stats().spent | number }} <small>FCFA</small></span>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="recent-section animate-fade-in">
+        <div class="section-header">
+            <h3>Activité récente</h3>
+            <a routerLink="/client/reservations">Voir tout</a>
+        </div>
+
+        <div class="activity-list" *ngIf="recentReservations().length > 0">
+            <div class="activity-card" *ngFor="let r of recentReservations()">
+                <div class="trip-dot" [attr.data-status]="r.statut"></div>
+                <div class="trip-info">
+                    <span class="route">{{ r.voyage.trajet?.depart }} → {{ r.voyage.trajet?.arrivee }}</span>
+                    <span class="date">{{ r.voyage.date_depart | date:'dd MMM yyyy' }}</span>
+                </div>
+                <div class="trip-status">{{ r.statut }}</div>
+            </div>
+        </div>
+
+        <div class="empty-activity" *ngIf="recentReservations().length === 0 && !isLoading()">
+            <p>Aucune activité récente. Prêt pour votre premier voyage ?</p>
+        </div>
+    </section>
 </div>

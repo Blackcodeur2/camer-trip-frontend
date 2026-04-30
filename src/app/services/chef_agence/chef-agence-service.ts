@@ -66,7 +66,7 @@ export class ChefAgenceService {
 
   getChauffeurs(): Observable<User[]> {
     return this.http.get<{ statut: boolean; data: User[] }>(`${this.API}/chef-agence/utilisateurs`)
-      .pipe(map((response: { statut: boolean; data: User[] }) => response.data.filter((user: User) => user.role_user === 'CHAUFFEUR' && user.statut === 'inactif')));
+      .pipe(map((response: { statut: boolean; data: User[] }) => response.data.filter((user: User) => user.role_user === 'CHAUFFEUR' && user.statut === 'actif')));
   }
 
   addStaff(staff: any): Observable<User> {

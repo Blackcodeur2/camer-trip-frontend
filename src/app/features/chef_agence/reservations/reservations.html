@@ -32,7 +32,6 @@
                 <tr>
                     <th>Référence</th>
                     <th>Client</th>
-                    <th>Voyage / Bus</th>
                     <th style="text-align: center;">Siège</th>
                     <th>Prix</th>
                     <th>Date Dédiée</th>
@@ -57,15 +56,7 @@
                             </span>
                         </div>
                     </td>
-                    <td>
-                        <div class="voyage-info">
-                            <span class="trip-id">{{ res.voyage?.num_voyage || 'N/A' }}</span>
-                            <span class="bus-tag">
-                                <mat-icon>directions_bus</mat-icon>
-                                {{ res.voyage?.bus?.immatriculation || 'Express' }}
-                            </span>
-                        </div>
-                    </td>
+            
                     <td style="text-align: center;">
                         <span class="seat-badge">{{ res.place || '--' }}</span>
                     </td>
@@ -76,7 +67,7 @@
                         </div>
                     </td>
                     <td class="date-cell">
-                        {{ (res.date || res.voyage?.date_depart) | date:'dd MMM yyyy, HH:mm' }}
+                        {{ (res.date || res.voyage?.date_depart) | date:'dd MMM yyyy' }}
                     </td>
                     <td>
                         <span class="status-badge status--{{ res.statut === 'validee' ? 'success' : res.statut === 'annule' ? 'rejected' : 'pending' }}">

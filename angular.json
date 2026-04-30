@@ -58,6 +58,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": ["unorally-unpneumatic-arvilla.ngrok-free.dev"]
+          },
           "configurations": {
             "production": {
               "buildTarget": "camer_trip:build:production"

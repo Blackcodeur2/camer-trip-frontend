@@ -240,6 +240,14 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/chauffeur/incidents/incidents').then(m => m.Incidents)
             },
             {
+                path: 'reservations',
+                loadComponent: () => import('./features/chauffeur/reservations/chauffeur-booking').then(m => m.ChauffeurBooking)
+            },
+            {
+                path: 'reservations/new/:id',
+                loadComponent: () => import('./features/chauffeur/reservations/new-reservation').then(m => m.ChauffeurNewReservation)
+            },
+            {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },
@@ -265,7 +273,7 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/client/reservations/reservations').then(m => m.Reservations)
             },
             {
-                path: 'new-reservation',
+                path: 'new-reservation/:voyageId',
                 loadComponent: () => import('./features/client/new-reservation/new-reservation').then(m => m.NewReservation)
             },
             {

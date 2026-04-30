@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterModule, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth-service';
@@ -5,7 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-client-layout',
-  imports: [MatIconModule, RouterModule, RouterLink],
+  standalone: true,
+  imports: [CommonModule, MatIconModule, RouterModule, RouterLink],
   templateUrl: './client-layout.html',
   styleUrl: './client-layout.css',
 })

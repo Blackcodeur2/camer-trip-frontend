@@ -1,3 +1,6 @@
+import { User } from "./user";
+import { Voyage } from "./voyage";
+
 export interface Reservation {
     created_at: string | number | Date;
     place: any;
@@ -5,5 +8,6 @@ export interface Reservation {
     id: number;
     statut: string;
     prix: number;
-    voyage: any;
+    voyage: Voyage;
+    user?: User; 
 }

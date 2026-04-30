@@ -3,17 +3,17 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
-import { ClientService } from '../../../services/client/client-service';
+import { ChauffeurService } from '../../../services/chauffeur/chauffeur-service';
 
 @Component({
-  selector: 'app-agences',
+  selector: 'app-chauffeur-booking',
   standalone: true,
   imports: [CommonModule, MatIconModule, FormsModule],
-  templateUrl: './agences.html',
-  styleUrl: './agences.css',
+  templateUrl: './chauffeur-booking.html',
+  styleUrl: './chauffeur-booking.css',
 })
-export class Agences {
-  private clientService = inject(ClientService);
+export class ChauffeurBooking {
+  private chauffeurService = inject(ChauffeurService);
   private router = inject(Router);
 
   searchQuery = '';
@@ -26,7 +26,7 @@ export class Agences {
 
   loadAllAvailableVoyages() {
     this.isLoading.set(true);
-    this.clientService.searchTrips({}).subscribe({
+    this.chauffeurService.searchVoyages({}).subscribe({
       next: (data) => {
         this.voyages.set(data);
         this.isLoading.set(false);
@@ -36,6 +36,6 @@ export class Agences {
   }
 
   selectVoyage(id: number) {
-    this.router.navigate(['/client/new-reservation', id]);
+    this.router.navigate(['/chauffeur/reservations/new', id]);
   }
 }

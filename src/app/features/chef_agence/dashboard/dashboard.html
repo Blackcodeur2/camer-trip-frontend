@@ -12,145 +12,103 @@
     </div>
 
     <div *ngIf="!isLoading()">
-    <!-- Statistiques Agence -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="info">
-                <span class="value">{{ busesOnRoad() }}/{{ totalBuses() }}</span>
-                <span class="label">Bus en Voyage</span>
-                <span class="sub text-blue">{{ busUsage() }}% utilisation</span>
-            </div>
-            <div class="icon-circle bus">🚌</div>
-        </div>
-
-        <div class="stat-card">
-            <div class="info">
-                <span class="value">{{ ticketsSoldToday() | number }}</span>
-                <span class="label">Billets Vendus</span>
-                <span class="sub text-green">Aujourd'hui</span>
-            </div>
-            <div class="icon-circle ticket">🎫</div>
-        </div>
-
-        <div class="stat-card">
-            <div class="info">
-                <span class="value">{{ dailyRevenue() | number }} <small>FCFA</small></span>
-                <span class="label">Revenu Journalier</span>
-                <span class="sub text-green">Total du jour</span>
-            </div>
-            <div class="icon-circle money">💰</div>
-        </div>
-
-        <div class="stat-card">
-            <div class="info">
-                <span class="value">{{ activeStaff() }}</span>
-                <span class="label">Personnel Actif</span>
-                <span class="sub">Chauffeurs & Agents</span>
-            </div>
-            <div class="icon-circle staff">👨‍✈️</div>
-        </div>
-    </div>
-
-    <div class="dashboard-main-grid">
-        <!-- Colonne Gauche (Graphiques & Activités) -->
-        <div class="left-col">
-            <!-- Graphique Revenus Hebdo -->
-            <div class="custom-card chart-card">
-                <div class="card-header">
-                    <h3>Évolution des Revenus</h3>
-                    <span class="period">7 derniers jours</span>
+        <!-- Statistiques Agence -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="info">
+                    <span class="value">{{ busesOnRoad() }}/{{ totalBuses() }}</span>
+                    <span class="label">Bus en Voyage</span>
+                    <span class="sub text-blue">{{ busUsage() }}% utilisation</span>
                 </div>
-                <div class="chart-container">
-                    <div class="bar-group" *ngFor="let data of revenueChart()">
-                        <div class="bar-wrapper" [title]="data.amount | number">
-                            <div class="bar" [style.height.%]="data.height"></div>
-                        </div>
-                        <span class="day-label">{{ data.day }}</span>
+                <div class="icon-circle bus">🚌</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="info">
+                    <span class="value">{{ ticketsSoldToday() | number }}</span>
+                    <span class="label">Billets Vendus</span>
+                    <span class="sub text-green">Aujourd'hui</span>
+                </div>
+                <div class="icon-circle ticket">🎫</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="info">
+                    <span class="value">{{ dailyRevenue() | number }} <small>FCFA</small></span>
+                    <span class="label">Revenu Journalier</span>
+                    <span class="sub text-green">Total du jour</span>
+                </div>
+                <div class="icon-circle money">💰</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="info">
+                    <span class="value">{{ activeStaff() }}</span>
+                    <span class="label">Personnel Actif</span>
+                    <span class="sub">Chauffeurs & Agents</span>
+                </div>
+                <div class="icon-circle staff">👨‍✈️</div>
+            </div>
+        </div>
+
+        <div class="dashboard-main-grid">
+            <!-- Colonne Gauche (Graphiques & Activités) -->
+            <div class="left-col">
+                <!-- Graphique Revenus Hebdo -->
+                <div class="custom-card chart-card">
+                    <div class="card-header">
+                        <h3>Évolution des Revenus</h3>
+                        <span class="period">7 derniers jours</span>
                     </div>
-                </div>
-            </div>
-
-            <!-- État de la Flotte -->
-            <div class="custom-card">
-                <div class="card-header">
-                    <h3>État de la Flotte</h3>
-                </div>
-                <div class="fleet-status-widget">
-                    <div class="progress-bar-container">
-                        <div class="segment" *ngFor="let status of fleetStatus()" [style.width.%]="status.percentage"
-                            [style.background-color]="status.color" [title]="status.label + ': ' + status.count"></div>
-                    </div>
-                    <div class="legend">
-                        <div class="legend-item" *ngFor="let status of fleetStatus()">
-                            <span class="dot" [style.background-color]="status.color"></span>
-                            <span class="name">{{ status.label }}</span>
-                            <span class="count">{{ status.count }}</span>
+                    <div class="chart-container">
+                        <div class="bar-group" *ngFor="let data of revenueChart()">
+                            <div class="bar-wrapper" [title]="data.amount | number">
+                                <div class="bar" [style.height.%]="data.height"></div>
+                            </div>
+                            <span class="day-label">{{ data.day }}</span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Départs en Direct -->
-            <div class="custom-card">
-                <div class="card-header">
-                    <h3>Départs en Direct</h3>
-                    <button class="btn-link" (click)="navigateTo('/chef_agence/voyages')">Voir Planning</button>
-                </div>
-                <div class="list-container">
-                    <div class="list-item" *ngFor="let trip of liveTrips()">
-                        <div class="trip-time">{{ trip.heure_depart || '—' }}</div>
-                        <div class="trip-details">
-                            <span class="route">{{ trip.ville_depart }} ➝ {{ trip.ville_arrivee }}</span>
-                            <span class="bus badge">{{ trip.vehicule_immatriculation }}</span>
+                <!-- État de la Flotte -->
+                <div class="custom-card">
+                    <div class="card-header">
+                        <h3>État de la Flotte</h3>
+                    </div>
+                    <div class="fleet-status-widget">
+                        <div class="progress-bar-container">
+                            <div class="segment" *ngFor="let status of fleetStatus()"
+                                [style.width.%]="status.percentage" [style.background-color]="status.color"
+                                [title]="status.label + ': ' + status.count"></div>
                         </div>
-                        <span class="occupancy" [class.full]="trip.statut === 'annule'">
-                            {{ trip.statut }}
-                        </span>
-                    </div>
-                    <div class="empty-state" *ngIf="liveTrips().length === 0">
-                        Aucun voyage prévu pour les prochains jours.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Colonne Droite (Récent & Alertes) -->
-        <div class="right-col">
-            <!-- Réservations Récentes -->
-            <div class="custom-card">
-                <div class="card-header">
-                    <h3>Réservations Récentes</h3>
-                </div>
-                <div class="recent-list">
-                    <div class="recent-item" *ngFor="let res of recentReservations()">
-                        <div class="avatar">{{ res.clientName.charAt(0) }}</div>
-                        <div class="details">
-                            <span class="name">{{ res.clientName }}</span>
-                            <span class="route-small">{{ res.route }}</span>
+                        <div class="legend">
+                            <div class="legend-item" *ngFor="let status of fleetStatus()">
+                                <span class="dot" [style.background-color]="status.color"></span>
+                                <span class="name">{{ status.label }}</span>
+                                <span class="count">{{ status.count }}</span>
+                            </div>
                         </div>
-                        <span class="amount">{{ res.amount | number }} FCFA</span>
-                    </div>
-                    <div class="empty-state" *ngIf="recentReservations().length === 0">
-                        Aucune réservation récente.
                     </div>
                 </div>
             </div>
 
-            <!-- Alertes Opérationnelles -->
-            <div class="custom-card">
-                <div class="card-header">
-                    <h3>Alertes Opérationnelles</h3>
-                </div>
-                <div class="alert-item warning" *ngIf="maintenanceCount() > 0">
-                    <strong>Maintenance Requise</strong>
-                    <p>{{ maintenanceCount() }} bus nécessitent une maintenance ou une attention particulière.</p>
-                </div>
-                <div class="alert-item info">
-                    <strong>Vue d'ensemble</strong>
-                    <p>Votre agence compte actuellement {{ totalBuses() }} bus enregistrés et {{ activeStaff() }}
-                        membres du personnel actifs.</p>
+            <!-- Colonne Droite (Récent & Alertes) -->
+            <div class="right-col">
+                <!-- Alertes Opérationnelles -->
+                <div class="custom-card">
+                    <div class="card-header">
+                        <h3>Alertes Opérationnelles</h3>
+                    </div>
+                    <div class="alert-item warning" *ngIf="maintenanceCount() > 0">
+                        <strong>Maintenance Requise</strong>
+                        <p>{{ maintenanceCount() }} bus nécessitent une maintenance ou une attention particulière.</p>
+                    </div>
+                    <div class="alert-item info">
+                        <strong>Vue d'ensemble</strong>
+                        <p>Votre agence compte actuellement {{ totalBuses() }} bus enregistrés et {{ activeStaff() }}
+                            membres du personnel actifs.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>

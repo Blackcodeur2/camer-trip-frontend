@@ -22,16 +22,16 @@
             <div class="form-section">
                 <label class="section-label">Niveau de gravité</label>
                 <div class="gravity-selector">
-                    <button class="gravity-btn low" [class.active]="incident.niveau_gravite === 'FAIBLE'"
-                        (click)="incident.niveau_gravite = 'FAIBLE'">
+                    <button class="gravity-btn low" [class.active]="incidentData.niveau_gravite === 'FAIBLE'"
+                        (click)="incidentData.niveau_gravite = 'FAIBLE'">
                         Faible
                     </button>
-                    <button class="gravity-btn medium" [class.active]="incident.niveau_gravite === 'MOYEN'"
-                        (click)="incident.niveau_gravite = 'MOYEN'">
+                    <button class="gravity-btn medium" [class.active]="incidentData.niveau_gravite === 'MOYEN'"
+                        (click)="incidentData.niveau_gravite = 'MOYEN'">
                         Moyen
                     </button>
-                    <button class="gravity-btn high" [class.active]="incident.niveau_gravite === 'ELEVÉ'"
-                        (click)="incident.niveau_gravite = 'ELEVÉ'">
+                    <button class="gravity-btn high" [class.active]="incidentData.niveau_gravite === 'CRITIQUE'"
+                        (click)="incidentData.niveau_gravite = 'CRITIQUE'">
                         Critique
                     </button>
                 </div>
@@ -41,16 +41,16 @@
                 <label class="section-label">Description détaillée</label>
                 <div class="textarea-wrapper">
                     <mat-icon class="field-icon">edit_note</mat-icon>
-                    <textarea [(ngModel)]="incident.description" name="description"
+                    <textarea [(ngModel)]="incidentData.description" name="description"
                         placeholder="Expliquez brièvement la situation..." rows="4"></textarea>
                 </div>
             </div>
         </div>
 
         <div class="card-footer">
-            <button class="submit-btn" (click)="onSubmit()" [disabled]="!incident.description || !selectedType">
-                <mat-icon>send</mat-icon>
-                ENVOYER LE SIGNALEMENT
+            <button class="submit-btn" (click)="onSubmit()" [disabled]="!incidentData.description || !selectedType || isSubmitting">
+                <mat-icon>{{ isSubmitting ? 'sync' : 'send' }}</mat-icon>
+                {{ isSubmitting ? 'ENVOI EN COURS...' : 'ENVOYER LE SIGNALEMENT' }}
             </button>
         </div>
     </div>

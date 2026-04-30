@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Agence } from '../../models/agence';
-import { Ville } from '../../models/ville';
 
 @Injectable({
   providedIn: 'root',
@@ -40,5 +39,22 @@ export class ClientService {
   getReservationDetails(id: number): Observable<any> {
     return this.http.get<{ statut: boolean; data: any }>(`${this.API}/client/reservations/${id}`)
       .pipe(map(response => response.data));
+  }
+
+  getVoyageDetails(id: number): Observable<any> {
+    return this.http.get<{ statut: boolean; data: any }>(`${this.API}/client/voyages/${id}`)
+      .pipe(map(response => response.data));
+  }
+
+  // ── Paiement ──
+  initiatePayment(reservationId: number, phone: string): Observable<any> {
+    return this.http.post<any>(`${this.API}/payments/initiate`, {
+      reservation_id: reservationId,
+      phone: phone
+    });
+  }
+
+  checkPaymentStatus(reference: string): Observable<any> {
+    return this.http.get<any>(`${this.API}/payments/status/${reference}`);
   }
 }

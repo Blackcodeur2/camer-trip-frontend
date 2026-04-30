@@ -18,7 +18,7 @@
         </header>
 
         <!-- Empty State -->
-        <div class="empty-card animate-scale-in" *ngIf="!nextTrip && upcomingVoyages.length === 0">
+        <div class="empty-card animate-scale-in" *ngIf="!nextTrip() && upcomingVoyages().length === 0">
             <div class="empty-icon">
                 <mat-icon>event_busy</mat-icon>
             </div>
@@ -64,12 +64,12 @@
                 @if (trip.statut === 'en attente') {
                     <button class="action-btn" (click)="demarrerVoyage(trip.id)" [disabled]="isProcessing()">
                         <mat-icon>play_circle_filled</mat-icon>
-                        {{ isProcessing() ? 'Chargement...' : 'DÉMARRER LE VOYAGE' }}
+                        {{ isProcessing() ? 'Chargement...' : 'DÉMARRER' }}
                     </button>
                 } @else if (trip.statut === 'en cours') {
                     <button class="action-btn finish" (click)="terminerVoyage(trip.id)" [disabled]="isProcessing()">
                         <mat-icon>check_circle</mat-icon>
-                        {{ isProcessing() ? 'Chargement...' : 'TERMINER LE VOYAGE' }}
+                        {{ isProcessing() ? 'Chargement...' : 'TERMINER' }}
                     </button>
                 }
             </div>
@@ -79,11 +79,15 @@
         <section class="quick-actions animate-fade-in">
             <h3 class="section-title">Outils Rapides</h3>
             <div class="actions-grid">
-                <button class="tool-card report" routerLink="/chauffeur/report-incident">
+                <button class="tool-card booking" routerLink="/chauffeur/reservations">
+                    <div class="tool-icon"><mat-icon>add_shopping_cart</mat-icon></div>
+                    <span>Réserver</span>
+                </button>
+                <button class="tool-card report" routerLink="/chauffeur/incident">
                     <div class="tool-icon"><mat-icon>report_problem</mat-icon></div>
                     <span>Incident</span>
                 </button>
-                <button class="tool-card history" routerLink="/chauffeur/history">
+                <button class="tool-card history" routerLink="/chauffeur/historique">
                     <div class="tool-icon"><mat-icon>history</mat-icon></div>
                     <span>Historique</span>
                 </button>

@@ -1,7 +1,7 @@
 <div class="page-container">
     <div class="page-header">
         <div>
-            <h1 class="page-title">Gestion des Lignes</h1>
+            <h1 class="page-title">Gestion des Trajets</h1>
             <p class="page-subtitle">Définissez vos trajets et les prix associés.</p>
         </div>
         <div style="display: flex; gap: 1rem;">
@@ -11,7 +11,7 @@
             </button>
             <button class="btn-primary" (click)="toggleForm()">
                 <mat-icon>{{ showForm() ? 'close' : 'add_road' }}</mat-icon>
-                <span>{{ showForm() ? 'Annuler' : 'Nouvelle Ligne' }}</span>
+                <span>{{ showForm() ? 'Annuler' : 'Nouveau trajet' }}</span>
             </button>
         </div>
     </div>
@@ -19,7 +19,7 @@
     @if (showForm()) {
     <div class="form-card">
         <div class="form-header">
-            <h2>{{ isEditing() ? 'Modifier la Ligne' : 'Créer une Nouvelle Ligne' }}</h2>
+            <h2>{{ isEditing() ? 'Modifier le trajet' : 'Créer un nouveau trajet' }}</h2>
         </div>
         <form [formGroup]="routeForm" (ngSubmit)="onSubmit()">
             <div class="form-grid">
@@ -79,7 +79,7 @@
             </div>
             <div class="form-actions">
                 <app-app-button type="submit" [disabled]="routeForm.invalid" [loading]="isSubmitting()">
-                    {{ isEditing() ? 'Mettre à jour' : 'Enregistrer la ligne' }}
+                    {{ isEditing() ? 'Mettre à jour' : 'Enregistrer le trajet' }}
                 </app-app-button>
             </div>
         </form>
@@ -154,7 +154,7 @@
                         <div class="empty-state">
                             <mat-icon
                                 style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">no_roads</mat-icon>
-                            <p style="font-weight: 700; color: var(--color-text-muted)">Aucune ligne n'a été configurée
+                            <p style="font-weight: 700; color: var(--color-text-muted)">Aucun trajet n'a été configuré
                                 pour le moment.</p>
                         </div>
                     </td>

@@ -2,20 +2,20 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ClientService } from '../../../services/client/client-service';
+import { ChauffeurService } from '../../../services/chauffeur/chauffeur-service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-new-reservation',
+  selector: 'app-chauffeur-new-reservation',
   standalone: true,
   imports: [CommonModule, MatIconModule],
   templateUrl: './new-reservation.html',
   styleUrl: './new-reservation.css',
 })
-export class NewReservation implements OnInit, OnDestroy {
+export class ChauffeurNewReservation implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private clientService = inject(ClientService);
+  private chauffeurService = inject(ChauffeurService);
 
   // States
   voyageId = signal<number | null>(null);
@@ -43,13 +43,13 @@ export class NewReservation implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('voyageId');
+    const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.voyageId.set(+id);
       this.loadData();
       this.startRealtimeUpdates();
     } else {
-      this.router.navigate(['/client/home']);
+      this.router.navigate(['/chauffeur/reservations']);
     }
   }
 
@@ -62,21 +62,21 @@ export class NewReservation implements OnInit, OnDestroy {
   startRealtimeUpdates(): void {
     this.refreshInterval = setInterval(() => {
       this.refreshOccupations();
-    }, 5000); // Rafraîchissement toutes les 5 secondes
+    },5000); 
   }
 
   loadData(): void {
     if (!this.voyageId()) return;
     this.isLoading.set(true);
     
-    this.clientService.getVoyageDetails(this.voyageId()!).subscribe({
+    this.chauffeurService.getVoyageDetails(this.voyageId()!).subscribe({
       next: (v) => {
         this.voyage.set(v);
         this.loadOccupations();
       },
       error: () => {
         this.isLoading.set(false);
-        Swal.fire('Erreur', 'Impossible de charger les détails du voyage.', 'error');
+        Swal.fire('Erreur', 'Impossible de charger les détails.', 'error');
       }
     });
   }
@@ -84,7 +84,7 @@ export class NewReservation implements OnInit, OnDestroy {
   refreshOccupations(): void {
     if (!this.voyageId() || this.isSubmitting()) return;
     
-    this.clientService.getVoyageDetails(this.voyageId()!).subscribe({
+    this.chauffeurService.getVoyageDetails(this.voyageId()!).subscribe({
       next: (v) => {
         this.voyage.set(v);
         this.loadOccupations();
@@ -108,6 +108,7 @@ export class NewReservation implements OnInit, OnDestroy {
 
   selectSeat(seat: number): void {
     if (this.isOccupied(seat)) return;
+    console.log('Seat selected:', seat);
     this.selectedSeat.set(seat === this.selectedSeat() ? null : seat);
   }
 
@@ -137,13 +138,13 @@ export class NewReservation implements OnInit, OnDestroy {
       station_id: this.voyage()?.station_id
     };
 
-    this.clientService.createReservation(payload).subscribe({
+    this.chauffeurService.createReservation(payload).subscribe({
       next: (res) => {
         this.processPayment(res.data.id);
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        Swal.fire('Erreur', err.error?.message || 'Impossible de réserver ce siège.', 'error');
+        Swal.fire('Erreur', err.error?.message || 'Erreur lors de la réservation.', 'error');
       }
     });
   }
@@ -176,7 +177,7 @@ export class NewReservation implements OnInit, OnDestroy {
         didOpen: () => Swal.showLoading()
       });
 
-      this.clientService.initiatePayment(reservationId, formattedPhone).subscribe({
+      this.chauffeurService.initiatePayment(reservationId, formattedPhone).subscribe({
         next: (res) => {
           this.pollPaymentStatus(res.reference);
         },
@@ -192,13 +193,13 @@ export class NewReservation implements OnInit, OnDestroy {
 
   pollPaymentStatus(reference: string) {
     const interval = setInterval(() => {
-      this.clientService.checkPaymentStatus(reference).subscribe({
+      this.chauffeurService.checkPaymentStatus(reference).subscribe({
         next: (res) => {
           if (res.statut === 'SUCCESSFUL') {
             clearInterval(interval);
             this.isSubmitting.set(false);
-            Swal.fire('Succès', 'Paiement réussi ! Bon voyage.', 'success').then(() => {
-              this.router.navigate(['/client/reservations']);
+            Swal.fire('Succès', 'Paiement réussi ! Votre place est réservée.', 'success').then(() => {
+              this.router.navigate(['/chauffeur/historique']);
             });
           } else if (res.statut === 'FAILED' || res.statut === 'echoue') {
             clearInterval(interval);
@@ -214,12 +215,12 @@ export class NewReservation implements OnInit, OnDestroy {
       clearInterval(interval);
       if (this.isSubmitting()) {
         this.isSubmitting.set(false);
-        Swal.fire('Délai dépassé', 'Nous n\'avons pas reçu la confirmation. Vérifiez votre historique plus tard.', 'warning');
+        Swal.fire('Délai dépassé', 'Nous n\'avons pas reçu la confirmation du paiement. Vérifiez votre historique plus tard.', 'warning');
       }
     }, 120000);
   }
 
   goBack(): void {
-    this.router.navigate(['/client/home']);
+    this.router.navigate(['/chauffeur/reservations']);
   }
 }

@@ -223,3 +223,7 @@
             transform: translateY(0);
         }
     }
+.type-badge { font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 6px; background: #E0F2FE; color: #0369A1; display: inline-block; margin-bottom: 6px; }
+.type-badge.reservation { background: #FEE2E2; color: #B91C1C; }
+.status-badge.reservation { color: #EF4444; }
+.seat-info { font-size: 0.75rem; font-weight: 700; color: var(--gray); background: #F1F5F9; padding: 2px 8px; border-radius: 4px; }

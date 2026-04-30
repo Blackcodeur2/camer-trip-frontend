@@ -1,12 +1,12 @@
 <div class="booking-container">
     <header class="page-header animate-fade-in">
-        <h2 class="title">Explorer les Voyages</h2>
-        <p class="subtitle">Trouvez et réservez votre prochain voyage en quelques clics</p>
+        <h2 class="title">Réserver un Voyage</h2>
+        <p class="subtitle">Sélectionnez un trajet pour réserver votre place</p>
     </header>
 
     <div class="search-bar animate-scale-in">
         <mat-icon>search</mat-icon>
-        <input type="text" [(ngModel)]="searchQuery" placeholder="Où voulez-vous aller ?">
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Rechercher une destination...">
     </div>
 
     <div *ngIf="isLoading()" class="loading-state">
@@ -17,10 +17,6 @@
         <div class="voyage-card animate-in" *ngFor="let v of voyages(); let i = index" 
              [style.animation-delay]="(i * 0.05) + 's'" (click)="selectVoyage(v.id)">
             <div class="card-body">
-                <div class="agency-badge">
-                    <mat-icon>business</mat-icon>
-                    {{ v.station?.agence?.nom || 'Agence' }}
-                </div>
                 <div class="route-info">
                     <span class="city">{{ v.trajet?.depart }}</span>
                     <mat-icon>trending_flat</mat-icon>
@@ -30,19 +26,13 @@
                     <mat-icon>schedule</mat-icon>
                     {{ v.date_depart | date:'dd MMM' }} à {{ v.heure_depart }}
                 </div>
-                <div class="footer-card">
-                    <div class="bus-type">
-                        <mat-icon>directions_bus</mat-icon>
-                        {{ v.bus?.classe_bus || 'Standard' }}
-                    </div>
-                    <div class="price-tag">{{ v.prix | number }} FCFA</div>
-                </div>
+                <div class="price-tag">{{ v.prix | number }} FCFA</div>
             </div>
         </div>
 
         <div class="empty-state" *ngIf="voyages().length === 0">
-            <mat-icon>search_off</mat-icon>
-            <p>Aucun voyage trouvé pour votre recherche.</p>
+            <mat-icon>event_busy</mat-icon>
+            <p>Aucun voyage disponible pour le moment.</p>
         </div>
     </div>
 </div>

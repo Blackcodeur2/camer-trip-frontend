@@ -1,0 +1,55 @@
+<div class="booking-page">
+    <header class="header animate-fade-in">
+        <button class="back-btn" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-info">
+            <h1>Choisir votre place</h1>
+            <p>{{ voyage()?.trajet?.depart }} → {{ voyage()?.trajet?.arrivee }}</p>
+        </div>
+    </header>
+
+    <div *ngIf="isLoading()" class="loading-overlay">
+        <mat-icon class="spin">sync</mat-icon>
+        <p>Chargement du bus...</p>
+    </div>
+
+    <main class="bus-container animate-scale-in" *ngIf="!isLoading() && voyage()">
+        <div class="bus-layout" [class.small]="isSmallBus()">
+            <!-- Cabine conducteur -->
+            <div class="bus-front">
+                <div class="steering">
+                    <mat-icon>steering_wheel</mat-icon>
+                </div>
+            </div>
+
+            <!-- Grille des sièges -->
+            <div class="seats-grid" [style.grid-template-columns]="'repeat(' + busColumns() + ', 1fr)'">
+                <ng-container *ngFor="let seat of seatsArray()">
+                    <div class="seat-wrapper" [class.occupied]="isOccupied(seat)" [class.selected]="selectedSeat() === seat"
+                        (click)="selectSeat(seat)">
+                        <div class="seat">
+                            <span class="seat-num">{{ seat }}</span>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="item"><span class="dot available"></span> Libre</div>
+            <div class="item"><span class="dot selected"></span> Choisi</div>
+            <div class="item"><span class="dot occupied"></span> Occupé</div>
+        </div>
+    </main>
+
+    <footer class="footer animate-slide-up" *ngIf="selectedSeat() && !isLoading()">
+        <div class="summary">
+            <span class="label">Siège sélectionné</span>
+            <span class="value">N° {{ selectedSeat() }}</span>
+        </div>
+        <button class="confirm-btn" (click)="confirmBooking()" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'TRAITEMENT...' : 'CONFIRMER' }}
+        </button>
+    </footer>
+</div>

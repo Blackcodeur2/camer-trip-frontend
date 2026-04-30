@@ -1,12 +1,12 @@
 <div class="page-container">
     <div class="page-header">
         <div class="header-text">
-            <h1 class="page-title">Gestion des Gérants</h1>
-            <p class="page-subtitle">Créez et gérez les chefs d'agences de votre réseau</p>
+            <h1 class="page-title">Mes Chefs d'agences</h1>
+            <p class="page-subtitle">Ajoutez les chefs d'agences de votre réseau</p>
         </div>
         @if (!showForm()) {
         <button class="btn-primary" (click)="openForm()">
-            <mat-icon>person_add</mat-icon> Nouveau gérant
+            <mat-icon>person_add</mat-icon> Nouveau chefs d'agence
         </button>
         }
     </div>
@@ -16,7 +16,7 @@
         <div class="form-card__header">
             <h2>
                 <mat-icon class="accent">person_add</mat-icon>
-                {{ editingGerant() ? 'Modifier le Gérant' : 'Nouveau Gérant' }}
+                {{ editingGerant() ? 'Mettre a le chefs d\'agence' : 'Nouveau chefs d\'agence' }}
             </h2>
             <button class="icon-btn" (click)="closeForm()" style="background: none; border: none; color: var(--color-text-muted); cursor: pointer;">
                 <mat-icon>close</mat-icon>
@@ -120,16 +120,13 @@
     @if (isLoading()) {
     <div class="loading-state" style="text-align: center; padding: 4rem;">
         <mat-icon class="spin" style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
-        <p>Chargement des gérants...</p>
+        <p>Chargement des chefs d'agences...</p>
     </div>
     } @else if (managers().length === 0 && !showForm()) {
     <div class="empty-state" style="text-align: center; padding: 4rem;">
         <mat-icon style="font-size: 4rem; width: 64px; height: 64px; color: var(--color-border);">group_off</mat-icon>
-        <h3>Aucun gérant pour le moment</h3>
-        <p>Ajoutez des gérants pour déléguer la gestion de vos agences.</p>
-        <button class="btn-primary" (click)="openForm()" style="margin-top: 1rem;">
-            <mat-icon>person_add</mat-icon> Recruter un gérant
-        </button>
+        <h3>Aucun chefs d'agence pour le moment</h3>
+        <p>Ajoutez des chefs d'agences pour déléguer la gestion de vos agences.</p>
     </div>
     } @else if (managers().length > 0) {
     <div class="managers-list">

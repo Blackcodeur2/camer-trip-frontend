@@ -9,6 +9,7 @@ import { ClientService } from '../../../services/client/client-service';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [CommonModule, MatIconModule, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
@@ -26,27 +27,18 @@ export class Home implements OnInit {
   // Derived Statistics
   stats = computed(() => {
     const all = this.reservations();
-    const confirmed = all.filter(r => r.statut === 'validee').length;
-    const spent = all.filter(r => r.statut === 'validee')
-      .reduce((sum, r) => sum + Number(r.prix || 0), 0);
+    const confirmed = all.filter(r => r.statut === 'validee');
+    const spent = confirmed.reduce((sum, r) => sum + Number(r.prix || 0), 0);
 
     return {
-      active: confirmed,
+      active: confirmed.length,
       spent
     };
   });
 
-  // Curated Upcoming Trips
-  upcomingTrips = computed(() => {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    
-    return this.reservations()
-      .filter(r => {
-        const tripDate = new Date(r.voyage?.date_depart);
-        return r.statut === 'validee' && tripDate >= today;
-      })
-      .sort((a, b) => new Date(a.voyage?.date_depart).getTime() - new Date(b.voyage?.date_depart).getTime());
+  // Recent Activity
+  recentReservations = computed(() => {
+    return this.reservations().slice(0, 3);
   });
 
   ngOnInit(): void {
@@ -65,12 +57,7 @@ export class Home implements OnInit {
     });
   }
 
-  getInitials(user: User | null): string {
-    if (!user) return '?';
-    return ((user.prenom?.[0] ?? '') + (user.nom?.[0] ?? '')).toUpperCase();
-  }
-
-  navigate(route: string): void {
-    this.router.navigate([route]);
+  goToSearch() {
+    this.router.navigate(['/client/agences']);
   }
 }

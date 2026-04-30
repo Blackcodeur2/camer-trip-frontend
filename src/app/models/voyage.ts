@@ -1,4 +1,5 @@
 import { Bus } from './bus';
+import { Reservation } from './reservation';
 import { Trajet } from './trajet';
 import { User } from './user';
 
@@ -20,6 +21,7 @@ export interface Voyage {
   promo?: boolean;
   trajet?: Trajet;
   bus?: Bus;
+  reservations?: Reservation[];
   chauffeur?: User;
 }
 
