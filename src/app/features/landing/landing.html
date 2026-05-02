@@ -82,29 +82,43 @@
   <div class="container">
     <div class="section-header">
       <div class="section-label">Agences partenaires</div>
-      <h2 class="section-title">Découvrez les agences et voyages disponibles</h2>
+      <h2 class="section-title">Découvrez les agences disponibles</h2>
       <p class="section-subtitle">
-        Parcourez les agences enregistrées, leurs stations, et les voyages programmés sans vous connecter.
+        Cliquez sur une agence pour voir ses stations et voyages programmés.
       </p>
     </div>
 
+    <!-- Barre de recherche -->
     <div class="agency-filter-card">
+      <mat-icon>search</mat-icon>
       <input
         type="text"
         class="agency-search-input"
-        placeholder="Rechercher agence, ville, trajet..."
+        placeholder="Rechercher une agence, ville..."
         [ngModel]="search()"
         (ngModelChange)="search.set($event)"
       />
     </div>
 
-    <div *ngIf="loading()" class="agency-loading">Chargement des agences...</div>
-    <div *ngIf="!loading() && filteredAgences().length === 0" class="agency-empty">
-      Aucune agence trouvée pour cette recherche.
+    <!-- Loading skeleton -->
+    <div *ngIf="loading()" class="agency-grid" id="voyages">
+      <div class="agency-card-skeleton" *ngFor="let i of [1,2,3,4,5,6]"></div>
     </div>
 
-    <div class="agency-grid" id="voyages">
-      <article *ngFor="let agence of filteredAgences()" class="agency-card">
+    <!-- Empty state -->
+    <div *ngIf="!loading() && filteredAgences().length === 0" class="agency-empty">
+      <mat-icon>search_off</mat-icon>
+      <p>Aucune agence trouvée.</p>
+    </div>
+
+    <!-- Grille des agences -->
+    <div *ngIf="!loading()" class="agency-grid" id="voyages">
+      <article
+        *ngFor="let agence of filteredAgences()"
+        class="agency-card"
+        [class.agency-card--active]="selectedAgence()?.id === agence.id"
+        (click)="selectAgence(agence)"
+      >
         <div class="agency-card-header">
           <div>
             <span class="agency-tag">Agence</span>
@@ -118,33 +132,57 @@
           <span><mat-icon>mail</mat-icon> {{ agence.email || 'Non renseigné' }}</span>
           <span><mat-icon>phone</mat-icon> {{ agence.telephone || 'Non renseigné' }}</span>
         </div>
-
-        <div class="agency-stations">
-          <div *ngFor="let station of agence.stations" class="station-card">
-            <div class="station-title">{{ station.nom || 'Gare sans nom' }}</div>
-            <div class="station-info">{{ station.adresse || 'Adresse non renseignée' }}</div>
-
-            <div *ngIf="station.voyages?.length" class="voyage-list">
-              <div class="voyage-heading">Voyages programmés</div>
-              <div *ngFor="let voyage of station.voyages" class="voyage-item">
-                <div class="voyage-main">
-                  <strong>{{ voyage.num_voyage || 'N° inconnu' }}</strong>
-                  <span class="voyage-route">
-                    {{ voyage.trajet?.depart }} →
-                    {{ voyage.trajet?.arrivee }}
-                  </span>
-                </div>
-                <div class="voyage-meta">
-                  <span>{{ voyage.date_depart || 'Date inconnue' }}</span>
-                  <span>{{ voyage.heure_depart || '' }}</span>
-                  <span>{{ voyage.prix ? (voyage.prix + ' FCFA') : 'Prix non défini' }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        
+        <div class="agency-card-footer">
+          <mat-icon class="expand-icon">
+            {{ selectedAgence()?.id === agence.id ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
         </div>
       </article>
     </div>
+
+    <!-- Panel de détail : voyages de l'agence sélectionnée -->
+    <div *ngIf="selectedAgence()" class="voyage-panel">
+      <div class="voyage-panel-header">
+        <div class="voyage-panel-title">
+          <mat-icon>directions_bus</mat-icon>
+          <span>Voyages de <strong>{{ selectedAgence()!.nom }}</strong></span>
+        </div>
+        <button class="close-panel-btn" (click)="closePanel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Aucun voyage -->
+      <div *ngIf="selectedAgenceVoyages().length === 0" class="no-voyage">
+        <mat-icon>event_busy</mat-icon>
+        <p>Aucun voyage programmé pour cette agence.</p>
+      </div>
+
+      <!-- Liste des voyages groupés par station -->
+      <div *ngFor="let station of selectedAgence()!.stations" class="panel-station">
+        <div *ngIf="station.voyages?.length" class="panel-station-header">
+          <mat-icon>place</mat-icon>
+          {{ station.nom }}
+        </div>
+        <div *ngIf="station.voyages?.length" class="panel-voyage-grid">
+          <div *ngFor="let voyage of station.voyages" class="panel-voyage-card">
+            <div class="pvc-route">
+              <span class="pvc-city">{{ voyage.trajet?.depart }}</span>
+              <mat-icon class="pvc-arrow">east</mat-icon>
+              <span class="pvc-city">{{ voyage.trajet?.arrivee }}</span>
+            </div>
+            <div class="pvc-details">
+              <span class="pvc-chip"><mat-icon>calendar_today</mat-icon>{{ voyage.date_depart | date:'dd MMM' }}</span>
+              <span class="pvc-chip"><mat-icon>schedule</mat-icon>{{ voyage.heure_depart }}</span>
+              <span class="pvc-chip pvc-price">{{ voyage.prix | number }} FCFA</span>
+            </div>
+            <a routerLink="/auth/register" class="pvc-cta">Réserver</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 

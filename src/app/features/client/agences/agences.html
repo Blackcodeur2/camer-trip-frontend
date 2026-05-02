@@ -4,17 +4,64 @@
         <p class="subtitle">Trouvez et réservez votre prochain voyage en quelques clics</p>
     </header>
 
-    <div class="search-bar animate-scale-in">
-        <mat-icon>search</mat-icon>
-        <input type="text" [(ngModel)]="searchQuery" placeholder="Où voulez-vous aller ?">
+    <!-- Filtres -->
+    <div class="filters-bar animate-scale-in">
+        <div class="filter-group">
+            <div class="filter-field">
+                <mat-icon>flight_takeoff</mat-icon>
+                <input
+                    type="text"
+                    [(ngModel)]="filterDepart"
+                    (ngModelChange)="onFilterChange()"
+                    placeholder="Ville de départ..."
+                    id="filter-depart"
+                />
+            </div>
+            <div class="filter-field">
+                <mat-icon>flight_land</mat-icon>
+                <input
+                    type="text"
+                    [(ngModel)]="filterArrivee"
+                    (ngModelChange)="onFilterChange()"
+                    placeholder="Ville d'arrivée..."
+                    id="filter-arrivee"
+                />
+            </div>
+            <div class="filter-field">
+                <mat-icon>calendar_today</mat-icon>
+                <input
+                    type="date"
+                    [(ngModel)]="filterDate"
+                    (ngModelChange)="onFilterChange()"
+                    id="filter-date"
+                />
+            </div>
+        </div>
+        <button
+            *ngIf="hasActiveFilters()"
+            class="clear-btn"
+            (click)="clearFilters()"
+            title="Réinitialiser les filtres"
+        >
+            <mat-icon>close</mat-icon>
+            Effacer
+        </button>
     </div>
 
-    <div *ngIf="isLoading()" class="loading-state">
-        <div class="skeleton-card" *ngFor="let i of [1,2,3]"></div>
+    <!-- Badge résultats -->
+    <div *ngIf="!isLoading() && hasActiveFilters()" class="results-count animate-fade-in">
+        <mat-icon>info_outline</mat-icon>
+        {{ voyages().length }} voyage{{ voyages().length !== 1 ? 's' : '' }} trouvé{{ voyages().length !== 1 ? 's' : '' }}
     </div>
 
+    <!-- Skeleton loader -->
+    <div *ngIf="isLoading()" class="voyages-grid">
+        <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+
+    <!-- Grille des voyages -->
     <div *ngIf="!isLoading()" class="voyages-grid">
-        <div class="voyage-card animate-in" *ngFor="let v of voyages(); let i = index" 
+        <div class="voyage-card animate-in" *ngFor="let v of voyages(); let i = index"
              [style.animation-delay]="(i * 0.05) + 's'" (click)="selectVoyage(v.id)">
             <div class="card-body">
                 <div class="agency-badge">
@@ -23,12 +70,12 @@
                 </div>
                 <div class="route-info">
                     <span class="city">{{ v.trajet?.depart }}</span>
-                    <mat-icon>trending_flat</mat-icon>
+                    <mat-icon class="arrow-icon">trending_flat</mat-icon>
                     <span class="city">{{ v.trajet?.arrivee }}</span>
                 </div>
                 <div class="time-info">
                     <mat-icon>schedule</mat-icon>
-                    {{ v.date_depart | date:'dd MMM' }} à {{ v.heure_depart }}
+                    {{ v.date_depart | date:'dd MMM yyyy' }} à {{ v.heure_depart }}
                 </div>
                 <div class="footer-card">
                     <div class="bus-type">
@@ -42,7 +89,11 @@
 
         <div class="empty-state" *ngIf="voyages().length === 0">
             <mat-icon>search_off</mat-icon>
-            <p>Aucun voyage trouvé pour votre recherche.</p>
+            <p *ngIf="hasActiveFilters()">Aucun voyage trouvé pour ces critères.</p>
+            <p *ngIf="!hasActiveFilters()">Aucun voyage disponible pour le moment.</p>
+            <button *ngIf="hasActiveFilters()" class="clear-btn-empty" (click)="clearFilters()">
+                Réinitialiser les filtres
+            </button>
         </div>
     </div>
 </div>
