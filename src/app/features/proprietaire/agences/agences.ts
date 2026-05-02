@@ -241,6 +241,7 @@ export class Agences {
         } else {
           this.agencies.update(list => [result, ...list]);
           Swal.fire({ icon: 'success', title: 'Agence créée !', timer: 2000, showConfirmButton: false });
+          this.loadAgencies();
         }
         this.closeForm();
       },
@@ -267,6 +268,7 @@ export class Agences {
           next: () => {
             this.agencies.update(list => list.filter(a => a.id !== agence.id));
             Swal.fire({ icon: 'success', title: 'Agence supprimée', timer: 1500, showConfirmButton: false });
+            this.loadAgencies();
           },
           error: () => Swal.fire('Erreur', 'Impossible de supprimer cette agence.', 'error')
         });
@@ -303,6 +305,7 @@ export class Agences {
         }));
         Swal.fire({ icon: 'success', title: 'Gare ajoutée !', timer: 2000, showConfirmButton: false });
         this.closeForm();
+        this.loadAgencies();
       },
       error: (err) => {
         this.isSubmitting.set(false);

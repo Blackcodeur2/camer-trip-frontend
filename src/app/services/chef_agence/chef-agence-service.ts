@@ -112,4 +112,24 @@ export class ChefAgenceService {
     return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/chef-agence/personnels`)
       .pipe(map(response => response.data));
   }
+
+  exportPersonnelPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/export-personnel`, { responseType: 'blob' });
+  }
+
+  exportBusesPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/export-buses`, { responseType: 'blob' });
+  }
+
+  exportRoutesPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/export-trajets`, { responseType: 'blob' });
+  }
+
+  exportVoyagesPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/export-voyages`, { responseType: 'blob' });
+  }
+
+  exportReservationsPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/export-reservations`, { responseType: 'blob' });
+  }
 }

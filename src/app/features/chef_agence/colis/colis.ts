@@ -109,19 +109,13 @@ export class ColisPage {
   onVoyageChange() {
     const voyageId = this.colisForm.get('voyage_id')?.value;
     const selectedVoyage = this.availableVoyages().find(v => v.id == voyageId);
-    
+
     if (selectedVoyage) {
-        // Le backend retourne souvent gare_id dans le trajet ou l'ID de la gare d'arrivée directement
-        // Dans notre cas, nous avons besoin de la gare d'arrivée pour la destination du colis.
-        // Si le trajet est de A -> B, la destination du colis est la gare de B.
-        // Note: Dans ce système, la destination est liée à la gare de destination du trajet.
-        const destinationId = selectedVoyage.trajet?.gare_id; // À vérifier si c'est bien la gare de destination
-        
-        // Si le trajet n'a pas explicitement d'ID de gare d'arrivée, on peut avoir besoin d'une autre logique
-        // Pour l'instant, on suppose que le trajet sélectionné définit la destination.
-        if (destinationId) {
-            this.colisForm.patchValue({ destination: destinationId });
-        }
+      const destinationId = selectedVoyage.trajet?.gare_id; // À vérifier si c'est bien la gare de destination
+
+      if (destinationId) {
+        this.colisForm.patchValue({ destination: destinationId });
+      }
     }
   }
 
@@ -160,6 +154,8 @@ export class ColisPage {
           next: () => {
             this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: 'retire' } : c));
             Swal.fire('Validé !', 'Le colis a été marqué comme retiré.', 'success');
+            this.loadColis();
+            this.loadVoyages();
           },
           error: (err) => {
             Swal.fire('Erreur', err.error?.message || 'Une erreur est survenue.', 'error');
@@ -174,7 +170,7 @@ export class ColisPage {
 
     this.isSubmitting.set(true);
     const formValue = this.colisForm.value;
-    
+
     const payload: Partial<Colis> = {
       user_id: this.selectedClient().id,
       nom_colis: formValue.nom_colis,
@@ -191,6 +187,8 @@ export class ColisPage {
         Swal.fire('Succès', 'Colis enregistré avec succès', 'success');
         this.colisList.update(list => [newColis, ...list]);
         this.toggleViewMode();
+        this.loadColis();
+        this.loadVoyages();
       },
       error: (err) => {
         console.error('Registration error', err);

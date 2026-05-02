@@ -125,9 +125,11 @@ import { Station } from '../../../models/station';
         if (editing) { 
           this.managers.update(list => list.map(m => m.id === res.id ? res : m));
           Swal.fire({ icon: 'success', title: 'Gérant mis à jour !', timer: 2000, showConfirmButton: false });
+          this.loadData();
         } else {
           this.managers.update(list => [res, ...list]);
           Swal.fire({ icon: 'success', title: 'Gérant créé !', text: 'Le gérant peut maintenant se connecter.', confirmButtonColor: '#006644' });
+          this.loadData();
         }
         this.closeForm();
       },
@@ -154,6 +156,7 @@ import { Station } from '../../../models/station';
           next: () => {
             this.managers.update(list => list.filter(m => m.id !== manager.id));
             Swal.fire({ icon: 'success', title: 'Chef d\'agence retiré', timer: 1500, showConfirmButton: false });
+            this.loadData();
           },
           error: () => Swal.fire('Erreur', 'Impossible de retirer ce Chef d\'agence.', 'error')
         });

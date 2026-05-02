@@ -115,9 +115,11 @@ export class BusPage {
         if (this.isEditing()) {
           this.buses.update((list: Bus[]) => list.map((b: Bus) => b.id === this.editId() ? res : b));
           Swal.fire({ icon: 'success', title: 'Succès', text: 'Bus mis à jour', timer: 2000, showConfirmButton: false });
+          this.loadBuses();
         } else {
           this.buses.update((list: Bus[]) => [res, ...list]);
           Swal.fire({ icon: 'success', title: 'Succès', text: 'Bus ajouté', timer: 2000, showConfirmButton: false });
+          this.loadBuses();
         }
 
         this.showForm.set(false);

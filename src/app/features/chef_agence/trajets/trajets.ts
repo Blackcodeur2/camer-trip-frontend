@@ -186,6 +186,7 @@ export class Trajets {
         if (this.isEditing()) {
           this.routesList.update((list: Trajet[]) => list.map((r: Trajet) => r.id === this.editId() ? res : r));
           Swal.fire({ icon: 'success', title: 'Succès', text: 'Ligne mise à jour', timer: 2000, showConfirmButton: false });
+          this.loadTrajets();
         } else {
           this.routesList.update((list: Trajet[]) => [res, ...list]);
           Swal.fire({ icon: 'success', title: 'Succès', text: 'Ligne créée', timer: 2000, showConfirmButton: false });

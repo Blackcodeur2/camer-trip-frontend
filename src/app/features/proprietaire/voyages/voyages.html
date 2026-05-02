@@ -43,7 +43,7 @@
                         <mat-icon>directions_bus</mat-icon>
                         <div>
                             <span class="label">Bus</span>
-                            <span class="value">{{ voyage.bus?.marque }} {{ voyage.bus?.modele || 'N/A' }}</span>
+                            <span class="value">{{ voyage.bus?.modele || 'N/A' }}{{ ' ('+ voyage.bus?.nb_places }} places)</span>
                         </div>
                     </div>
                     <div class="info-item">

@@ -33,13 +33,13 @@ export class ProprietaireLayout {
   menuItems = [
     { label: 'Tableau de bord', icon: 'dashboard', route: '/proprietaire/dashboard', badge: null },
     { label: 'Mes Agences', icon: 'business', route: '/proprietaire/agences', badge: null },
-    { label: 'Gares', icon: 'location_on', route: '/proprietaire/stations', badge: null },
+    { label: 'Stations', icon: 'location_on', route: '/proprietaire/stations', badge: null },
     { label: 'Bus', icon: 'directions_bus', route: '/proprietaire/bus', badge: null },
-    { label: 'Routes', icon: 'route', route: '/proprietaire/trajets', badge: null },
+    { label: 'Trajets', icon: 'route', route: '/proprietaire/trajets', badge: null },
     { label: 'Voyages', icon: 'flight_takeoff', route: '/proprietaire/voyages', badge: null },
     { label: 'Utilisateurs', icon: 'people', route: '/proprietaire/personnels', badge: null },
     /*{ label: 'Vérification KYC', icon: 'verified_user', route: '/proprietaire/kyc', badge: null },*/
-    { label: 'Mon Abonnements', icon: 'money', route: '/proprietaire/abonnements', badge: null },
+    { label: 'Mes Souscriptions', icon: 'money', route: '/proprietaire/abonnements', badge: null },
     { label: 'Mon profil', icon: 'manage_accounts', route: '/proprietaire/profile', badge: null },
   ];
 

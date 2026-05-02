@@ -168,7 +168,6 @@ export class NewReservation implements OnInit, OnDestroy {
       if (/^6\d{8}$/.test(formattedPhone)) {
         formattedPhone = '237' + formattedPhone;
       }
-
       Swal.fire({
         title: 'Initialisation...',
         text: 'Veuillez confirmer le paiement sur votre téléphone',

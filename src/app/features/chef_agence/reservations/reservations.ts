@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { AuthService } from '../../../services/auth/auth-service';
 import { ChefAgenceService } from '../../../services/chef_agence/chef-agence-service';
 import { AgentService } from '../../../services/agent/agent-service';
+import { TicketService } from '../../../services/ticket/ticket-service';
 
 @Component({
   selector: 'app-reservations',
@@ -18,7 +19,7 @@ export class Reservations {
   private agentService = inject(AgentService);
   private chefAgenceService = inject(ChefAgenceService);
   private authService = inject(AuthService);
-  //private ticketService = inject(TicketService);
+  private ticketService = inject(TicketService);
 
   reservations = signal<any[]>([]);
   isLoading = signal(true);
@@ -75,6 +76,7 @@ export class Reservations {
           next: () => {
             this.reservations.update((list: any[]) => list.filter((r: any) => r.id !== id));
             Swal.fire('Annulée !', 'La réservation a été annulée.', 'success');
+            this.loadReservations();
           },
           error: (err: any) => {
             Swal.fire('Erreur', err.error?.message || 'Impossible d\'annuler la réservation.', 'error');
@@ -84,11 +86,40 @@ export class Reservations {
     });
   }
 
-  printReservation(id: number) {
-    //this.ticketService.openTicket(id);
+   printReservation(id: number) {
+    this.ticketService.downloadTicket(id);
+  }
+
+  openTicket(id: number)
+  {
+    this.ticketService.openTicket(id);
   }
 
   downloadPdf() {
+    if (this.isExporting() || !this.isChefAgence()) return;
+    this.isExporting.set(true);
 
+    this.chefAgenceService.exportReservationsPdf().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const now = new Date();
+        const dateStr = `${now.getFullYear()}_${(now.getMonth() + 1).toString().padStart(2, '0')}_${now.getDate().toString().padStart(2, '0')}`;
+        link.download = `reservations_agence_${dateStr}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        this.isExporting.set(false);
+        Swal.fire({ icon: 'success', title: 'Succès', text: 'Téléchargement réussi', timer: 2000, showConfirmButton: false });
+      },
+      error: () => {
+        this.isExporting.set(false);
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de télécharger le document PDF' });
+      }
+    });
   }
 }

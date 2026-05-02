@@ -37,8 +37,8 @@ export class Dashboard {
   statItems = [
     { key: 'agences', label: 'Agences', icon: 'business' },
     { key: 'stations', label: 'Stations', icon: 'location_on' },
-    { key: 'buses', label: 'Flotte de Bus', icon: 'directions_bus' },
-    { key: 'utilisateurs', label: 'Utilisateurs', icon: 'people' },
+    { key: 'buses', label: 'Bus', icon: 'directions_bus' },
+    { key: 'utilisateurs', label: 'Employés', icon: 'people' },
   ];
 
   ngOnInit() {

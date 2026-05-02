@@ -44,8 +44,8 @@ export class Dashboard {
         // Calcul robuste des gares à travers toutes les agences
         let garesCount = 0;
         agenciesList.forEach((a: any) => {
-          if (Array.isArray(a.gares)) {
-            garesCount += a.gares.length;
+          if (Array.isArray(a.stations)) {
+            garesCount += a.stations.length;
           } else if (a.nb_gares) { // Fallback si le backend renvoie juste le compte
             garesCount += Number(a.nb_gares);
           }
@@ -53,9 +53,9 @@ export class Dashboard {
         this.totalGares.set(garesCount);
 
         // Statistiques simulées basées sur les entités réelles
-        const baseTrips = agenciesList.length * 15;
-        this.totalTrips.set(baseTrips > 0 ? baseTrips + 3 : 0);
-        this.totalBuses.set(agenciesList.length * 8);
+        const baseTrips = agenciesList.length;
+        this.totalTrips.set(baseTrips > 0 ? baseTrips  : 0);
+        this.totalBuses.set(agenciesList.length );
 
         this.isLoading.set(false);
         setTimeout(() => this.initChart(), 0);

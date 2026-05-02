@@ -126,9 +126,11 @@ onSubmit() {
         if (this.isEditing()) {
           this.staffMembers.update((list: User[]) => list.map((m: User) => m.id === this.editId() ? res : m));
           Swal.fire({ icon: 'success', title: 'Succès', text: 'Personnel mis à jour', timer: 2000, showConfirmButton: false });
+          this.loadStaff();
         } else {
           this.staffMembers.update((list: User[]) => [res, ...list]);
           Swal.fire({ icon: 'success', title: 'Succès', text: 'Personnel ajouté', timer: 2000, showConfirmButton: false });
+          this.loadStaff();
         }
 
         this.showForm.set(false);
