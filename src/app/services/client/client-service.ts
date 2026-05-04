@@ -57,4 +57,10 @@ export class ClientService {
   checkPaymentStatus(reference: string): Observable<any> {
     return this.http.get<any>(`${this.API}/payments/status/${reference}`);
   }
+
+  // ── Colis ──
+  getColis(): Observable<any[]> {
+    return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/client/colis`)
+      .pipe(map(response => response.data));
+  }
 }

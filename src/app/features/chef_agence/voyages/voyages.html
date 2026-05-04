@@ -139,10 +139,11 @@
                     </td>
                     <td style="text-align: right;">
                         <div class="action-btn-group" style="justify-content: flex-end; display: flex; gap: 0.5rem;">
-                            @if (voyage.statut === 'en attente' || voyage.statut === 'en cours' || voyage.statut === 'en voyage') {
-                                <button class="btn-icon" (click)="markAsTerminated(voyage)" title="Terminer" style="color: var(--color-primary); background: none; border: none; cursor: pointer;">
+                            @if (voyage.statut === 'en attente') {
+                                <!--<button class="btn-icon" (click)="markAsTerminated(voyage)" title="Terminer" style="color: var(--color-primary); background: none; border: none; cursor: pointer;">
                                     <mat-icon>check_circle</mat-icon>
-                                </button>
+                                </button>-->
+                                <button class="btn-icon" (click)="editVoyage(voyage)" title="Modifier" style="color: var(--color-primary); background: none; border: none; cursor: pointer;"><mat-icon>edit_circle</mat-icon></button>
                             }
                         </div>
                     </td>

@@ -4,8 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(168, 174, 185, 0.592), rgba(64, 88, 76, 0.8)),
-    url('/images/hero_bus.png');
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/hero_bus.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -156,9 +155,9 @@
 .field__control,
 select.field__control {
   width: 100%;
-  height: 2.5rem;
-  padding: 0 0.95rem 0 3rem;
-  border-radius: 14px;
+  height: 3rem;
+  padding: 0 1.5rem 0 4rem;
+  border-radius: 8px;
   border: 2px solid var(--color-border);
   background: var(--color-surface);
   font-size: 0.92rem;

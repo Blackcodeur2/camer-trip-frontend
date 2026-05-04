@@ -276,6 +276,108 @@
   box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
+/* Subscription Banner */
+.subscription-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+}
+
+.sub-card {
+  background: white;
+  padding: 4rem 3rem;
+  border-radius: 40px;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  width: 100%;
+  border: 1px solid var(--color-border);
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.sub-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+}
+
+.sub-icon mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.sub-card h2 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-dark);
+  margin-bottom: 1.5rem;
+}
+
+.sub-card p {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+.price-tag {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 3rem;
+}
+
+.price-tag .amount {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--color-primary-dark);
+}
+
+.price-tag .period {
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.btn-subscribe {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 1.5rem 3rem;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  box-shadow: 0 15px 30px rgba(0, 102, 68, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-subscribe:hover:not(:disabled) {
+  transform: translateY(-5px);
+  background: var(--color-primary-dark);
+  box-shadow: 0 20px 40px rgba(0, 102, 68, 0.4);
+}
+
+.btn-subscribe:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;

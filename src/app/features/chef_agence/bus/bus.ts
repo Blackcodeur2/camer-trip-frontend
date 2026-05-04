@@ -88,15 +88,15 @@ export class BusPage {
 
   editBus(bus: Bus) {
     this.isEditing.set(true);
-    this.editId.set(1 || null);
+    this.editId.set(bus.id || null);
     this.busForm.patchValue({
-      immatriculation: '',
-      code_bus: '',
-      type_bus: '',
-      classe_bus: '',
-      nb_places: 80,
-      station_id: 1,
-      statut: ''
+      immatriculation: bus.immatriculation,
+      code_bus: bus.code_bus,
+      type_bus: bus.type_bus || (bus as any).modele,
+      classe_bus: bus.classe_bus || (bus as any).type,
+      nb_places: bus.nb_places,
+      station_id: bus.station_id,
+      statut: bus.statut
     });
     this.showForm.set(true);
   }
@@ -111,14 +111,14 @@ export class BusPage {
       : this.chefAgenceService.createBus(busData);
 
     request.subscribe({
-      next: (res: Bus) => {
+      next: (res: any) => {
         if (this.isEditing()) {
           this.buses.update((list: Bus[]) => list.map((b: Bus) => b.id === this.editId() ? res : b));
-          Swal.fire({ icon: 'success', title: 'Succès', text: 'Bus mis à jour', timer: 2000, showConfirmButton: false });
+          Swal.fire({ icon: 'success', title: 'Succès', text: res.message, timer: 2000, showConfirmButton: false });
           this.loadBuses();
         } else {
           this.buses.update((list: Bus[]) => [res, ...list]);
-          Swal.fire({ icon: 'success', title: 'Succès', text: 'Bus ajouté', timer: 2000, showConfirmButton: false });
+          Swal.fire({ icon: 'success', title: 'Succès', text: res.message, timer: 2000, showConfirmButton: false });
           this.loadBuses();
         }
 

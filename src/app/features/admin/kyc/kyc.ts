@@ -23,7 +23,7 @@ export class Kyc {
   isProcessing = signal(false);
 
   // Modal de prévisualisation
-  previewDocument = signal<{ url: SafeResourceUrl | string, rawUrl: string, type: string, comment: string, isPdf: boolean } | null>(null);
+  previewDocument = signal<{ url: SafeResourceUrl | string, rawUrl: string, type: string, comment: string, isPdf: boolean, doc: DocumentKYC } | null>(null);
   selectedSubmission = signal<KycGroupedByUser | null>(null);
 
   ngOnInit() {
@@ -122,7 +122,8 @@ export class Kyc {
       rawUrl: fullUrl,
       type: doc.type,
       comment: doc.commentaire,
-      isPdf: isPdf
+      isPdf: isPdf,
+      doc: doc // reference to the original document
     });
   }
 
@@ -138,42 +139,27 @@ export class Kyc {
     this.previewDocument.set(null);
   }
 
-  approve(sub: KycGroupedByUser) {
-    Swal.fire({
-      title: 'Approuver ce dossier ?',
-      text: `Tous les documents de ${sub.user.prenom} ${sub.user.nom} seront validés.`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Oui, tout approuver',
-      cancelButtonText: 'Annuler',
-      confirmButtonColor: '#10b981'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.isProcessing.set(true);
-        const pendingDocs = sub.documents.filter(d => d.statut === 'en attente');
-        const requests = pendingDocs.map(d => this.adminService.approveKyc(d.user_id).toPromise());
-
-        Promise.all(requests).then(() => {
-          this.isProcessing.set(false);
-          this.submissions.update(list => list.filter(item => item.user.id !== sub.user.id));
-          Swal.fire('Approuvé', 'Le dossier a été entièrement validé.', 'success');
-        }).catch((err) => {
-          this.isProcessing.set(false);
-          Swal.fire('Erreur', 'Certains documents n\'ont pas pu être approuvés.', 'error');
-        });
-      }
-    });
+  approveDocument(doc: DocumentKYC) {
+    doc.statut = 'approuve';
+    doc.commentaire = '';
+    
+    const sub = this.selectedSubmission();
+    if (sub) {
+      this.selectedSubmission.set({...sub});
+    }
+    
+    this.closePreview();
   }
 
-  reject(sub: KycGroupedByUser) {
+  rejectDocument(doc: DocumentKYC) {
     Swal.fire({
-      title: 'Rejeter ce dossier ?',
-      text: 'Veuillez saisir le motif du rejet (s\'appliquera à tous les documents en attente) :',
+      title: 'Rejeter ce document ?',
+      text: 'Veuillez saisir le motif du rejet :',
       input: 'textarea',
       inputPlaceholder: 'Document illisible, expiré, etc.',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Rejeter tout',
+      confirmButtonText: 'Rejeter',
       cancelButtonText: 'Annuler',
       confirmButtonColor: '#ef4444',
       preConfirm: (reason) => {
@@ -184,19 +170,61 @@ export class Kyc {
       }
     }).then((result) => {
       if (result.isConfirmed && result.value) {
-        this.isProcessing.set(true);
-        const pendingDocs = sub.documents.filter(d => d.statut === 'en attente');
-        const requests = pendingDocs.map(d => this.adminService.rejectKyc(d.id, result.value).toPromise());
+        doc.statut = 'rejete';
+        doc.commentaire = result.value;
+        
+        const sub = this.selectedSubmission();
+        if (sub) {
+          this.selectedSubmission.set({...sub});
+        }
+        
+        this.closePreview();
+      }
+    });
+  }
 
-        Promise.all(requests).then(() => {
-          this.isProcessing.set(false);
-          this.submissions.update(list => list.filter(item => item.user.id !== sub.user.id));
-          Swal.fire('Rejeté', 'Le dossier a été rejeté.', 'success');
-        }).catch((err) => {
-          this.isProcessing.set(false);
-          Swal.fire('Erreur', 'Certains documents n\'ont pas pu être rejetés.', 'error');
+  submitDecision(sub: KycGroupedByUser) {
+    const hasPending = sub.documents.some(d => d.statut === 'en attente');
+    if (hasPending) {
+        Swal.fire('Attention', 'Veuillez traiter tous les documents avant de soumettre.', 'warning');
+        return;
+    }
+
+    Swal.fire({
+      title: 'Soumettre la décision ?',
+      text: `Vous êtes sur le point d'envoyer votre décision finale pour ce dossier.`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Oui, soumettre',
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: '#10b981'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isProcessing.set(true);
+        const docsPayload = sub.documents.map(d => ({
+            id: d.id,
+            statut: d.statut,
+            commentaire: d.commentaire
+        }));
+
+        this.adminService.processKyc(sub.user.id, docsPayload).subscribe({
+            next: () => {
+                this.isProcessing.set(false);
+                this.submissions.update(list => list.filter(item => item.user.id !== sub.user.id));
+                this.closeSubmission();
+                Swal.fire('Succès', 'La décision a été enregistrée et un email a été envoyé si nécessaire.', 'success');
+                this.loadPendingKyc();
+            },
+            error: () => {
+                this.isProcessing.set(false);
+                Swal.fire('Erreur', 'Impossible de soumettre la décision.', 'error');
+            }
         });
       }
     });
+  }
+
+  isAnyDocPending(docs: DocumentKYC[]): boolean {
+    return docs.some(d => d.statut === 'en attente');
   }
 }

@@ -5,7 +5,7 @@
       <div class="spinner"></div>
       <p>Chargement des statistiques...</p>
     </div>
-  } @else if (stats()) {
+  } @else {
     <!-- Welcome Banner -->
     <div class="welcome-banner animate-fade-in">
       <div class="banner-content">
@@ -20,43 +20,73 @@
       </div>
     </div>
 
-    <!-- Dashboard Stats Grid -->
-    <div class="stats-grid">
-      @for (item of statItems; track item.key) {
-        <div class="stat-card animate-fade-in" style="animation-delay: 0.1s;">
-          <div class="stat-icon" [ngClass]="item.key">
-            <mat-icon>{{ item.icon }}</mat-icon>
+    @if (kycStatus() !== 'approuve') {
+      <div class="subscription-banner animate-fade-in">
+        <div class="sub-card">
+          <div class="sub-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+            <mat-icon>gpp_maybe</mat-icon>
           </div>
-          <div class="stat-info">
-            <span class="value">{{ getStatValue(item.key) }}</span>
-            <span class="label">{{ item.label }}</span>
-          </div>
+          <h2>Vérification en cours</h2>
+          <p>Vos documents KYC sont en cours d'examen par notre équipe. Vous recevrez un email dès que votre compte sera validé pour procéder à l'abonnement.</p>
         </div>
-      }
-    </div>
+      </div>
+    } @else if (!isSubscribed()) {
+      <div class="subscription-banner animate-fade-in">
+        <div class="sub-card">
+          <div class="sub-icon">
+            <mat-icon>star</mat-icon>
+          </div>
+          <h2>Activez votre réseau d'agences</h2>
+          <p>Félicitations ! Vos documents KYC ont été validés. Pour commencer à créer vos agences, gérer vos bus et vos trajets, vous devez souscrire à l'abonnement annuel.</p>
+          <div class="price-tag">
+            <span class="amount">100,000 FCFA</span>
+            <span class="period">/ an</span>
+          </div>
+          <button class="btn-subscribe" (click)="subscribe()" [disabled]="isPaying()">
+            <mat-icon>payment</mat-icon>
+            {{ isPaying() ? 'Traitement...' : 'Souscrire maintenant' }}
+          </button>
+        </div>
+      </div>
+    } @else if (stats()) {
+      <!-- Dashboard Stats Grid -->
+      <div class="stats-grid">
+        @for (item of statItems; track item.key) {
+          <div class="stat-card animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="stat-icon" [ngClass]="item.key">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </div>
+            <div class="stat-info">
+              <span class="value">{{ getStatValue(item.key) }}</span>
+              <span class="label">{{ item.label }}</span>
+            </div>
+          </div>
+        }
+      </div>
 
-    <!-- Charts Grid -->
-    <div class="charts-grid animate-fade-in" style="animation-delay: 0.2s;">
-      <section class="panel chart-card activity-chart">
-        <div class="panel-header">
-          <div>
-            <h2>Activité de vos Agences</h2>
-            <p class="subtitle">Évolution des réservations</p>
+      <!-- Charts Grid -->
+      <div class="charts-grid animate-fade-in" style="animation-delay: 0.2s;">
+        <section class="panel chart-card activity-chart">
+          <div class="panel-header">
+            <div>
+              <h2>Activité de vos Agences</h2>
+              <p class="subtitle">Évolution des réservations</p>
+            </div>
           </div>
-        </div>
-        <div class="chart-container">
-          <canvas id="activityChart"></canvas>
-        </div>
-      </section>
+          <div class="chart-container">
+            <canvas id="activityChart"></canvas>
+          </div>
+        </section>
 
-      <section class="panel chart-card personnel-chart">
-        <div class="panel-header">
-          <h2>Ressources Humaines</h2>
-        </div>
-        <div class="chart-container" style="height: 300px; display: flex; justify-content: center; align-items: center;">
-          <canvas id="personnelChart"></canvas>
-        </div>
-      </section>
-    </div>
+        <section class="panel chart-card personnel-chart">
+          <div class="panel-header">
+            <h2>Ressources Humaines</h2>
+          </div>
+          <div class="chart-container" style="height: 300px; display: flex; justify-content: center; align-items: center;">
+            <canvas id="personnelChart"></canvas>
+          </div>
+        </section>
+      </div>
+    }
   }
 </div>

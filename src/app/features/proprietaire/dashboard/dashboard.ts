@@ -45,20 +45,28 @@ export class Dashboard {
     const localUser = this.authService.currentUser();
 
     if (localUser) {
-      // Données déjà disponibles depuis le login — on les utilise directement
       this.userName.set(`${localUser.prenom || ''} ${localUser.nom || ''}`.trim());
       this.kycStatus.set(localUser.kyc_status || localUser.statut || '');
       this.isSubscribed.set(!!localUser.is_subscribed);
-      this.loadStats();
+      
+      if (localUser.is_subscribed && this.kycStatus() === 'approuve') {
+        this.loadStats();
+      } else {
+        this.isLoading.set(false);
+      }
     } else {
-      // Aucune donnée locale — tenter un refresh depuis l'API
       this.authService.fetchUser().subscribe({
         next: (user) => {
           if (user && user.role_user === 'PROPRIETAIRE') {
             this.userName.set(`${user.prenom || ''} ${user.nom || ''}`.trim());
             this.kycStatus.set(user.kyc_status || user.statut || '');
             this.isSubscribed.set(!!user.is_subscribed);
-            this.loadStats();
+            
+            if (user.is_subscribed && this.kycStatus() === 'approuve') {
+              this.loadStats();
+            } else {
+              this.isLoading.set(false);
+            }
           } else {
             this.isLoading.set(false);
           }
@@ -89,7 +97,7 @@ export class Dashboard {
           Swal.showValidationMessage('Numéro invalide. Format: 6xxxxxxxx');
           return false;
         }
-        return phone;
+        return '237'+ phone;
       }
     }).then((result) => {
       if (result.isConfirmed) {
@@ -101,7 +109,7 @@ export class Dashboard {
           },
           error: (err) => {
             this.isPaying.set(false);
-            Swal.fire('Erreur', 'Impossible d\'initier le paiement.', 'error');
+            Swal.fire('Erreur', err.error?.message || 'Impossible d\'initier le paiement.', 'error');
           }
         });
       }
@@ -117,9 +125,9 @@ export class Dashboard {
         this.isLoading.set(false);
         setTimeout(() => this.initCharts(), 100);
       },
-      error: () => {
+      error: (err) => {
         this.isLoading.set(false);
-        Swal.fire('Erreur', 'Impossible de charger les statistiques.', 'error');
+        Swal.fire('Erreur', err.error?.message || 'Impossible de charger les statistiques.', 'error');
       }
     });
   }

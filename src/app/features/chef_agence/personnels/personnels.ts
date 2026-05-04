@@ -96,8 +96,9 @@ export class Personnels implements OnInit {
     });
     // Password is not required when editing
     this.staffForm.get('password')?.clearValidators();
-    this.staffForm.get('password')?.setValidators([Validators.minLength(8)]);
+    /*this.staffForm.get('password')?.setValidators([Validators.minLength(8)]);*/
     this.staffForm.get('password')?.updateValueAndValidity();
+    this.staffForm.get('password')?.disable;
     this.showForm.set(true);
   }
 
@@ -122,10 +123,10 @@ onSubmit() {
       : this.chefAgenceService.addStaff(payload);
 
     request.subscribe({
-      next: (res: User) => {
+      next: (res: any) => {
         if (this.isEditing()) {
           this.staffMembers.update((list: User[]) => list.map((m: User) => m.id === this.editId() ? res : m));
-          Swal.fire({ icon: 'success', title: 'Succès', text: 'Personnel mis à jour', timer: 2000, showConfirmButton: false });
+          Swal.fire({ icon: 'success', title: 'Succès', text: res.message, timer: 2000, showConfirmButton: false });
           this.loadStaff();
         } else {
           this.staffMembers.update((list: User[]) => [res, ...list]);

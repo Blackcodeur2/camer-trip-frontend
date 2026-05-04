@@ -70,12 +70,7 @@
                                 <mat-icon>folder_open</mat-icon>
                             </button>
                             @if (sub.statutGlobal === 'en attente') {
-                                <button class="table-action-btn success" title="Approuver tout" (click)="approve(sub)">
-                                    <mat-icon>check_circle</mat-icon>
-                                </button>
-                                <button class="table-action-btn delete" title="Rejeter tout" (click)="reject(sub)">
-                                    <mat-icon>cancel</mat-icon>
-                                </button>
+                                <!-- Les actions globales ont été retirées pour forcer la vérification document par document via le dossier -->
                             }
                         </div>
                     </td>
@@ -126,16 +121,11 @@
                     }
                 </div>
 
-                @if (selectedSubmission()!.statutGlobal === 'en attente') {
-                <div class="modal-actions">
-                    <button class="btn-reject" (click)="reject(selectedSubmission()!); closeSubmission()" [disabled]="isProcessing()">
-                        <mat-icon>close</mat-icon> Rejeter le dossier
-                    </button>
-                    <button class="btn-approve" (click)="approve(selectedSubmission()!); closeSubmission()" [disabled]="isProcessing()">
-                        <mat-icon>check</mat-icon> Approuver le dossier
+                <div class="modal-actions" style="grid-template-columns: 1fr;">
+                    <button class="btn-approve" (click)="submitDecision(selectedSubmission()!)" [disabled]="isProcessing() || isAnyDocPending(selectedSubmission()!.documents)" style="width: 100%; border-right: none;">
+                        <mat-icon>send</mat-icon> Soumettre la décision
                     </button>
                 </div>
-                }
             </div>
         </div>
     </div>
@@ -162,6 +152,28 @@
                     <mat-icon style="font-size: 18px; margin-right: 8px;">info</mat-icon>
                     <span>{{ previewDocument()!.comment }}</span>
                 </div>
+                }
+                
+                @if (previewDocument()!.doc.statut === 'en attente') {
+                <div class="modal-actions" style="margin-top: 1.5rem;">
+                    <button class="btn-reject" (click)="rejectDocument(previewDocument()!.doc)">
+                        <mat-icon>close</mat-icon> Rejeter
+                    </button>
+                    <button class="btn-approve" (click)="approveDocument(previewDocument()!.doc)">
+                        <mat-icon>check</mat-icon> Approuver
+                    </button>
+                </div>
+                } @else {
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <span class="status-badge status--{{ previewDocument()!.doc.statut === 'approuve' ? 'success' : 'rejected' }}" style="font-size: 1rem; padding: 8px 16px; justify-content: center;">
+                            Ce document a été marqué comme {{ previewDocument()!.doc.statut }}
+                        </span>
+                        <div style="margin-top: 10px;">
+                            <button class="table-action-btn" (click)="previewDocument()!.doc.statut = 'en attente'; previewDocument()!.doc.commentaire = '';" style="background: var(--color-surface); padding: 8px 16px; border-radius: 8px;">
+                                <mat-icon style="font-size: 18px; margin-right: 5px;">undo</mat-icon> Annuler la décision
+                            </button>
+                        </div>
+                    </div>
                 }
             </div>
         </div>

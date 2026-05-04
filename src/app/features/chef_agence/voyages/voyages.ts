@@ -164,6 +164,27 @@ export class Voyages {
     }
   }
 
+    editVoyage(voyage: Voyage) {
+    this.isEditing.set(true);
+    this.editId.set(voyage.id || null);
+    
+    // Load all buses so we can see the current one even if it's not "disponible"
+    this.chefService.getBuses().subscribe(data => {
+        this.buses.set(data);
+        this.voyageForm.patchValue({
+            date_depart: voyage.date_depart,
+            date_arrivee: voyage.date_arrivee,
+            trajet_id: voyage.trajet_id,
+            heure_depart:  voyage.heure_depart,
+            bus_id: voyage.bus_id,
+            prix: voyage.prix,
+            chauffeur_id: voyage.chauffeur_id ?? voyage.chauffeur?.id,
+            statut: voyage.statut,
+        });
+
+        this.showForm.set(true);
+    });
+  }
   onSubmit() {
     if (this.voyageForm.invalid) return;
 

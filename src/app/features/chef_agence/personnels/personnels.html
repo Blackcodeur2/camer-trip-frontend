@@ -125,8 +125,9 @@
                     </td>
                     <td>
                         <div class="info-cell">
-                            <span class="birth">{{ member?.date_naissance | date:'dd/MM/yyyy' }}</span>
-                            <span class="joined">Dernière MAJ: {{ member?.updated_at | date:'shortDate' }}</span>
+                            <span class="birth">
+                                <button class="action-btn edit" (click)="editStaff(member)" title="Modifier"><mat-icon>edit_note</mat-icon></button>
+                            </span>
                         </div>
                     </td>
                 </tr>

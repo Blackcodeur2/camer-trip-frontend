@@ -71,12 +71,8 @@ export class AdminService {
     return this.http.get<DocumentKYC[]>(`${this.API}/admin/documents`);
   }
 
-  approveKyc(doc_id: number): Observable<any> {
-    return this.http.put(`${this.API}/admin/documents/${doc_id}/approuver`, {});
-  }
-
-  rejectKyc(doc_id: number, reason: string): Observable<any> {
-    return this.http.post(`${this.API}/admin/documents/${doc_id}/rejeter`, { reason });
+  processKyc(userId: number, documents: any[]): Observable<any> {
+    return this.http.post(`${this.API}/admin/documents/${userId}/process`, { documents });
   }
 
   // ── Abonnements ──
