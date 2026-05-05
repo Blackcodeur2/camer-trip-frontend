@@ -58,6 +58,12 @@ export class NewReservation {
   });
 
   isNewClient = signal(false);
+  isGuestClient = signal(false);
+
+  guestForm = this.fb.group({
+    nom_complet: ['', Validators.required],
+    telephone: ['', [Validators.pattern('^6[0-9]{8}$')]]
+  });
 
   constructor() {
     // Setup search debounce
@@ -96,6 +102,14 @@ export class NewReservation {
       }
       if (this.isNewClient()) {
         this.submitNewClient();
+        return;
+      }
+      if (this.isGuestClient()) {
+        if (this.guestForm.invalid) {
+          this.guestForm.markAllAsTouched();
+          return;
+        }
+        this.loadSeats();
         return;
       }
       this.loadSeats();
@@ -144,6 +158,13 @@ export class NewReservation {
 
   toggleNewClient() {
     this.isNewClient.update(v => !v);
+    this.isGuestClient.set(false);
+    this.selectedClient.set(null);
+  }
+
+  toggleGuestClient() {
+    this.isGuestClient.update(v => !v);
+    this.isNewClient.set(false);
     this.selectedClient.set(null);
   }
 
@@ -192,15 +213,21 @@ export class NewReservation {
 
   submitBooking() {
     this.submitting.set(true);
-    const payload = {
+    const payload: any = {
       voyage_id: this.selectedVoyage()?.id,
-      user_id: this.selectedClient()?.id,
       station_id: this.authService.currentUser()?.station_id,
       place: Number(this.selectedSeat()),
-      // Client info for display if needed
-      client_name: `${this.selectedClient()?.prenom} ${this.selectedClient()?.nom}`,
-      telephone: this.selectedClient()?.telephone
+      payment_method: 'especes'
     };
+
+    if (this.isGuestClient()) {
+      payload.nom_client = this.guestForm.value.nom_complet;
+      payload.telephone_client = this.guestForm.value.telephone;
+    } else {
+      payload.user_id = this.selectedClient()?.id;
+      payload.client_name = `${this.selectedClient()?.prenom} ${this.selectedClient()?.nom}`;
+      payload.telephone = this.selectedClient()?.telephone;
+    }
 
     this.agentService.createBooking(payload).subscribe({
       next: () => {
@@ -224,7 +251,9 @@ export class NewReservation {
     this.selectedSeat.set(null);
     this.tripForm.reset({ date: new Date().toISOString().slice(0, 10) });
     this.clientForm.reset({ sexe: 'M' });
+    this.guestForm.reset();
     this.isNewClient.set(false);
+    this.isGuestClient.set(false);
   }
 
   // -- UI Helpers --

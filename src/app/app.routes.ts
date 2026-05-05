@@ -277,6 +277,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/client/new-reservation/new-reservation').then(m => m.NewReservation)
             },
             {
+                path: 'colis',
+                loadComponent: () => import('./features/client/colis/colis').then(m => m.ClientColisComponent)
+            },
+            {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },

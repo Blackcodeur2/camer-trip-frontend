@@ -26,7 +26,10 @@ export class AgentService {
   }
 
   getRoutes(): Observable<Trajet[]> {
-    return this.http.get<{ statut: boolean; data: Trajet[] }>(`${this.API}/${this.getPrefix()}/routes`)
+    const role = this.authService.currentUser()?.role_user;
+    // Agent uses /routes, Chef d'Agence uses /trajets
+    const path = role === 'CHEF_AGENCE' ? 'trajets' : 'routes';
+    return this.http.get<{ statut: boolean; data: Trajet[] }>(`${this.API}/${this.getPrefix()}/${path}`)
       .pipe(map((response: { statut: boolean; data: Trajet[] }) => response.data));
   }
 

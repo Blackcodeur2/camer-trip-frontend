@@ -135,13 +135,19 @@
                     <mat-icon>person_search</mat-icon>
                     <h2>Identifier le client</h2>
                 </div>
-                <button class="btn-secondary" (click)="toggleNewClient()">
-                    <mat-icon>{{ isNewClient() ? 'search' : 'person_add' }}</mat-icon>
-                    {{ isNewClient() ? 'Rechercher existant' : 'Nouveau client' }}
-                </button>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-secondary" (click)="toggleGuestClient()" [class.active]="isGuestClient()">
+                        <mat-icon>person_outline</mat-icon>
+                        Client de passage
+                    </button>
+                    <button class="btn-secondary" (click)="toggleNewClient()" [class.active]="isNewClient()">
+                        <mat-icon>{{ isNewClient() ? 'search' : 'person_add' }}</mat-icon>
+                        {{ isNewClient() ? 'Rechercher existant' : 'Nouveau client' }}
+                    </button>
+                </div>
             </div>
 
-            @if (!isNewClient()) {
+            @if (!isNewClient() && !isGuestClient()) {
             <div class="search-section">
                 <div class="search-input-field">
                     <mat-icon>search</mat-icon>
@@ -169,6 +175,36 @@
                     }
                 </div>
             </div>
+            } @else if (isGuestClient()) {
+            <form [formGroup]="guestForm" class="client-form guest-form animate-in">
+                <div class="guest-info-alert">
+                    <mat-icon>info</mat-icon>
+                    <p>Utilisez cette option si le client ne souhaite pas créer de compte. Les informations ne seront pas enregistrées dans la base client.</p>
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Nom Complet du Client</label>
+                        <div class="input-wrapper">
+                            <mat-icon>person</mat-icon>
+                            <input type="text" formControlName="nom_complet" placeholder="Ex: NDEDI JEAN PAUL">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Téléphone (Optionnel)</label>
+                        <div class="input-wrapper">
+                            <mat-icon>phone</mat-icon>
+                            <input type="tel" formControlName="telephone" placeholder="6XXXXXXXX">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button type="button" class="btn-text" (click)="prevStep()">Retour</button>
+                    <button type="button" class="btn-primary" (click)="nextStep()" [disabled]="guestForm.invalid">
+                        Continuer <mat-icon>arrow_forward</mat-icon>
+                    </button>
+                </div>
+            </form>
             } @else {
             <form [formGroup]="clientForm" class="client-form" (ngSubmit)="submitNewClient()">
                 <div class="form-grid">
@@ -293,8 +329,20 @@
             <div class="summary-grid">
                 <div class="summary-item">
                     <span class="label">Client</span>
-                    <span class="val">{{ selectedClient()?.prenom }} {{ selectedClient()?.nom }}</span>
-                    <span class="sub">{{ selectedClient()?.telephone }}</span>
+                    <span class="val">
+                        @if (isGuestClient()) {
+                            {{ guestForm.get('nom_complet')?.value }} <small>(Passage)</small>
+                        } @else {
+                            {{ selectedClient()?.prenom }} {{ selectedClient()?.nom }}
+                        }
+                    </span>
+                    <span class="sub">
+                        @if (isGuestClient()) {
+                            {{ guestForm.get('telephone')?.value || 'Pas de numéro' }}
+                        } @else {
+                            {{ selectedClient()?.telephone }}
+                        }
+                    </span>
                 </div>
                 <div class="summary-item">
                     <span class="label">Trajet</span>
