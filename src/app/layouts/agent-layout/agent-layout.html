@@ -34,7 +34,9 @@
         </span>
       </div>
 
-      <div class="user-menu">
+      <div class="user-menu" style="display: flex;">
+        <app-notification-menu></app-notification-menu>
+        
         <div class="avatar-chip" (click)="toggleUserMenu()">
           <div class="avatar" style="overflow: hidden;">
             @if (currentUser()?.profil_url) {

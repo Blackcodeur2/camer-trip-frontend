@@ -16,7 +16,7 @@
           <mat-icon class="icon">{{ item.icon }}</mat-icon>
           <span>{{ item.label }}</span>
           @if (item.badge) {
-            <span class="nav-badge">{{ item.badge }}</span>
+            <span class="nav-badge">{{ '' }}</span>
           }
         </a>
       }
@@ -39,7 +39,9 @@
         </span>
       </div>
 
-      <div class="user-menu">
+      <div class="user-menu" style="display: flex;">
+        <app-notification-menu></app-notification-menu>
+        
         <div class="avatar-chip" (click)="toggleUserMenu()">
           <div class="avatar" style="overflow: hidden;">
             @if (currentUser()?.profil_url) {

@@ -37,10 +37,16 @@
                     <tr>
                         <td>
                             <div class="client-info">
-                                <span class="name">{{ colis.user?.prenom }} {{ colis.user?.nom }}</span>
+                                <span class="name">
+                                    @if (colis.user) {
+                                        {{ colis.user.prenom }} {{ colis.user.nom }}
+                                    } @else {
+                                        {{ colis.nom_expediteur }} (Invité)
+                                    }
+                                </span>
                                 <span class="phone">
                                     <mat-icon>phone</mat-icon>
-                                    {{ colis.user?.telephone }}
+                                    {{ colis.user?.telephone || colis.tel_expediteur }}
                                 </span>
                             </div>
                         </td>
@@ -54,12 +60,16 @@
                             </div>
                         </td>
                         <td>
-                            @if (colis.voyage) {
+                            @if (colis.trajet) {
                             <div class="voyage-info">
                                 <div class="path">
-                                    {{ colis.voyage.trajet?.depart }}
+                                    {{ colis.trajet.depart }}
                                     &rarr;
-                                    {{ colis.voyage.trajet?.arrivee }}
+                                    {{ colis.trajet.arrivee }}
+                                </div>
+                                <div class="destination-badge">
+                                    <mat-icon style="font-size: 14px; width: 14px; height: 14px;">place</mat-icon>
+                                    {{ colis.destination }}
                                 </div>
                             </div>
                             }
@@ -107,37 +117,57 @@
 
                 <!-- Section Expéditeur -->
                 <div class="form-section">
-                    <h3>1. Expéditeur (Client)</h3>
-                    <div class="form-group" style="position: relative;">
-                        <label>Rechercher un client (Tel ou Nom) <span style="color: var(--color-accent)">*</span></label>
-                        <div style="position: relative; display: flex; align-items: center;">
-                            <mat-icon style="position: absolute; left: 1rem; color: var(--color-text-muted);">search</mat-icon>
-                            <input type="text" formControlName="clientSearchQuery" class="form-control" style="padding-left: 3rem;" placeholder="Ex: 690..."
-                                (input)="onClientSearch($event)">
-                        </div>
-                        @if (clientSearchResults().length > 0) {
-                        <div class="search-results">
-                            @for (m of clientSearchResults(); track m.id) {
-                            <div class="search-item" (click)="selectClient(m)">
-                                <span style="font-weight: 800; color: var(--color-dark);">{{ m.nom }} {{ m.prenom }}</span>
-                                <span style="color: var(--color-primary); font-weight: 700;">{{ m.telephone }}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h3>1. Expéditeur</h3>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--color-primary);">
+                            <input type="checkbox" (change)="toggleGuestSender()" [checked]="isGuestSender()">
+                            Client non inscrit
+                        </label>
+                    </div>
+
+                    @if (!isGuestSender()) {
+                        <div class="form-group" style="position: relative;">
+                            <label>Rechercher un client (Tel ou Nom) <span style="color: var(--color-accent)">*</span></label>
+                            <div style="position: relative; display: flex; align-items: center;">
+                                <mat-icon style="position: absolute; left: 1rem; color: var(--color-text-muted);">search</mat-icon>
+                                <input type="text" formControlName="clientSearchQuery" class="form-control" style="padding-left: 3rem;" placeholder="Ex: 690..."
+                                    (input)="onClientSearch($event)">
+                            </div>
+                            @if (clientSearchResults().length > 0) {
+                            <div class="search-results">
+                                @for (m of clientSearchResults(); track m.id) {
+                                <div class="search-item" (click)="selectClient(m)">
+                                    <span style="font-weight: 800; color: var(--color-dark);">{{ m.nom }} {{ m.prenom }}</span>
+                                    <span style="color: var(--color-primary); font-weight: 700;">{{ m.telephone }}</span>
+                                </div>
+                                }
+                            </div>
+                            }
+                            @if (selectedClient()) {
+                            <div class="selected-client-card">
+                                <mat-icon style="color: var(--color-primary);">check_circle</mat-icon>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 800; color: var(--color-dark);">{{ selectedClient()?.nom }} {{ selectedClient()?.prenom }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 600;">{{ selectedClient()?.telephone }}</div>
+                                </div>
+                                <button type="button" (click)="clearClient()" style="background: none; border: none; color: var(--color-accent); cursor: pointer;">
+                                    <mat-icon>close</mat-icon>
+                                </button>
                             </div>
                             }
                         </div>
-                        }
-                        @if (selectedClient()) {
-                        <div class="selected-client-card">
-                            <mat-icon style="color: var(--color-primary);">check_circle</mat-icon>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 800; color: var(--color-dark);">{{ selectedClient()?.nom }} {{ selectedClient()?.prenom }}</div>
-                                <div style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 600;">{{ selectedClient()?.telephone }}</div>
+                    } @else {
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label>Nom complet de l'expéditeur <span style="color: var(--color-accent)">*</span></label>
+                                <input type="text" formControlName="nom_expediteur" class="form-control" placeholder="Nom complet">
                             </div>
-                            <button type="button" (click)="clearClient()" style="background: none; border: none; color: var(--color-accent); cursor: pointer;">
-                                <mat-icon>close</mat-icon>
-                            </button>
+                            <div class="form-group">
+                                <label>Téléphone de l'expéditeur <span style="color: var(--color-accent)">*</span></label>
+                                <input type="text" formControlName="tel_expediteur" class="form-control" placeholder="Numéro de téléphone">
+                            </div>
                         </div>
-                        }
-                    </div>
+                    }
                 </div>
 
                 <!-- Section Colis -->
@@ -159,22 +189,24 @@
                     </div>
                 </div>
 
-                <!-- Section Voyage & Destinataire -->
+                <!-- Section Trajet & Destinataire -->
                 <div class="form-section">
-                    <h3>3. Voyage & Destinataire</h3>
+                    <h3>3. Trajet & Destinataire</h3>
                     <div class="form-group" style="margin-bottom: 1.5rem;">
-                        <label>Voyage de transport <span style="color: var(--color-accent)">*</span></label>
-                        <select formControlName="voyage_id" class="form-control" (change)="onVoyageChange()">
-                            <option value="">Sélectionnez le voyage prévu</option>
-                            @for (m of availableVoyages(); track m.id) {
+                        <label>Trajet de transport <span style="color: var(--color-accent)">*</span></label>
+                        <select formControlName="trajet_id" class="form-control" (change)="onTrajetChange()">
+                            <option value="">Sélectionnez le trajet</option>
+                            @for (m of availableTrajets(); track m.id) {
                             <option [value]="m.id">
-                                Voyage #{{ m.num_voyage || m.id }} :
-                                {{ m.trajet?.ville_depart_nom || m.trajet?.villeDepart?.nom || '...' }} &rarr;
-                                {{ m.trajet?.ville_arrive_nom || m.trajet?.villeArrivee?.nom || '...' }}
-                                ({{ m.date_depart | date:'dd/MM HH:mm' }})
+                                {{ m.depart }} &rarr; {{ m.arrivee }}
                             </option>
                             }
                         </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label>Destination spécifique (Point d'arrêt) <span style="color: var(--color-accent)">*</span></label>
+                        <input type="text" formControlName="destination" class="form-control" placeholder="Ex: Edéa, Boumnyébel...">
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
@@ -193,7 +225,7 @@
 
             <div class="form-actions">
                 <button type="button" class="btn-secondary" (click)="toggleViewMode()">Annuler</button>
-                <app-app-button type="submit" [disabled]="colisForm.invalid || !selectedClient() || isSubmitting()">
+                <app-app-button type="submit" [disabled]="colisForm.invalid || isSubmitting()">
                     {{ isSubmitting() ? 'Enregistrement...' : 'Enregistrer le Colis' }}
                 </app-app-button>
             </div>

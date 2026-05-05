@@ -20,9 +20,30 @@ export class Profile implements OnInit {
   isRefreshing = signal(false);
 
   ngOnInit(): void {
-    // Les données sont déjà disponibles depuis le login (localStorage -> signal)
-    // On ne rappelle PAS fetchUser() pour ne pas écraser avec un mauvais endpoint
+    this.resetProfileForm();
     this.isRefreshing.set(false);
+  }
+
+  resetProfileForm(): void {
+    const u = this.currentUser();
+    if (u) {
+      this.profileForm.patchValue({
+        nom: u.nom,
+        prenom: u.prenom,
+        email: u.email,
+        telephone: u.telephone,
+        num_cni: u.num_cni,
+        date_naissance: u.date_naissance,
+        sexe: u.sexe
+      });
+    }
+  }
+
+  toggleEdit(): void {
+    if (this.isEditing()) {
+      this.resetProfileForm();
+    }
+    this.isEditing.set(!this.isEditing());
   }
 
   protected readonly userInitials = computed(() => {
@@ -64,7 +85,17 @@ export class Profile implements OnInit {
   showNewPwd = signal(false);
   showConfirmPwd = signal(false);
 
-  // Password form
+  isEditing = signal(false);
+
+  profileForm = this.fb.group({
+    nom: ['', [Validators.required]],
+    prenom: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    telephone: ['', [Validators.required]],
+    num_cni: [''],
+    date_naissance: [''],
+    sexe: ['M']
+  });
   passwordForm = this.fb.nonNullable.group(
     {
       current_password: ['', [Validators.required]],
@@ -141,6 +172,42 @@ export class Profile implements OnInit {
     });
   }
 
+  onUpdateProfile(): void {
+    if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
+      return;
+    }
+    this.isLoading.set(true);
+    
+    // Create FormData for the update
+    const formData = new FormData();
+    const val = this.profileForm.value;
+    Object.keys(val).forEach(key => {
+      const fieldKey = key as keyof typeof val;
+      if (val[fieldKey]) {
+        formData.append(key, val[fieldKey] as string);
+      }
+    });
+
+    this.authService.updateProfile(formData).subscribe({
+      next: (response) => {
+        this.isLoading.set(false);
+        this.isEditing.set(false);
+        Swal.fire({
+          icon: 'success',
+          title: 'Profil mis à jour !',
+          text: 'Vos informations ont été enregistrées avec succès.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        console.error('Erreur update profile:', err);
+        Swal.fire('Erreur', err.error?.message || 'Impossible de mettre à jour le profil.', 'error');
+      }
+    });
+  }
 
   onChangePassword(): void {
     if (this.passwordForm.invalid) {

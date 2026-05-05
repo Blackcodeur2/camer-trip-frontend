@@ -37,18 +37,22 @@ export class ColisPage {
   clientSearchResults = signal<any[]>([]);
   selectedClient = signal<any>(null);
 
-  // Voyages (to replace Destinations)
-  availableVoyages = signal<any[]>([]);
+  // Trajets
+  availableTrajets = signal<any[]>([]);
 
   colisForm: FormGroup;
+  isGuestSender = signal(false);
 
   constructor() {
     this.colisForm = this.fb.group({
       clientSearchQuery: [''],
+      nom_expediteur: [''],
+      tel_expediteur: [''],
       nom_colis: ['', Validators.required],
       tel_destinataire: ['', Validators.required],
       nom_destinataire: ['', Validators.required],
-      voyage_id: ['', Validators.required],
+      trajet_id: ['', Validators.required],
+      destination: ['', Validators.required],
       prix: [0, [Validators.min(0)]],
       poids: [0, [Validators.min(0)]]
     });
@@ -68,14 +72,15 @@ export class ColisPage {
 
   ngOnInit() {
     this.loadColis();
-    this.loadVoyages();
+    this.loadTrajets();
   }
 
   toggleViewMode() {
     if (this.viewMode() === 'list') {
       this.viewMode.set('create');
-      this.colisForm.reset({ prix: 0, poids: 0, clientSearchQuery: '', voyage_id: '', destination: '' });
+      this.colisForm.reset({ prix: 0, poids: 0, clientSearchQuery: '', trajet_id: '', destination: '' });
       this.selectedClient.set(null);
+      this.isGuestSender.set(false);
     } else {
       this.viewMode.set('list');
     }
@@ -95,27 +100,21 @@ export class ColisPage {
     });
   }
 
-  loadVoyages() {
-    this.agentService.getVoyages().subscribe({
-      next: (voyages) => {
-        // Keep upcoming voyages where the agent's gare is the departure point (which getVoyages naturally filters by).
-        const upcomingVoyages = voyages.filter((v: any) => v.statut === 'en attente' || v.statut === 'en cours');
-        this.availableVoyages.set(upcomingVoyages);
+  loadTrajets() {
+    this.agentService.getRoutes().subscribe({
+      next: (trajets) => {
+        this.availableTrajets.set(trajets);
       },
-      error: (err) => console.error('Erreur voyages:', err)
+      error: (err) => console.error('Erreur trajets:', err)
     });
   }
 
-  onVoyageChange() {
-    const voyageId = this.colisForm.get('voyage_id')?.value;
-    const selectedVoyage = this.availableVoyages().find(v => v.id == voyageId);
+  onTrajetChange() {
+    const trajetId = this.colisForm.get('trajet_id')?.value;
+    const selectedTrajet = this.availableTrajets().find(t => t.id == trajetId);
 
-    if (selectedVoyage) {
-      const destinationId = selectedVoyage.trajet?.gare_id; // À vérifier si c'est bien la gare de destination
-
-      if (destinationId) {
-        this.colisForm.patchValue({ destination: destinationId });
-      }
+    if (selectedTrajet) {
+      this.colisForm.patchValue({ destination: selectedTrajet.arrivee });
     }
   }
 
@@ -132,6 +131,20 @@ export class ColisPage {
     this.selectedClient.set(client);
     this.clientSearchResults.set([]);
     this.colisForm.get('clientSearchQuery')?.setValue('');
+  }
+
+  toggleGuestSender() {
+    this.isGuestSender.update(v => !v);
+    if (this.isGuestSender()) {
+      this.selectedClient.set(null);
+      this.colisForm.get('nom_expediteur')?.setValidators([Validators.required]);
+      this.colisForm.get('tel_expediteur')?.setValidators([Validators.required]);
+    } else {
+      this.colisForm.get('nom_expediteur')?.clearValidators();
+      this.colisForm.get('tel_expediteur')?.clearValidators();
+    }
+    this.colisForm.get('nom_expediteur')?.updateValueAndValidity();
+    this.colisForm.get('tel_expediteur')?.updateValueAndValidity();
   }
 
   clearClient() {
@@ -155,7 +168,7 @@ export class ColisPage {
             this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: 'retire' } : c));
             Swal.fire('Validé !', 'Le colis a été marqué comme retiré.', 'success');
             this.loadColis();
-            this.loadVoyages();
+            this.loadTrajets();
           },
           error: (err) => {
             Swal.fire('Erreur', err.error?.message || 'Une erreur est survenue.', 'error');
@@ -166,20 +179,33 @@ export class ColisPage {
   }
 
   onSubmitColis() {
-    if (this.colisForm.invalid || !this.selectedClient()) return;
+    if (this.colisForm.invalid) {
+      if (!this.isGuestSender() && !this.selectedClient()) {
+         Swal.fire('Attention', 'Veuillez sélectionner un client ou remplir les infos expéditeur', 'warning');
+         return;
+      }
+      return;
+    }
 
     this.isSubmitting.set(true);
     const formValue = this.colisForm.value;
 
-    const payload: Partial<Colis> = {
-      user_id: this.selectedClient().id,
+    const payload: any = {
       nom_colis: formValue.nom_colis,
       tel_destinataire: formValue.tel_destinataire,
       nom_destinataire: formValue.nom_destinataire,
-      voyage_id: formValue.voyage_id,
+      trajet_id: formValue.trajet_id,
+      destination: formValue.destination,
       prix: formValue.prix,
       poids: formValue.poids
     };
+
+    if (this.isGuestSender()) {
+      payload.nom_expediteur = formValue.nom_expediteur;
+      payload.tel_expediteur = formValue.tel_expediteur;
+    } else {
+      payload.user_id = this.selectedClient()?.id;
+    }
 
     this.agentService.createColis(payload).subscribe({
       next: (newColis) => {
@@ -188,7 +214,7 @@ export class ColisPage {
         this.colisList.update(list => [newColis, ...list]);
         this.toggleViewMode();
         this.loadColis();
-        this.loadVoyages();
+        this.loadTrajets();
       },
       error: (err) => {
         console.error('Registration error', err);

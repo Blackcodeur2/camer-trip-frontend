@@ -69,45 +69,96 @@
     <!-- Personal Information section -->
     <section class="profile-section">
       <div class="section-header">
-        <mat-icon>person_outline</mat-icon>
-        <div>
-          <h3>Informations personnelles</h3>
-          <p>Vos données de compte enregistrées sur la plateforme.</p>
+        <div style="display: flex; align-items: center; gap: 0.8rem;">
+            <mat-icon>person_outline</mat-icon>
+            <div>
+              <h3>Informations personnelles</h3>
+              <p>Vos données de compte enregistrées sur la plateforme.</p>
+            </div>
         </div>
+        <button class="btn-edit-toggle" (click)="toggleEdit()">
+            <mat-icon>{{ isEditing() ? 'close' : 'edit' }}</mat-icon>
+            {{ isEditing() ? 'Annuler' : 'Modifier' }}
+        </button>
       </div>
-      <div class="info-grid">
-        <div class="info-field">
-          <span class="info-field__label">Prénom</span>
-          <span class="info-field__value">{{ currentUser()?.prenom || '—' }}</span>
-        </div>
-        <div class="info-field">
-          <span class="info-field__label">Nom</span>
-          <span class="info-field__value">{{ currentUser()?.nom || '—' }}</span>
-        </div>
-        <div class="info-field">
-          <span class="info-field__label">Email</span>
-          <span class="info-field__value">{{ currentUser()?.email || '—' }}</span>
-        </div>
-        <div class="info-field">
-          <span class="info-field__label">Téléphone</span>
-          <span class="info-field__value">{{ currentUser()?.telephone || '—' }}</span>
-        </div>
-        <div class="info-field">
-          <span class="info-field__label">Sexe</span>
-          <span class="info-field__value">{{ currentUser()?.sexe === 'M' ? 'Masculin' : currentUser()?.sexe === 'F' ? 'Féminin' : '—' }}</span>
-        </div>
-        <div class="info-field">
-          <span class="info-field__label">Date de naissance</span>
-          <span class="info-field__value">{{ currentUser()?.date_naissance || '—' }}</span>
-        </div>
-        <div class="info-field info-field--full">
-          <span class="info-field__label">Rôle</span>
-          <span class="info-field__value role-tag">
-            <mat-icon>verified</mat-icon>
-            {{ userRoleLabel() }}
-          </span>
-        </div>
-      </div>
+      @if (!isEditing()) {
+          <div class="info-grid">
+            <div class="info-field">
+              <span class="info-field__label">Prénom</span>
+              <span class="info-field__value">{{ currentUser()?.prenom || '—' }}</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field__label">Nom</span>
+              <span class="info-field__value">{{ currentUser()?.nom || '—' }}</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field__label">Email</span>
+              <span class="info-field__value">{{ currentUser()?.email || '—' }}</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field__label">Téléphone</span>
+              <span class="info-field__value">{{ currentUser()?.telephone || '—' }}</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field__label">Sexe</span>
+              <span class="info-field__value">{{ currentUser()?.sexe === 'M' ? 'Masculin' : currentUser()?.sexe === 'F' ? 'Féminin' : '—' }}</span>
+            </div>
+            <div class="info-field">
+              <span class="info-field__label">Date de naissance</span>
+              <span class="info-field__value">{{ currentUser()?.date_naissance || '—' }}</span>
+            </div>
+            <div class="info-field info-field--full">
+              <span class="info-field__label">Rôle</span>
+              <span class="info-field__value role-tag">
+                <mat-icon>verified</mat-icon>
+                {{ userRoleLabel() }}
+              </span>
+            </div>
+          </div>
+      } @else {
+          <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()" class="profile-edit-form">
+              <div class="form-grid-inner">
+                  <div class="form-field">
+                      <label class="form-field__label">Prénom</label>
+                      <input type="text" formControlName="prenom" class="form-field__input" />
+                  </div>
+                  <div class="form-field">
+                      <label class="form-field__label">Nom</label>
+                      <input type="text" formControlName="nom" class="form-field__input" />
+                  </div>
+                  <div class="form-field">
+                      <label class="form-field__label">Email</label>
+                      <input type="email" formControlName="email" class="form-field__input" />
+                  </div>
+                  <div class="form-field">
+                      <label class="form-field__label">Téléphone</label>
+                      <input type="text" formControlName="telephone" class="form-field__input" />
+                  </div>
+                  <div class="form-field">
+                      <label class="form-field__label">Sexe</label>
+                      <select formControlName="sexe" class="form-field__input">
+                          <option value="M">Masculin</option>
+                          <option value="F">Féminin</option>
+                      </select>
+                  </div>
+                  <div class="form-field">
+                      <label class="form-field__label">Date de naissance</label>
+                      <input type="date" formControlName="date_naissance" class="form-field__input" />
+                  </div>
+              </div>
+              <div class="form-actions" style="margin-top: 1.5rem;">
+                  <button type="button" class="btn-cancel" (click)="toggleEdit()">Annuler</button>
+                  <button type="submit" class="btn-save" [disabled]="isLoading() || profileForm.invalid">
+                    @if (isLoading()) {
+                        <span class="spinner"></span>
+                    } @else {
+                        <mat-icon>save</mat-icon>
+                        Enregistrer les modifications
+                    }
+                  </button>
+              </div>
+          </form>
+      }
      
     </section>
 

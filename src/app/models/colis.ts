@@ -5,18 +5,21 @@ import { Voyage } from "./voyage";
 
 export interface Colis {
     user?: User;
+    user_id?: number;
+    nom_expediteur?: string;
+    tel_expediteur?: string;
     nom_colis: string;
+    description?: string;
     nom_destinataire: string;
     tel_destinataire: string;
-    voyage?: Voyage;
-    voyage_id?: number;
+    destination: string;
+    trajet_id: number;
+    trajet?: Trajet;
     prix: string | number;
     poids: number;
     created_at: string | number | Date;
     statut: string;
-    trajet?: Trajet;
-    description: string;
     station?: Station;
+    station_id?: number;
     id: number;
-    user_id: number;
 }

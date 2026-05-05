@@ -1,73 +1,49 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterModule, RouterLink } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth/auth-service';
 import { MatIconModule } from '@angular/material/icon';
-import { TitleCasePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { NotificationMenuComponent } from '../../features/shared/notification-menu/notification-menu';
 
 @Component({
   selector: 'app-agent-layout',
-  imports: [MatIconModule, RouterModule, RouterLink, TitleCasePipe],
+  standalone: true,
+  imports: [CommonModule, MatIconModule, RouterModule, RouterLink, NotificationMenuComponent],
   templateUrl: './agent-layout.html',
   styleUrl: './agent-layout.css',
 })
 export class AgentLayout {
-  public authService = inject(AuthService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   protected readonly currentUser = this.authService.currentUser;
-
-  protected readonly currentUserRole = computed(() => {
-    const role = this.currentUser()?.role_user;
-    return role ? role.toUpperCase() : 'AGENT';
-  });
-
-  protected readonly userInitials = computed(() => {
-    const user = this.currentUser();
-    if (!user) return 'AG';
-    const first = user.prenom?.trim().charAt(0) ?? '';
-    const last = user.nom?.trim().charAt(0) ?? '';
-    return `${first || 'A'}${last || 'G'}`.toUpperCase();
-  });
+  isUserMenuOpen = false;
 
   menuItems = [
-    { label: 'Tableau de bord', icon: 'dashboard', route: '/agent/dashboard' },
-    { label: 'Nouvelle Vente', icon: 'add', route: '/agent/booking/new' },
-    { label: 'Mes reservations', icon: 'list', route: '/agent/reservations' },
-    { label: 'Gestion Colis', icon: 'local_mall', route: '/agent/colis' },
-    { label: 'Mon Profil', icon: 'person', route: '/agent/profile' },
+    { label: 'Dashboard', route: '/agent/dashboard', icon: 'dashboard' },
+    { label: 'Nouvelle reservation', route: '/agent/booking/new', icon: 'add' },
+    { label: 'Reservations', route: '/agent/reservations', icon: 'list' },
+    { label: 'Gestion Colis', route: '/agent/colis', icon: 'inventory_2' },
+    { label: 'Historique', route: '/agent/history', icon: 'history' },
   ];
 
-  isUserMenuOpen = false;
+  protected readonly userInitials = computed(() => {
+    const u = this.currentUser();
+    if (!u) return '?';
+    return `${u.prenom?.[0] || ''}${u.nom?.[0] || ''}`.toUpperCase();
+  });
+
+  protected readonly currentUserRole = computed(() => {
+    return this.currentUser()?.role_user || '';
+  });
 
   toggleUserMenu() {
     this.isUserMenuOpen = !this.isUserMenuOpen;
   }
 
   logout() {
-    import('sweetalert2').then((Swal) => {
-      Swal.default.fire({
-        title: 'Déconnexion ?',
-        text: 'Êtes-vous sûr de vouloir vous déconnecter de votre session ?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#006644', // Ton vert primary
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Oui, me déconnecter',
-        cancelButtonText: 'Annuler',
-        background: '#ffffff',
-        customClass: {
-          popup: 'premium-swal-popup',
-          confirmButton: 'premium-swal-confirm',
-          cancelButton: 'premium-swal-cancel'
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.authService.logout().subscribe({
-            next: () => this.router.navigate(['/login']),
-            error: () => this.router.navigate(['/login'])
-          });
-        }
-      });
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
     });
   }
 }
