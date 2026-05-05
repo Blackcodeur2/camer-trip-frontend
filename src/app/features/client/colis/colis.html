@@ -67,10 +67,10 @@
                             <span>{{ colis.station?.nom || 'Gare de départ' }}</span>
                         </div>
 
-                        @if (colis.voyage) {
+                        @if (colis.trajet) {
                             <div class="info-row">
                                 <mat-icon>route</mat-icon>
-                                <span>{{ colis.voyage.trajet?.depart }} → {{ colis.voyage.trajet?.arrivee }}</span>
+                                <span>{{ colis.trajet.depart }} → {{ colis.trajet.arrivee }}</span>
                             </div>
                         }
 
