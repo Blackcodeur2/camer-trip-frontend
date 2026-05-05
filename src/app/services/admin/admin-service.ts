@@ -32,6 +32,12 @@ export class AdminService {
 
   constructor(private http: HttpClient) {}
 
+  getDashboardStats(): Observable<any> {
+    return this.http.get<{ success: boolean; data: any }>(`${this.API}/admin/dashboard`).pipe(
+      map(response => response.data)
+    );
+  }
+
   // ── Profil ──
   getProfile(): Observable<User> {
     return this.http.get<{ success: boolean; data: User }>(`${this.API}/admin/profile`).pipe(

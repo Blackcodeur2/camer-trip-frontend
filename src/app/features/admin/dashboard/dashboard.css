@@ -88,6 +88,8 @@
 .icon-secondary { background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark)); color: var(--color-dark); }
 .icon-accent { background: linear-gradient(135deg, #fecaca, var(--color-accent)); color: white; }
 .icon-dark { background: linear-gradient(135deg, #475569, var(--color-dark)); color: white; }
+.icon-success { background: linear-gradient(135deg, #86efac, #16a34a); color: white; }
+.icon-warning { background: linear-gradient(135deg, #fef08a, #ca8a04); color: white; }
 
 .label {
   font-size: 0.85rem;

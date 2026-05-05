@@ -1,20 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, effect, AfterViewInit, computed } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import Swal from 'sweetalert2';
-import Chart from 'chart.js/auto';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 import { AuthService } from '../../../services/auth/auth-service';
 import { ProprietaireService } from '../../../services/proprietaire/proprietaire-service';
 
 interface Stats {
   agences: number;
-  gares: number;
+  stations: number;
   buses: number;
   trajets: number;
   voyages: number;
   utilisateurs: number;
   chauffeurs: number;
   agents: number;
+  chefs_agence: number;
 }
 
 @Component({
@@ -23,7 +25,7 @@ interface Stats {
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements AfterViewInit {
   private authService = inject(AuthService);
   private proprietaireService = inject(ProprietaireService);
 
@@ -31,8 +33,32 @@ export class Dashboard {
   kycStatus = signal('');
   isSubscribed = signal(false);
   stats = signal<Stats | null>(null);
+  revenueHistory = signal<any[]>([]);
   isLoading = signal(true);
   isPaying = signal(false);
+
+  constructor() {
+    effect(() => {
+      const history = this.revenueHistory();
+      const stats = this.stats();
+      const loading = this.isLoading();
+
+      if (!loading) {
+        setTimeout(() => {
+          if (history.length >= 0) {
+            if (!this.chart) {
+              this.initActivityChart();
+            } else {
+              this.updateActivityChart(history);
+            }
+          }
+          if (stats) {
+            this.initPersonnelChart();
+          }
+        }, 0);
+      }
+    });
+  }
 
   statItems = [
     { key: 'agences', label: 'Agences', icon: 'business' },
@@ -116,14 +142,13 @@ export class Dashboard {
     });
   }
 
- loadStats() {
+  loadStats() {
     this.isLoading.set(true);
     this.proprietaireService.getMyStatistics().subscribe({
       next: (data) => {
-        const statsData = data.data || data;
-        this.stats.set(statsData);
+        this.stats.set(data.stats);
+        this.revenueHistory.set(data.revenue_history);
         this.isLoading.set(false);
-        setTimeout(() => this.initCharts(), 100);
       },
       error: (err) => {
         this.isLoading.set(false);
@@ -146,29 +171,36 @@ export class Dashboard {
     this.initPersonnelChart();
   }
 
+  ngAfterViewInit() {
+    this.initCharts();
+  }
+
   initActivityChart() {
-    const ctx = document.getElementById('activityChart') as HTMLCanvasElement;
+    const canvas = document.getElementById('activityChart') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     if (this.chart) {
       this.chart.destroy();
     }
 
-    const gradient = ctx.getContext('2d')?.createLinearGradient(0, 0, 0, 400);
-    if (gradient) {
-      gradient.addColorStop(0, 'rgba(0, 102, 68, 0.4)');
-      gradient.addColorStop(1, 'rgba(0, 102, 68, 0)');
-    }
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(0, 102, 68, 0.4)');
+    gradient.addColorStop(1, 'rgba(0, 102, 68, 0)');
 
-    this.chart = new Chart(ctx, {
+    const history = this.revenueHistory();
+
+    this.chart = new Chart(canvas, {
       type: 'line',
       data: {
-        labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+        labels: history.length > 0 ? history.map(h => h.label) : ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
         datasets: [{
-          label: 'Réservations de vos Agences',
-          data: [45, 80, 110, 90, 85, 130, 180, 160, 100, 75, 95, 120],
+          label: 'Revenus (FCFA)',
+          data: history.length > 0 ? history.map(h => h.amount) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           borderColor: '#006644',
-          backgroundColor: gradient || 'rgba(0, 102, 68, 0.1)',
+          backgroundColor: gradient,
           fill: true,
           tension: 0.4,
           pointRadius: 4,
@@ -188,14 +220,27 @@ export class Dashboard {
             titleFont: { size: 14, weight: 'bold' },
             padding: 12,
             cornerRadius: 12,
-            displayColors: false
+            displayColors: false,
+            callbacks: {
+              label: (context) => {
+                let label = context.dataset.label || '';
+                if (label) label += ': ';
+                if (context.parsed.y !== null) {
+                  label += new Intl.NumberFormat('fr-FR').format(context.parsed.y) + ' FCFA';
+                }
+                return label;
+              }
+            }
           }
         },
         scales: {
           y: {
             beginAtZero: true,
             grid: { color: '#f1f5f9' },
-            ticks: { font: { size: 11 } }
+            ticks: {
+              font: { size: 11 },
+              callback: (value) => new Intl.NumberFormat('fr-FR', { notation: 'compact' }).format(value as number)
+            }
           },
           x: {
             grid: { display: false },
@@ -204,6 +249,13 @@ export class Dashboard {
         }
       }
     });
+  }
+
+  private updateActivityChart(history: any[]) {
+    if (!this.chart) return;
+    this.chart.data.labels = history.map(h => h.label);
+    this.chart.data.datasets[0].data = history.map(h => h.amount);
+    this.chart.update();
   }
 
   initPersonnelChart() {

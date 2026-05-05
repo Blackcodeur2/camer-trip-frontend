@@ -54,26 +54,30 @@
                     <mat-icon>local_shipping</mat-icon>
                     <span>{{ trip.bus?.immatriculation }}</span>
                 </div>
-                <div class="info-item">
-                    <mat-icon>confirmation_number</mat-icon>
-                    <span>{{ trip.num_voyage }}</span>
-                </div>
+                <mat-icon>confirmation_number</mat-icon>
+                <span>{{ trip.num_voyage }}</span>
             </div>
-
+            <div class="info-item occupancy">
+                <mat-icon>people</mat-icon>
+                <span class="count"><strong>{{ trip.reservations_count ?? 0 }}</strong> / {{ trip.bus?.nb_places ?? 0
+                    }}</span>
+                <span class="free-badge">{{ (trip.bus?.nb_places ?? 0) - (trip.reservations_count ?? 0) }} libres</span>
+            </div>
             <div class="hero-actions">
                 @if (trip.statut === 'en attente') {
-                    <button class="action-btn" (click)="demarrerVoyage(trip.id)" [disabled]="isProcessing()">
-                        <mat-icon>play_circle_filled</mat-icon>
-                        {{ isProcessing() ? 'Chargement...' : 'DÉMARRER' }}
-                    </button>
+                <button class="action-btn" (click)="demarrerVoyage(trip.id)" [disabled]="isProcessing()">
+                    <mat-icon>play_circle_filled</mat-icon>
+                    {{ isProcessing() ? 'Chargement...' : 'DÉMARRER' }}
+                </button>
                 } @else if (trip.statut === 'en cours') {
-                    <button class="action-btn finish" (click)="terminerVoyage(trip.id)" [disabled]="isProcessing()">
-                        <mat-icon>check_circle</mat-icon>
-                        {{ isProcessing() ? 'Chargement...' : 'TERMINER' }}
-                    </button>
+                <button class="action-btn finish" (click)="terminerVoyage(trip.id)" [disabled]="isProcessing()">
+                    <mat-icon>check_circle</mat-icon>
+                    {{ isProcessing() ? 'Chargement...' : 'TERMINER' }}
+                </button>
                 }
             </div>
         </div>
+
 
         <!-- Quick Actions Grid -->
         <section class="quick-actions animate-fade-in">
@@ -117,6 +121,10 @@
                         <div class="trip-meta">
                             <span><mat-icon>schedule</mat-icon> {{ voyage.heure_depart }}</span>
                             <span><mat-icon>directions_bus</mat-icon> {{ voyage.bus?.immatriculation }}</span>
+                            <span class="occupancy-badge">
+                                <mat-icon>people</mat-icon>
+                                {{ (voyage.bus?.nb_places ?? 0) - (voyage.reservations_count ?? 0) }} libres
+                            </span>
                         </div>
                     </div>
                     <mat-icon class="arrow">chevron_right</mat-icon>

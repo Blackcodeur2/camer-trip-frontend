@@ -59,8 +59,11 @@
                     <div class="info-item">
                         <mat-icon>event_seat</mat-icon>
                         <div>
-                            <span class="label">Places</span>
-                            <span class="value">{{ voyage.places_disponibles || 0 }} disponibles</span>
+                            <span class="label">Remplissage</span>
+                            <span class="value">
+                                <strong>{{ voyage.reservations_count ?? 0 }}</strong>/{{ voyage.bus?.nb_places ?? 0 }} 
+                                <small>({{ (voyage.bus?.nb_places ?? 0) - (voyage.reservations_count ?? 0) }} libres)</small>
+                            </span>
                         </div>
                     </div>
                     <div class="info-item">

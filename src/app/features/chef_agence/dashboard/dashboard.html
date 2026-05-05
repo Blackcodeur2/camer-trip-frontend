@@ -100,6 +100,32 @@
                             membres du personnel actifs.</p>
                     </div>
                 </div>
+
+                <!-- Prochains Départs (Occupancy) -->
+                <div class="custom-card">
+                    <div class="card-header">
+                        <h3>Départs à venir</h3>
+                    </div>
+                    <div class="trip-list">
+                        <div class="trip-item" *ngFor="let voyage of liveTrips()">
+                            <div class="trip-info">
+                                <span class="time">{{ voyage.time }}</span>
+                                <span class="route">{{ voyage.route }}</span>
+                                <span class="bus-tag">{{ voyage.bus }}</span>
+                            </div>
+                            <div class="occupancy-info" [class.full]="voyage.isFull">
+                                <div class="counts">
+                                    <span class="occupied">{{ voyage.occupiedSeats }}</span>
+                                    <span class="total">/ {{ voyage.totalSeats }}</span>
+                                </div>
+                                <span class="free-label">{{ voyage.freeSeats }} places libres</span>
+                            </div>
+                        </div>
+                        <div *ngIf="liveTrips().length === 0" class="empty-list">
+                            Aucun départ prévu aujourd'hui
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

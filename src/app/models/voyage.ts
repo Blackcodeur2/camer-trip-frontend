@@ -22,6 +22,7 @@ export interface Voyage {
   trajet?: Trajet;
   bus?: Bus;
   reservations?: Reservation[];
+  reservations_count?: number;
   chauffeur?: User;
 }
 

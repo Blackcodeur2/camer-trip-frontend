@@ -83,11 +83,10 @@
                     </div>
                 </div>
                 <div class="info-row">
-                    <mat-icon>directions_bus</mat-icon>
+                    <mat-icon>people</mat-icon>
                     <div class="text">
-                        <label>Véhicule</label>
-                        <span>{{ voyage()?.bus?.classe_bus || 'Premium Bus' }} ({{ voyage()?.vehicule_immatriculation
-                            }})</span>
+                        <label>Remplissage</label>
+                        <span><strong>{{ occupancyCount() }}</strong>/{{ voyage()?.bus?.nb_places ?? 0 }} sièges occupés <small>({{ freeSeats() }} libres)</small></span>
                     </div>
                 </div>
             </div>

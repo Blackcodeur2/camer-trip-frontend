@@ -358,3 +358,41 @@
 .action-btn { flex: 2; width: auto !important; padding: 1.1rem !important; font-size: 1rem !important; }
 .action-btn.secondary { flex: 1; background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: none; }
 .action-btn.secondary:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+
+/* Occupancy Styles */
+.info-item.occupancy {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    gap: 12px;
+}
+
+.occupancy .count strong {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.free-badge {
+    background: #10b981;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.occupancy-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #10b981 !important;
+    font-weight: 700;
+    margin-left: auto;
+}
+
+.occupancy-badge mat-icon {
+    font-size: 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+}
+

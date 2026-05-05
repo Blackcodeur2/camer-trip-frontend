@@ -425,3 +425,101 @@ h1 {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Trip List (Occupancy View) */
+.trip-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.trip-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--color-surface);
+    border-radius: 18px;
+    transition: all 0.3s;
+}
+
+.trip-item:hover {
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.trip-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.trip-info .time {
+    font-weight: 800;
+    color: var(--color-primary);
+    font-size: 1.1rem;
+}
+
+.trip-info .route {
+    font-weight: 600;
+    color: var(--color-dark);
+}
+
+.bus-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    background: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    width: fit-content;
+}
+
+.occupancy-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.occupancy-info .counts {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+.occupancy-info .occupied {
+    color: var(--color-dark);
+}
+
+.occupancy-info .total {
+    color: var(--color-text-muted);
+}
+
+.free-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    background: rgba(0, 102, 68, 0.05);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.occupancy-info.full .occupied {
+    color: #ef4444;
+}
+
+.occupancy-info.full .free-label {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.empty-list {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+    background: var(--color-surface);
+    border-radius: 16px;
+}
+

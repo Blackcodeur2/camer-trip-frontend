@@ -21,6 +21,7 @@ export class NewReservation implements OnInit, OnDestroy {
   voyageId = signal<number | null>(null);
   voyage = signal<any | null>(null);
   occupiedSeats = signal<number[]>([]);
+  occupancyCount = signal<number>(0);
   selectedSeat = signal<number | null>(null);
   isLoading = signal<boolean>(true);
   isSubmitting = signal<boolean>(false);
@@ -40,6 +41,11 @@ export class NewReservation implements OnInit, OnDestroy {
   seatsArray = computed(() => {
     const count = this.voyage()?.bus?.nb_places || 0;
     return Array.from({ length: count }, (_, i) => i + 1);
+  });
+
+  freeSeats = computed(() => {
+    const total = this.voyage()?.bus?.nb_places || 0;
+    return total - this.occupancyCount();
   });
 
   ngOnInit(): void {
@@ -94,11 +100,15 @@ export class NewReservation implements OnInit, OnDestroy {
 
   loadOccupations(): void {
     if (!this.voyageId()) return;
-    const occupied = this.voyage()?.reservations
-      ?.filter((r: any) => r.statut === 'validee')
-      ?.map((r: any) => r.place) || [];
+    
+    // On considère occupé tout ce qui n'est pas annulé
+    const activeReservations = this.voyage()?.reservations
+      ?.filter((r: any) => r.statut !== 'annule') || [];
+      
+    const occupied = activeReservations.map((r: any) => r.place);
     
     this.occupiedSeats.set(occupied);
+    this.occupancyCount.set(activeReservations.length);
     this.isLoading.set(false);
   }
 

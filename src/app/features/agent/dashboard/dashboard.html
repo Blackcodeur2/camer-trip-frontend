@@ -43,6 +43,30 @@
         </div>
     </div>
 
+    <section class="upcoming-trips animate-fade-in" style="margin-bottom: 2rem;">
+        <h2>Départs à venir (Remplissage)</h2>
+        <div class="trips-grid">
+            <div class="trip-item" *ngFor="let voyage of liveTrips()">
+                <div class="trip-main">
+                    <span class="time">{{ voyage.time }}</span>
+                    <span class="route">{{ voyage.route }}</span>
+                    <span class="bus">{{ voyage.bus }}</span>
+                </div>
+                <div class="occupancy-stats">
+                    <div class="seat-count">
+                        <strong>{{ voyage.occupiedSeats }}</strong> / {{ voyage.totalSeats }}
+                    </div>
+                    <span class="free-badge" [class.full]="voyage.isFull">
+                        {{ voyage.isFull ? 'Complet' : voyage.freeSeats + ' places libres' }}
+                    </span>
+                </div>
+            </div>
+            <div *ngIf="liveTrips().length === 0" class="empty-state">
+                Aucun départ prévu prochainement.
+            </div>
+        </div>
+    </section>
+
     <section class="recent-actions">
         <h2>Actions Rapides</h2>
         <div class="actions-grid">

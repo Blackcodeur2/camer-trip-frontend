@@ -24,7 +24,6 @@ export class AgentLayout {
     { label: 'Nouvelle reservation', route: '/agent/booking/new', icon: 'add' },
     { label: 'Reservations', route: '/agent/reservations', icon: 'list' },
     { label: 'Gestion Colis', route: '/agent/colis', icon: 'inventory_2' },
-    { label: 'Historique', route: '/agent/history', icon: 'history' },
   ];
 
   protected readonly userInitials = computed(() => {

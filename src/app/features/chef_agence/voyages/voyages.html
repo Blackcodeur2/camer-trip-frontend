@@ -103,6 +103,7 @@
                     <th>Date & Heure</th>
                     <th>Trajet</th>
                     <th>Chauffeur</th>
+                    <th>Remplissage</th>
                     <th>Statut</th>
                     <th style="text-align: right;">Actions</th>
                 </tr>
@@ -130,6 +131,12 @@
                                 {{ (voyage.chauffeur?.prenom?.[0] || '') + (voyage.chauffeur?.nom?.[0] || '') }}
                             </div>
                             <span style="font-weight: 700; font-size: 0.9rem;">{{ voyage.chauffeur?.nom }} {{ voyage.chauffeur?.prenom }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="occupancy-cell">
+                            <span class="count"><strong>{{ voyage.reservations_count ?? 0 }}</strong> / {{ voyage.bus?.nb_places ?? 0 }}</span>
+                            <span class="free-label">{{ (voyage.bus?.nb_places ?? 0) - (voyage.reservations_count ?? 0) }} libres</span>
                         </div>
                     </td>
                     <td>

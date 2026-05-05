@@ -40,8 +40,24 @@
     <div class="stat-card">
       <div class="icon icon-accent"><mat-icon fontIcon="location_on"></mat-icon></div>
       <div class="stat-info">
-        <span class="value">{{ totalGares() }}</span>
+        <span class="value">{{ totalStations() }}</span>
         <span class="label">Stations</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon icon-success"><mat-icon fontIcon="explore"></mat-icon></div>
+      <div class="stat-info">
+        <span class="value">{{ totalVoyages() | number }}</span>
+        <span class="label">Voyages</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="icon icon-warning"><mat-icon fontIcon="payments"></mat-icon></div>
+      <div class="stat-info">
+        <span class="value">{{ totalRevenue() | number }} <small>FCFA</small></span>
+        <span class="label">Revenu Global</span>
       </div>
     </div>
   </div>

@@ -175,6 +175,10 @@
             <div class="pvc-details">
               <span class="pvc-chip"><mat-icon>calendar_today</mat-icon>{{ voyage.date_depart | date:'dd MMM' }}</span>
               <span class="pvc-chip"><mat-icon>schedule</mat-icon>{{ voyage.heure_depart }}</span>
+              <span class="pvc-chip free-seats" *ngIf="voyage.reservations_count !== undefined">
+                <mat-icon>event_seat</mat-icon>
+                {{ (voyage.bus?.nb_places ?? 0) - (voyage.reservations_count ?? 0) }} places
+              </span>
               <span class="pvc-chip pvc-price">{{ voyage.prix | number }} FCFA</span>
             </div>
             <a routerLink="/auth/register" class="pvc-cta">Réserver</a>

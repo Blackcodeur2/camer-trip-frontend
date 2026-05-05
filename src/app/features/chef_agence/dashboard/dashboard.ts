@@ -24,8 +24,15 @@ export class Dashboard implements AfterViewInit {
     // Reactively update the chart when revenue data changes
     effect(() => {
       const data = this.revenueChart();
-      if (data.length > 0 && this.chart) {
-        this.updateChart(data);
+      const loading = this.isLoading();
+      if (!loading && data.length >= 0) {
+        setTimeout(() => {
+          if (!this.chart) {
+            this.initActivityChart();
+          } else {
+            this.updateChart(data);
+          }
+        }, 0);
       }
     });
   }
@@ -69,8 +76,11 @@ export class Dashboard implements AfterViewInit {
     const maxAmount = Math.max(...history.map((h: any) => h.amount), 50000); // Scale relative to max or 50k
 
     return history.map((item: any) => {
-      const date = new Date(item.date);
-      const label = date.toLocaleDateString('fr-FR', { weekday: 'short' });
+      const [year, month, day] = item.date.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      let label = date.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '');
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+      
       return {
         day: label,
         amount: item.amount,

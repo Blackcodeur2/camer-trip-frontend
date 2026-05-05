@@ -15,7 +15,7 @@ export class AgentService {
   private authService = inject(AuthService);
   private readonly API = environment.apiUrl;
 
-  getDashboardStats(): Observable<{ sales_today: number; active_reservations: number; revenue_today: number; pending_validations: number }> {
+  getDashboardStats(): Observable<any> {
     return this.http.get<{ statut: boolean; data: any }>(`${this.API}/${this.getPrefix()}/dashboard`)
       .pipe(map((response: { statut: boolean; data: any }) => response.data));
   }
