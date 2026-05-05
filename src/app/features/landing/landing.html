@@ -177,7 +177,7 @@
               <span class="pvc-chip"><mat-icon>schedule</mat-icon>{{ voyage.heure_depart }}</span>
               <span class="pvc-chip free-seats" *ngIf="voyage.reservations_count !== undefined">
                 <mat-icon>event_seat</mat-icon>
-                {{ (voyage.bus?.nb_places ?? 0) - (voyage.reservations_count ?? 0) }} places
+                {{ (voyage.bus?.nb_places ?? 0) - voyage.reservations_count }} places
               </span>
               <span class="pvc-chip pvc-price">{{ voyage.prix | number }} FCFA</span>
             </div>

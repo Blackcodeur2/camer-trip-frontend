@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { AdminService } from '../../../services/admin/admin-service';
 
 @Component({
   selector: 'app-abonnements',
   standalone: true,
-  imports: [CommonModule, MatIconModule, DatePipe, CurrencyPipe],
+  imports: [CommonModule, MatIconModule, DatePipe, CurrencyPipe, NgClass],
   templateUrl: './abonnements.html',
   styleUrl: './abonnements.css'
 })
