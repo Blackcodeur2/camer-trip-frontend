@@ -1,3 +1,4 @@
+import { Station } from "./station";
 import { Trajet } from "./trajet";
 import { User } from "./user";
 import { Voyage } from "./voyage";
@@ -14,6 +15,8 @@ export interface Colis {
     created_at: string | number | Date;
     statut: string;
     trajet?: Trajet;
+    description: string;
+    station?: Station;
     id: number;
     user_id: number;
 }

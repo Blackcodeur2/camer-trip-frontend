@@ -1,0 +1,102 @@
+<div class="colis-container">
+    <div class="header-section">
+        <h1>Mes Colis</h1>
+        
+        <div class="search-box">
+            <mat-icon>search</mat-icon>
+            <input 
+                type="text" 
+                placeholder="Rechercher un colis..." 
+                (input)="onSearch($event)"
+            >
+        </div>
+    </div>
+
+    <div class="tabs-container">
+        <div 
+            class="tab-item" 
+            [class.active]="activeTab() === 'sent'"
+            (click)="setTab('sent')"
+        >
+            <mat-icon>outbox</mat-icon>
+            Colis Envoyés
+        </div>
+        <div 
+            class="tab-item" 
+            [class.active]="activeTab() === 'received'"
+            (click)="setTab('received')"
+        >
+            <mat-icon>move_to_inbox</mat-icon>
+            Colis Reçus
+        </div>
+    </div>
+
+    @if (isLoading()) {
+        <div class="loading-state" style="text-align: center; padding: 4rem;">
+            <div class="spinner"></div>
+            <p>Chargement de vos colis...</p>
+        </div>
+    } @else {
+        <div class="colis-grid">
+            @for (colis of filteredDisplayList(); track colis.id) {
+                <div class="colis-card">
+                    <div class="card-header">
+                        <div class="colis-icon">
+                            <mat-icon>{{ activeTab() === 'sent' ? 'local_shipping' : 'inventory_2' }}</mat-icon>
+                        </div>
+                        <span class="status-badge" [ngClass]="getStatusClass(colis.statut)">
+                            {{ colis.statut }}
+                        </span>
+                    </div>
+
+                    <div class="colis-info">
+                        <h3>{{ colis.nom_colis }}</h3>
+                        
+                        <div class="info-row">
+                            <mat-icon>person</mat-icon>
+                            <span>{{ activeTab() === 'sent' ? 'Destinataire: ' + colis.nom_destinataire : 'Envoyé par: ' + (colis.user?.nom || 'Inconnu') }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <mat-icon>phone</mat-icon>
+                            <span>{{ activeTab() === 'sent' ? colis.tel_destinataire : colis.user?.telephone }}</span>
+                        </div>
+
+                        <div class="info-row">
+                            <mat-icon>location_on</mat-icon>
+                            <span>{{ colis.station?.nom || 'Gare de départ' }}</span>
+                        </div>
+
+                        @if (colis.voyage) {
+                            <div class="info-row">
+                                <mat-icon>route</mat-icon>
+                                <span>{{ colis.voyage.trajet?.depart }} → {{ colis.voyage.trajet?.arrivee }}</span>
+                            </div>
+                        }
+
+                        @if (colis.description) {
+                            <p class="description">{{ colis.description }}</p>
+                        }
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="footer-left">
+                            <span class="price-tag">{{ colis.prix | currency:'XAF':'symbol':'1.0-0' }}</span>
+                            <span class="weight-tag">{{ colis.poids }} kg</span>
+                        </div>
+                        
+                        <button class="btn-download" (click)="downloadReceipt(colis)" title="Télécharger le bordereau">
+                            <mat-icon>download</mat-icon>
+                        </button>
+                    </div>
+                </div>
+            } @empty {
+                <div class="empty-state">
+                    <mat-icon>{{ activeTab() === 'sent' ? 'unarchive' : 'history_toggle_off' }}</mat-icon>
+                    <h2>Aucun colis trouvé</h2>
+                    <p>Vous n'avez pas encore de colis dans cette catégorie.</p>
+                </div>
+            }
+        </div>
+    }
+</div>
