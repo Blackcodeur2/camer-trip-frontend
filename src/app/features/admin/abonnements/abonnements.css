@@ -248,3 +248,85 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.search-bar mat-icon { color: #94a3b8; }
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 0.9375rem;
+  color: #0f172a;
+  background: transparent;
+}
+
+/* Owner cell with avatar */
+.owner-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.owner-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.phone { font-weight: 600; color: #475569; }
+
+/* Abonnement info */
+.abo-info { display: flex; flex-direction: column; gap: 2px; }
+.abo-montant { font-weight: 700; color: #059669; font-size: 0.9375rem; }
+.abo-duree { font-size: 0.75rem; color: #64748b; font-weight: 600; }
+
+/* Expiry date */
+.expiry-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.expiry-date mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+/* Days badge */
+.days-badge {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* Expiry colour variants */
+.expiry-ok { color: #15803d; }
+.expiry-ok.days-badge { background: #dcfce7; color: #15803d; }
+.expiry-soon { color: #b45309; }
+.expiry-soon.days-badge { background: #fef3c7; color: #b45309; }
+.expiry-expired { color: #b91c1c; }
+.expiry-expired.days-badge { background: #fee2e2; color: #b91c1c; }
+
+.text-muted { color: #94a3b8; font-style: italic; }
+
+/* Warning stat card */
+.stat-icon.warning { background: #fffbeb; color: #d97706; }
+

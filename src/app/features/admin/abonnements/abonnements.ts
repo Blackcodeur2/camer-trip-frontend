@@ -2,7 +2,6 @@ import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { AdminService } from '../../../services/admin/admin-service';
-import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-abonnements',
@@ -17,43 +16,51 @@ export class Abonnements implements OnInit {
   abonnements = signal<any[]>([]);
   isLoading = signal(true);
   error = signal<string | null>(null);
+  searchQuery = signal('');
 
-  // Statistics
-  stats = computed(() => {
-    const list = this.abonnements();
-    return {
-      total: list.length,
-      active: list.filter(a => a.statut === 'en cours').length,
-      expired: list.filter(a => a.statut === 'termine').length,
-      revenue: list.reduce((sum, a) => sum + Number(a.montant || 0), 0)
-    };
+  filteredAbonnements = computed(() => {
+    const q = this.searchQuery().toLowerCase();
+    if (!q) return this.abonnements();
+    return this.abonnements().filter(a =>
+      `${a.nom} ${a.prenom} ${a.email}`.toLowerCase().includes(q)
+    );
   });
 
-  ngOnInit() {
-    this.loadAbonnements();
-  }
+  stats = computed(() => {
+    const list = this.abonnements();
+    const now = new Date();
+    const expiringSoon = list.filter(a => {
+      if (!a.subscription_expires_at) return false;
+      const exp = new Date(a.subscription_expires_at);
+      const diff = (exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+      return diff >= 0 && diff <= 30;
+    });
+    const active = list.filter(a => a.abonnement?.statut === 'en cours');
+    const totalRevenue = list.reduce((sum, a) => sum + Number(a.abonnement?.montant ?? 0), 0);
+    return { total: list.length, active: active.length, expiringSoon: expiringSoon.length, revenue: totalRevenue };
+  });
+
+  ngOnInit() { this.loadAbonnements(); }
 
   loadAbonnements() {
     this.isLoading.set(true);
     this.error.set(null);
     this.adminService.getAbonnements().subscribe({
-      next: (data) => {
-        this.abonnements.set(data);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Erreur chargement abonnements:', err);
-        this.error.set('Impossible de charger les abonnements.');
-        this.isLoading.set(false);
-      }
+      next: (data) => { this.abonnements.set(data); this.isLoading.set(false); },
+      error: () => { this.error.set('Impossible de charger les abonnements.'); this.isLoading.set(false); }
     });
   }
 
-  getStatusClass(statut: string): string {
-    switch (statut) {
-      case 'en cours': return 'status-active';
-      case 'termine': return 'status-expired';
-      default: return 'status-unknown';
-    }
+  getDaysRemaining(expiresAt: string): number {
+    if (!expiresAt) return 0;
+    const diff = new Date(expiresAt).getTime() - new Date().getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }
+
+  getExpiryClass(expiresAt: string): string {
+    const days = this.getDaysRemaining(expiresAt);
+    if (days < 0) return 'expiry-expired';
+    if (days <= 30) return 'expiry-soon';
+    return 'expiry-ok';
   }
 }
