@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, effect, AfterViewInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth-service';
 import { ChefAgenceService } from '../../../services/chef_agence/chef-agence-service';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
@@ -11,11 +14,21 @@ import { ChefAgenceService } from '../../../services/chef_agence/chef-agence-ser
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
-export class Dashboard {
+export class Dashboard implements AfterViewInit {
   private authService = inject(AuthService);
   private chefAgenceService = inject(ChefAgenceService);
   private router = inject(Router);
+  chart: any;
 
+  constructor() {
+    // Reactively update the chart when revenue data changes
+    effect(() => {
+      const data = this.revenueChart();
+      if (data.length > 0 && this.chart) {
+        this.updateChart(data);
+      }
+    });
+  }
   isLoading = signal(true);
   dashboardData = signal<any>(null);
   user = this.authService.currentUser;
@@ -66,6 +79,93 @@ export class Dashboard {
     });
   });
 
+
+
+  initActivityChart() {
+    const canvas = document.getElementById('activityChart') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(0, 102, 68, 0.4)');
+    gradient.addColorStop(1, 'rgba(0, 102, 68, 0)');
+
+    const revenueData = this.revenueChart();
+    const labels = revenueData.map((d: any) => d.day);
+    const amounts = revenueData.map((d: any) => d.amount);
+
+    this.chart = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: labels.length > 0 ? labels : ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+        datasets: [{
+          label: 'Revenus (FCFA)',
+          data: amounts.length > 0 ? amounts : [0, 0, 0, 0, 0, 0, 0],
+          borderColor: '#006644',
+          backgroundColor: gradient,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#006644',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleFont: { size: 14, weight: 'bold' },
+            padding: 12,
+            cornerRadius: 12,
+            displayColors: false,
+            callbacks: {
+              label: (context) => {
+                let label = context.dataset.label || '';
+                if (label) label += ': ';
+                if (context.parsed.y !== null) {
+                  label += new Intl.NumberFormat('fr-FR').format(context.parsed.y) + ' FCFA';
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: '#f1f5f9' },
+            ticks: {
+              font: { size: 11 },
+              callback: (value) => new Intl.NumberFormat('fr-FR', { notation: 'compact' }).format(value as number)
+            }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 11 } }
+          }
+        }
+      }
+    });
+  }
+
+  private updateChart(data: any[]) {
+    if (!this.chart) return;
+    this.chart.data.labels = data.map((d: any) => d.day);
+    this.chart.data.datasets[0].data = data.map((d: any) => d.amount);
+    this.chart.update();
+  }
+
   fleetStatus = computed(() => {
     const raw = this.dashboardData()?.fleet_status ?? [];
     const total = Math.max(this.totalBuses(), 1);
@@ -95,6 +195,10 @@ export class Dashboard {
 
   ngOnInit() {
     this.loadStats();
+  }
+
+  ngAfterViewInit() {
+    this.initActivityChart();
   }
 
   navigateTo(path: string) {

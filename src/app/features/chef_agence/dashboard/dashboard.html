@@ -56,17 +56,8 @@
             <div class="left-col">
                 <!-- Graphique Revenus Hebdo -->
                 <div class="custom-card chart-card">
-                    <div class="card-header">
-                        <h3>Évolution des Revenus</h3>
-                        <span class="period">7 derniers jours</span>
-                    </div>
                     <div class="chart-container">
-                        <div class="bar-group" *ngFor="let data of revenueChart()">
-                            <div class="bar-wrapper" [title]="data.amount | number">
-                                <div class="bar" [style.height.%]="data.height"></div>
-                            </div>
-                            <span class="day-label">{{ data.day }}</span>
-                        </div>
+                        <canvas id="activityChart"></canvas>
                     </div>
                 </div>
 
