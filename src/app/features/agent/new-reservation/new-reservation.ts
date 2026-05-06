@@ -96,7 +96,7 @@ export class NewReservation {
     if (this.currentStep() === 1) {
       this.searchVoyages();
     } else if (this.currentStep() === 3) {
-      if (!this.selectedClient() && !this.isNewClient()) {
+      if (!this.selectedClient() && !this.isNewClient() && !this.isGuestClient()) {
         Swal.fire('Attention', 'Veuillez sélectionner ou créer un client', 'warning');
         return;
       }
