@@ -24,6 +24,7 @@
     "@fontsource/open-sans": "^5.2.7",
     "@fontsource/poppins": "^5.2.7",
     "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
     "@sweetalert2/ngx-sweetalert2": "^14.1.4",
     "chart.js": "^4.5.1",
     "material-icons": "^1.13.14",
