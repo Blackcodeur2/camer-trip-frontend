@@ -288,10 +288,14 @@
 
                         <div class="seats-grid">
                             @for (seat of getTotalSeatsArray(); track seat) {
-                            <button class="seat" [class.occupied]="!isSeatAvailable(seat)"
+                            <button class="seat" [class.occupied]="!isSeatAvailable(seat) || seat === 1"
                                 [class.selected]="selectedSeat() === seat.toString()"
-                                [disabled]="!isSeatAvailable(seat)" (click)="selectSeat(seat.toString())">
-                                {{ seat }}
+                                [disabled]="!isSeatAvailable(seat) || seat === 1" (click)="seat !== 1 ? selectSeat(seat.toString()) : null">
+                                @if (seat === 1) {
+                                    <mat-icon style="font-size: 20px; width: 20px; height: 20px; margin-top: 4px;">airline_seat_recline_normal</mat-icon>
+                                } @else {
+                                    {{ seat }}
+                                }
                             </button>
                             }
                         </div>

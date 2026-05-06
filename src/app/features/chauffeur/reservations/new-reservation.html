@@ -24,12 +24,16 @@
             </div>
 
             <!-- Grille des sièges -->
-            <div class="seats-grid" [style.grid-template-columns]="'repeat(' + busColumns() + ', 1fr)'">
+            <div class="seats-grid" style="grid-template-columns: repeat(5, 1fr);">
                 <ng-container *ngFor="let seat of seatsArray()">
                     <div class="seat-wrapper" [class.occupied]="isOccupied(seat)" [class.selected]="selectedSeat() === seat"
-                        (click)="selectSeat(seat)">
+                        (click)="seat !== 1 ? selectSeat(seat) : null">
                         <div class="seat">
-                            <span class="seat-num">{{ seat }}</span>
+                            @if (seat === 1) {
+                                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">airline_seat_recline_normal</mat-icon>
+                            } @else {
+                                <span class="seat-num">{{ seat }}</span>
+                            }
                         </div>
                     </div>
                 </ng-container>

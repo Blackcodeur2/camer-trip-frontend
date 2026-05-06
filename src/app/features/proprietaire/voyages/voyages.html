@@ -61,8 +61,8 @@
                         <div>
                             <span class="label">Remplissage</span>
                             <span class="value">
-                                <strong>{{ voyage.reservations_count ?? 0 }}</strong>/{{ voyage.bus?.nb_places ?? 0 }} 
-                                <small>({{ (voyage.bus?.nb_places ?? 0) - (voyage.reservations_count ?? 0) }} libres)</small>
+                                <strong>{{ voyage.reservations_count ?? 0 }}</strong>/{{ (voyage.bus?.nb_places ?? 1) - 1 }} 
+                                <small>({{ (voyage.bus?.nb_places ?? 1) - 1 - (voyage.reservations_count ?? 0) }} libres)</small>
                             </span>
                         </div>
                     </div>

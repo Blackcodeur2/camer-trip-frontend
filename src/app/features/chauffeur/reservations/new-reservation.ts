@@ -103,11 +103,11 @@ export class ChauffeurNewReservation implements OnInit, OnDestroy {
   }
 
   isOccupied(seat: number): boolean {
-    return this.occupiedSeats().includes(seat);
+    return seat === 1 || this.occupiedSeats().includes(seat);
   }
 
   selectSeat(seat: number): void {
-    if (this.isOccupied(seat)) return;
+    if (seat === 1 || this.isOccupied(seat)) return;
     console.log('Seat selected:', seat);
     this.selectedSeat.set(seat === this.selectedSeat() ? null : seat);
   }

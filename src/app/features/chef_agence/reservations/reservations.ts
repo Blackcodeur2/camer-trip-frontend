@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -20,6 +21,7 @@ export class Reservations {
   private chefAgenceService = inject(ChefAgenceService);
   private authService = inject(AuthService);
   private ticketService = inject(TicketService);
+  private router = inject(Router);
 
   reservations = signal<any[]>([]);
   isLoading = signal(true);
@@ -53,6 +55,15 @@ export class Reservations {
         this.reservations.set(data);
         this.isLoading.set(false);
       });
+  }
+
+  newReservation() {
+    const role = this.authService.currentUser()?.role_user;
+    if (role === 'CHEF_AGENCE') {
+      this.router.navigate(['/chef_agence/reservations/new']);
+    } else {
+      this.router.navigate(['/agent/booking/new']);
+    }
   }
 
   cancelReservation(id: number) {

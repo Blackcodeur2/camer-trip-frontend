@@ -264,6 +264,6 @@ export class NewReservation {
   }
 
   isSeatAvailable(seat: number): boolean {
-    return this.availableSeats().includes(seat.toString());
+    return seat !== 1 && this.availableSeats().includes(seat.toString());
   }
 }

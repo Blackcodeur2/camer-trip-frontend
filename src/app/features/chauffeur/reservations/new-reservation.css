@@ -71,6 +71,11 @@
     justify-content: center;
 }
 
+/* Middle aisle after 3 seats */
+.seats-grid .seat-wrapper:nth-child(5n+3) {
+    margin-right: 1.5rem;
+}
+
 .seat-wrapper {
     width: 40px;
     height: 40px;

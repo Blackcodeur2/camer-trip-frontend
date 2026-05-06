@@ -135,8 +135,8 @@
                     </td>
                     <td>
                         <div class="occupancy-cell">
-                            <span class="count"><strong>{{ voyage.reservations_count ?? 0 }}</strong> / {{ voyage.bus?.nb_places ?? 0 }}</span>
-                            <span class="free-label">{{ (voyage.bus?.nb_places ?? 0) - (voyage.reservations_count ?? 0) }} libres</span>
+                            <span class="count"><strong>{{ voyage.reservations_count ?? 0 }}</strong> / {{ (voyage.bus?.nb_places ?? 1) - 1 }}</span>
+                            <span class="free-label">{{ (voyage.bus?.nb_places ?? 1) - 1 - (voyage.reservations_count ?? 0) }} libres</span>
                         </div>
                     </td>
                     <td>

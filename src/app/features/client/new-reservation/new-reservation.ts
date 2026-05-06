@@ -44,8 +44,8 @@ export class NewReservation implements OnInit, OnDestroy {
   });
 
   freeSeats = computed(() => {
-    const total = this.voyage()?.bus?.nb_places || 0;
-    return total - this.occupancyCount();
+    const total = this.voyage()?.bus?.nb_places || 1;
+    return (total - 1) - this.occupancyCount();
   });
 
   ngOnInit(): void {
@@ -113,11 +113,11 @@ export class NewReservation implements OnInit, OnDestroy {
   }
 
   isOccupied(seat: number): boolean {
-    return this.occupiedSeats().includes(seat);
+    return seat === 1 || this.occupiedSeats().includes(seat);
   }
 
   selectSeat(seat: number): void {
-    if (this.isOccupied(seat)) return;
+    if (seat === 1 || this.isOccupied(seat)) return;
     this.selectedSeat.set(seat === this.selectedSeat() ? null : seat);
   }
 

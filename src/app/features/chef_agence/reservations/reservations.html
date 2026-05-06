@@ -11,6 +11,9 @@
                     <span class="value">{{ reservations().length }}</span>
                 </div>
             </div>
+            <button class="btn-primary" (click)="newReservation()" style="display: flex; align-items: center; gap: 0.5rem; background: var(--color-primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                <mat-icon>add</mat-icon> <span>Nouvelle</span>
+            </button>
             @if (isChefAgence()) {
             <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
                 <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>

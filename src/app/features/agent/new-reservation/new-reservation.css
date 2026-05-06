@@ -407,12 +407,12 @@
 
 .seats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
 }
 
-/* Middle aisle after 2 seats */
-.seats-grid .seat:nth-child(4n+2) {
+/* Middle aisle after 3 seats */
+.seats-grid .seat:nth-child(5n+3) {
     margin-right: 1.5rem;
 }
 

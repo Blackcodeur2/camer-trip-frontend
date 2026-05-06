@@ -28,28 +28,20 @@
                     </div>
 
                     <!-- Seats Layout -->
-                    <div class="seats-grid"
-                        [style.grid-template-columns]="isSmallBus() ? 'repeat(2, 1fr) 40px 1fr' : 'repeat(2, 1fr) 40px repeat(2, 1fr)'">
+                    <div class="seats-grid" style="grid-template-columns: repeat(3, 1fr) 40px repeat(2, 1fr);">
                         @for (seat of seatsArray(); track seat) {
-                        <!-- Add Aisle placeholder every N seats -->
-                        @if (isSmallBus()) {
-                        <!-- Column 1, 2, Aisle, 3 -->
+                        <!-- Column 1, 2, 3, Aisle, 4, 5 -->
                         <button class="seat" [class.occupied]="isOccupied(seat)"
-                            [class.selected]="selectedSeat() === seat" (click)="selectSeat(seat)"
-                            [attr.aria-label]="'Siège ' + seat">
-                            <span class="seat-num">{{ seat }}</span>
-                            <div class="seat-icon"></div>
+                            [class.selected]="selectedSeat() === seat" (click)="seat !== 1 ? selectSeat(seat) : null"
+                            [attr.aria-label]="'Siège ' + seat" [disabled]="seat === 1">
+                            @if (seat === 1) {
+                                <mat-icon style="font-size: 24px; width: 24px; height: 24px; color: #94a3b8;">airline_seat_recline_normal</mat-icon>
+                            } @else {
+                                <span class="seat-num">{{ seat }}</span>
+                                <div class="seat-icon"></div>
+                            }
                         </button>
-                        @if (seat % 3 === 2) { <div class="aisle"></div> }
-                        } @else {
-                        <!-- Column 1, 2, Aisle, 3, 4 -->
-                        <button class="seat" [class.occupied]="isOccupied(seat)"
-                            [class.selected]="selectedSeat() === seat" (click)="selectSeat(seat)">
-                            <span class="seat-num">{{ seat }}</span>
-                            <div class="seat-icon"></div>
-                        </button>
-                        @if (seat % 4 === 2) { <div class="aisle"></div> }
-                        }
+                        @if (seat % 5 === 3) { <div class="aisle"></div> }
                         }
                     </div>
                 </div>
@@ -86,7 +78,7 @@
                     <mat-icon>people</mat-icon>
                     <div class="text">
                         <label>Remplissage</label>
-                        <span><strong>{{ occupancyCount() }}</strong>/{{ voyage()?.bus?.nb_places ?? 0 }} sièges occupés <small>({{ freeSeats() }} libres)</small></span>
+                        <span><strong>{{ occupancyCount() }}</strong>/{{ (voyage()?.bus?.nb_places ?? 1) - 1 }} sièges occupés <small>({{ freeSeats() }} libres)</small></span>
                     </div>
                 </div>
             </div>
