@@ -113,6 +113,14 @@ export class ChefAgenceService {
       .pipe(map(response => response.data));
   }
 
+  updateIncidentStatus(id: number, statut: string): Observable<any> {
+    return this.http.patch<any>(`${this.API}/chef-agence/incidents/${id}/status`, { statut });
+  }
+
+  exportIncidentsPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/export-incidents`, { responseType: 'blob' });
+  }
+
   // ── Personnels ──
   getPersonnels(): Observable<any[]> {
     return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/chef-agence/personnels`)
