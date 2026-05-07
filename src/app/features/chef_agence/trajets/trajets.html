@@ -4,7 +4,19 @@
             <h1 class="page-title">Gestion des Trajets</h1>
             <p class="page-subtitle">Définissez vos trajets et les prix associés.</p>
         </div>
-        <div style="display: flex; gap: 1rem;">
+        <div class="header-actions">
+            <div class="search-box">
+                <mat-icon>search</mat-icon>
+                <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+                    placeholder="Filtrer par ville..." />
+            </div>
+            
+            <select class="filter-select" (change)="selectedType.set($any($event.target).value)">
+                <option value="">Tous les types</option>
+                <option value="vip">VIP</option>
+                <option value="classique">Classique</option>
+            </select>
+
             <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
                 <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
                 <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
@@ -100,9 +112,12 @@
             </thead>
             <tbody>
                 @for (route of paginatedRoutes(); track route.id) {
-                <tr>
+                <tr [class.most-profitable]="route.id === mostProfitableTrajetId()">
                     <td style="text-align: center;">
                         <span class="ref-badge">#{{ route.id }}</span>
+                        @if (route.id === mostProfitableTrajetId()) {
+                            <mat-icon class="profit-star" title="Le plus rentable">stars</mat-icon>
+                        }
                     </td>
                     <td>
                         <div class="route-display">
@@ -132,10 +147,10 @@
                         </div>
                     </td>
                     <td>
-                        <span
-                            class="status-badge status--{{ route.type_trajet?.toLowerCase() === 'vip' ? 'success' : 'active' }}">
-                            {{ route.type_trajet }}
-                        </span>
+                        <div class="stats-info">
+                            <span class="revenue">{{ route.revenue | number }} FCFA</span>
+                            <span class="count">{{ route.voyages_count }} voyages</span>
+                        </div>
                     </td>
                     <td style="text-align: right;">
                         <div class="action-btn-group" style="justify-content: flex-end;">

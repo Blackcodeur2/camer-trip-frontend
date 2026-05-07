@@ -24,7 +24,7 @@ export interface CreateGerantPayload {
   telephone: string;
   num_cni: string;
   date_naissance: string;
-  station_id: number;
+  station_id: number | null| undefined;
   password?: string;
   password_confirmation?: string;
 }
@@ -111,8 +111,12 @@ export class ProprietaireService {
   }
 
   // ── Statistiques ──
-  getMyStatistics(): Observable<any> {
-    return this.http.get<{ statut: boolean; data: any }>(`${this.API}/proprietaire/statistiques`)
+  getMyStatistics(stationId?: number): Observable<any> {
+    let url = `${this.API}/proprietaire/statistiques`;
+    if (stationId) {
+      url += `?station_id=${stationId}`;
+    }
+    return this.http.get<{ statut: boolean; data: any }>(url)
       .pipe(map(response => response.data));
   }
 
@@ -154,6 +158,21 @@ export class ProprietaireService {
       reportProgress: true,
       observe: 'events'
     });
+  }
+
+  getMySubscription(): Observable<any> {
+    return this.http.get<any>(`${this.API}/proprietaire/my-subscription`)
+      .pipe(map(res => res.data));
+  }
+
+  getKYCDocuments(): Observable<any> {
+    return this.http.get<any>(`${this.API}/proprietaire/documents`);
+  }
+
+  resubmitKYCDocument(id: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('fichier', file);
+    return this.http.post<any>(`${this.API}/proprietaire/documents/${id}`, formData);
   }
 
   initiateSubscriptionPayment(phone: string): Observable<any> {

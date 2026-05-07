@@ -145,6 +145,25 @@
     color: var(--color-dark);
 }
 
+.filter-select {
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    background: white;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-dark);
+    outline: none;
+    transition: all 0.3s;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.filter-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(0, 102, 68, 0.05);
+}
+
 /* Buttons */
 .btn-primary {
     display: inline-flex;

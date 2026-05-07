@@ -7,5 +7,7 @@ export interface Trajet {
   type_trajet?: string;
   prix?: number;
   distance_km: number;
+  revenue?: number;
+  voyages_count?: number;
 }
 

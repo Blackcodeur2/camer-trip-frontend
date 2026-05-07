@@ -34,7 +34,12 @@ import { RouterModule } from '@angular/router';
                 </div>
                 <div class="item-content">
                   <p class="title">{{ notif.title }}</p>
-                  <p class="message">{{ notif.message }}</p>
+                  <p class="message">
+                    {{ notif.message }}
+                    @if (notif.data?.actor) {
+                      <br><small class="actor">Par : {{ notif.data.actor }}</small>
+                    }
+                  </p>
                   <span class="time">{{ notif.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
                 </div>
                 <div class="item-actions">
@@ -161,11 +166,14 @@ import { RouterModule } from '@angular/router';
       flex-shrink: 0;
     }
     .item-icon.profile_update { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+    .item-icon.INCIDENT { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    .item-icon.VOYAGE_CANCELLED { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
     .item-icon.info { background: rgba(100, 116, 139, 0.1); color: #64748b; }
     .item-icon mat-icon { font-size: 18px; width: 18px; height: 18px; }
     .item-content { flex: 1; min-width: 0; }
     .title { margin: 0; font-size: 0.85rem; font-weight: 700; color: #1e293b; }
     .message { margin: 0.1rem 0; font-size: 0.75rem; color: #64748b; line-height: 1.4; }
+    .actor { color: var(--color-primary); font-weight: 700; font-size: 0.65rem; }
     .time { font-size: 0.65rem; color: #94a3b8; }
     .item-actions { display: flex; flex-direction: column; gap: 0.25rem; opacity: 0; transition: opacity 0.2s; }
     .notification-item:hover .item-actions { opacity: 1; }
@@ -200,6 +208,8 @@ export class NotificationMenuComponent implements OnInit {
     switch (type) {
       case 'profile_update': return 'person_outline';
       case 'reservation': return 'confirmation_number';
+      case 'INCIDENT': return 'warning_amber';
+      case 'VOYAGE_CANCELLED': return 'cancel_presentation';
       default: return 'info_outline';
     }
   }

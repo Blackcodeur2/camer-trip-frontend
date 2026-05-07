@@ -1,0 +1,202 @@
+.page-container {
+    padding: 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 3rem;
+}
+
+.page-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--color-dark);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+}
+
+.incidents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.incident-card {
+    background: white;
+    border-radius: 24px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.incident-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+.card-left {
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    background: var(--color-surface);
+}
+
+.severity-indicator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+}
+
+.incident-type-icon {
+    margin-top: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-dark);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.card-main {
+    flex: 1;
+    padding: 2rem;
+}
+
+.incident-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+}
+
+.type-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.type-info h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-dark);
+    margin: 0;
+}
+
+.status-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.incident-date {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.incident-voyage, .incident-location {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text-main);
+    font-size: 1rem;
+}
+
+.incident-voyage mat-icon, .incident-location mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--color-primary);
+}
+
+.bus-info {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.incident-description {
+    background: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin: 1.5rem 0;
+}
+
+.incident-description p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--color-text-main);
+}
+
+.incident-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+}
+
+.reporter-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.reporter-info mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.severity-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Severity Styles */
+.severity-critical .severity-indicator { background: #ef4444; }
+.severity-critical .incident-type-icon { color: #ef4444; }
+.severity-critical .severity-label strong { color: #ef4444; }
+
+.severity-medium .severity-indicator { background: #f59e0b; }
+.severity-medium .incident-type-icon { color: #f59e0b; }
+.severity-medium .severity-label strong { color: #f59e0b; }
+
+.severity-low .severity-indicator { background: #10b981; }
+.severity-low .incident-type-icon { color: #10b981; }
+.severity-low .severity-label strong { color: #10b981; }
+
+.loading-state, .empty-state {
+    text-align: center;
+    padding: 5rem;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

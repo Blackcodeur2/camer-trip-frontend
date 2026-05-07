@@ -1,0 +1,72 @@
+<div class="page-container">
+    <div class="page-header">
+        <div class="header-title">
+            <h1 class="page-title">Incidents Signalés</h1>
+            <p class="page-subtitle">Suivez et gérez les incidents survenus lors des voyages</p>
+        </div>
+    </div>
+
+    @if (isLoading()) {
+    <div class="loading-state">
+        <mat-icon class="spin large-icon">sync</mat-icon>
+        <p>Chargement des incidents...</p>
+    </div>
+    } @else if (incidents().length === 0) {
+    <div class="empty-state">
+        <mat-icon style="font-size: 4rem; color: var(--color-border);">report_off</mat-icon>
+        <h3>Aucun incident</h3>
+        <p>Aucun incident n'a été signalé pour le moment.</p>
+    </div>
+    } @else {
+    <div class="incidents-list">
+        @for (incident of incidents(); track incident.id) {
+        <div class="incident-card" [class]="getSeverityClass(incident.niveau_gravite)">
+            <div class="card-left">
+                <div class="severity-indicator"></div>
+                <div class="incident-type-icon">
+                    <mat-icon>{{ incident.type === 'accident' ? 'minor_crash' : (incident.type === 'panne' ? 'build' : 'report_problem') }}</mat-icon>
+                </div>
+            </div>
+            
+            <div class="card-main">
+                <div class="incident-header">
+                    <div class="type-info">
+                        <h3>{{ incident.type | titlecase }}</h3>
+                        <span class="status-badge">{{ getStatusLabel(incident.statut) }}</span>
+                    </div>
+                    <span class="incident-date">{{ incident.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+
+                <div class="incident-voyage">
+                    <mat-icon>directions_bus</mat-icon>
+                    <span>
+                        Voyage #{{ incident.voyage_id }} : 
+                        <strong>{{ incident.voyage?.trajet?.depart }} → {{ incident.voyage?.trajet?.arrivee }}</strong>
+                    </span>
+                    <span class="bus-info" *ngIf="incident.voyage?.bus"> ({{ incident.voyage?.bus?.immatriculation }})</span>
+                </div>
+
+                <div class="incident-location" *ngIf="incident.lieu">
+                    <mat-icon>location_on</mat-icon>
+                    <span>{{ incident.lieu }}</span>
+                </div>
+
+                <div class="incident-description">
+                    <p>{{ incident.description }}</p>
+                </div>
+
+                <div class="incident-footer">
+                    <div class="reporter-info">
+                        <mat-icon>person</mat-icon>
+                        <span>Signalé par : <strong>{{ incident.user?.nom }} {{ incident.user?.prenom }}</strong></span>
+                    </div>
+                    <div class="severity-label">
+                        Gravité : <strong>{{ incident.niveau_gravite }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

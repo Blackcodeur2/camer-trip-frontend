@@ -72,7 +72,7 @@
                     <td>{{ (user.created_at | date:'dd/MM/yyyy') || '—' }}</td>
                     <td style="text-align: right;">
                         <div class="action-btn-group" style="justify-content: flex-end;">
-                            <button class="table-action-btn" title="Voir détails">
+                            <button class="table-action-btn" title="Voir détails" (click)="viewDetails(user)">
                                 <mat-icon>visibility</mat-icon>
                             </button>
                         </div>
@@ -95,5 +95,117 @@
     <gev-pagination [totalItems]="totalItems()" [pageSize]="pageSize()" [currentPage]="currentPage()"
         (pageChange)="onPageChange($event)">
     </gev-pagination>
+    }
+
+    <!-- Modal Détails Utilisateur -->
+    @if (selectedUser(); as user) {
+    <div class="modal-overlay" (click)="closeDetails()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-header-info">
+                    <div class="user-avatar-large">
+                        @if (getAvatarUrl(user)) {
+                        <img [src]="getAvatarUrl(user)!" alt="Photo de profil" class="avatar-img" />
+                        } @else {
+                        <div class="avatar-initials">{{ getUserInitials(user) }}</div>
+                        }
+                    </div>
+                    <div>
+                        <h2 class="modal-title">{{ user.prenom }} {{ user.nom }}</h2>
+                        <div class="modal-subtitle">
+                            <span class="role-badge" [class]="'role-' + user.role_user.toLowerCase()">
+                                {{ getRoleLabel(user.role_user) }}
+                            </span>
+                            <span class="matricule">#{{ user.matricule || 'Sans matricule' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-close" (click)="closeDetails()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="info-section">
+                    <h3 class="section-title">Informations Personnelles</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Nom Complet</label>
+                            <p>{{ user.nom }} {{ user.prenom }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Sexe</label>
+                            <p>{{ user.sexe === 'M' ? 'Masculin' : (user.sexe === 'F' ? 'Féminin' : 'Non précisé') }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Email</label>
+                            <p>{{ user.email }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Téléphone</label>
+                            <p>{{ user.telephone || '—' }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Numéro CNI</label>
+                            <p>{{ user.num_cni || '—' }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Date de Naissance</label>
+                            <p>{{ (user.date_naissance | date:'dd MMMM yyyy') || '—' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3 class="section-title">Compte & Système</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Rôle</label>
+                            <p>{{ getRoleLabel(user.role_user) }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Date d'inscription</label>
+                            <p>{{ (user.created_at | date:'dd/MM/yyyy HH:mm') || '—' }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Dernière mise à jour</label>
+                            <p>{{ (user.updated_at | date:'dd/MM/yyyy HH:mm') || '—' }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Statut</label>
+                            <p>{{ user.statut || 'Actif' }}</p>
+                        </div>
+                        
+                        @if (user.role_user === 'CHEF_AGENCE' || user.role_user === 'AGENT' || user.role_user === 'CHAUFFEUR') {
+                            <div class="info-item">
+                                <label>Gare assignée</label>
+                                <p>{{ getStationName(user.station_id) }}</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @if (user.role_user === 'PROPRIETAIRE') {
+                    <div class="info-section">
+                        <h3 class="section-title">Informations Abonnement</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>État Abonnement</label>
+                                <p>{{ user.is_subscribed ? 'Abonné' : 'Non abonné' }}</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Expire le</label>
+                                <p>{{ (user.subscription_expires_at | date:'dd/MM/yyyy') || '—' }}</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Statut KYC</label>
+                                <p>{{ user.kyc_status || '—' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
     }
 </div>

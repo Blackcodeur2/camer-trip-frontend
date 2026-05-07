@@ -30,7 +30,7 @@ export class Stations {
   editingGare = signal<Station | null>(null);
 
   gareForm = this.fb.nonNullable.group({
-    agence_id: [0, Validators.required],
+    agence_id: [0], // Only for creation
     ville: ['', Validators.required],
     quartier: ['', Validators.required],
     telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],

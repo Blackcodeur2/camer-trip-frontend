@@ -186,6 +186,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/chef_agence/personnels/personnels').then(m => m.Personnels)
             },
             {
+                path: 'incidents',
+                loadComponent: () => import('./features/chef_agence/incidents/incidents').then(m => m.Incidents)
+            },
+            {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },

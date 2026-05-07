@@ -9,6 +9,19 @@
                 <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
                     placeholder="Rechercher un bus..." />
             </div>
+
+            <select class="filter-select" (change)="selectedType.set($any($event.target).value)">
+                <option value="">Tous les types</option>
+                <option value="coaster">Coaster</option>
+                <option value="gros porteur">Gros Porteur</option>
+            </select>
+
+            <select class="filter-select" (change)="selectedCapacity.set($any($event.target).value ? +$any($event.target).value : null)">
+                <option value="">Toutes capacités</option>
+                <option value="30">30 places</option>
+                <option value="70">70 places</option>
+            </select>
+
             <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
                 <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
                 <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>

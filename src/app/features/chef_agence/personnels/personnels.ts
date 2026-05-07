@@ -51,10 +51,14 @@ export class Personnels implements OnInit {
     telephone: ['', Validators.required],
     role_user: ['AGENT', Validators.required],
     password: ['', [Validators.required, Validators.minLength(8)]],
-    station_id: [null as number | null | undefined],
+    station_id: [null as number | null | undefined, [Validators.required]],
   });
 
   ngOnInit() {
+    const user = this.authService.currentUser();
+    if (user) {
+      this.staffForm.patchValue({ station_id: user.station_id });
+    }
     this.loadStaff();
   }
 

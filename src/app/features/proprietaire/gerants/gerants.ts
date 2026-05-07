@@ -7,6 +7,7 @@ import { User } from '../../../models/user';
 import { ProprietaireService } from '../../../services/proprietaire/proprietaire-service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'app-gerants',
@@ -16,6 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class Gerants implements OnInit {
   private proprietaireService = inject(ProprietaireService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
   managers = signal<User[]>([]);
@@ -34,7 +36,7 @@ export class Gerants implements OnInit {
     telephone:            ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
     num_cni:              ['', Validators.required],
     date_naissance:       ['', Validators.required],
-    station_id:              [0,  Validators.required],
+    station_id: [null as number | null | undefined, [Validators.required]],// Optional
     password:             [''],
     password_confirmation: [''],
   }, { validators: this.passwordMatchValidator });
@@ -118,6 +120,10 @@ export class Gerants implements OnInit {
     }
     this.isSubmitting.set(true);
     const payload = this.gerantForm.getRawValue();
+    
+    if (payload.station_id === 0) {
+      (payload as any).station_id = null;
+    }
     
     // Si pas de password saisi en édition, on le retire du payload
     if (this.selectedManager() && !payload.password) {

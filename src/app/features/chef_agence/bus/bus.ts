@@ -31,16 +31,33 @@ export class BusPage {
   currentPage = signal(1);
   pageSize = signal(5);
   searchQuery = signal('');
+  selectedType = signal('');
+  selectedCapacity = signal<number | null>(null);
 
   filteredBuses = computed(() => {
     const query = this.searchQuery().toLowerCase();
-    const list = this.buses();
+    const typeFilter = this.selectedType();
+    const capFilter = this.selectedCapacity();
+    let list = this.buses();
+
     if (!Array.isArray(list)) return [];
-    if (!query) return list;
-    return list.filter(bus =>
-      bus.immatriculation?.toLowerCase().includes(query) ||
-      bus.code_bus?.toLowerCase().includes(query)
-    );
+    
+    if (query) {
+      list = list.filter(bus =>
+        bus.immatriculation?.toLowerCase().includes(query) ||
+        bus.code_bus?.toLowerCase().includes(query)
+      );
+    }
+
+    if (typeFilter) {
+      list = list.filter(bus => bus.type_bus === typeFilter);
+    }
+
+    if (capFilter) {
+      list = list.filter(bus => bus.nb_places === capFilter);
+    }
+
+    return list;
   });
 
   paginatedBuses = computed(() => {

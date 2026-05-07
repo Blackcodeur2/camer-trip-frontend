@@ -9,10 +9,19 @@
     <!-- Welcome Banner -->
     <div class="welcome-banner animate-fade-in">
       <div class="banner-content">
-        <h1>Bonjour, <span class="highlight">{{ userName() }}</span> ! 👋</h1>
+        <h2>Bonjour, <span class="highlight">{{ userName() }}</span> ! 👋</h2>
         <p>Voici l'état de votre réseau d'agences et vos performances globales.</p>
       </div>
       <div class="banner-actions">
+        @if (isSubscribed() && subscription()) {
+          <div class="subscription-status-badge">
+            <mat-icon>star</mat-icon>
+            <div class="sub-details">
+              <span class="sub-label">Abonnement Actif</span>
+              <span class="sub-expiry">Expire le: {{ subscription().subscription_expires_at | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        }
         <div class="kyc-badge" [class.verified]="kycStatus() === 'approuve'">
           <mat-icon>{{ kycStatus() === 'approuve' ? 'verified_user' : 'gpp_maybe' }}</mat-icon>
           <span>{{ kycStatus() === 'approuve' ? 'Compte Vérifié' : 'En attente KYC' }}</span>
@@ -71,6 +80,15 @@
             <div>
               <h2>Activité de vos Agences</h2>
               <p class="subtitle">Évolution des réservations</p>
+            </div>
+            <div class="filter-box">
+              <mat-icon>filter_list</mat-icon>
+              <select (change)="onStationChange($event)" [value]="selectedStationId() || ''">
+                <option value="">Toutes les stations</option>
+                @for (station of stations(); track station.id) {
+                  <option [value]="station.id">{{ station.ville }} - {{ station.quartier }}</option>
+                }
+              </select>
             </div>
           </div>
           <div class="chart-container">

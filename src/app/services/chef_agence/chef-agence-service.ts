@@ -107,6 +107,12 @@ export class ChefAgenceService {
       .pipe(map(response => response.data));
   }
 
+  // ── Incidents ──
+  getIncidents(): Observable<any[]> {
+    return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/chef-agence/incidents`)
+      .pipe(map(response => response.data));
+  }
+
   // ── Personnels ──
   getPersonnels(): Observable<any[]> {
     return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/chef-agence/personnels`)

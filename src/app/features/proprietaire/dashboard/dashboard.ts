@@ -34,6 +34,7 @@ export class Dashboard implements AfterViewInit {
   isSubscribed = signal(false);
   stats = signal<Stats | null>(null);
   revenueHistory = signal<any[]>([]);
+  subscription = signal<any>(null);
   isLoading = signal(true);
   isPaying = signal(false);
 
@@ -77,6 +78,7 @@ export class Dashboard implements AfterViewInit {
       
       if (localUser.is_subscribed && this.kycStatus() === 'approuve') {
         this.loadStats();
+        this.loadStations();
       } else {
         this.isLoading.set(false);
       }
@@ -90,6 +92,7 @@ export class Dashboard implements AfterViewInit {
             
             if (user.is_subscribed && this.kycStatus() === 'approuve') {
               this.loadStats();
+              this.loadStations();
             } else {
               this.isLoading.set(false);
             }
@@ -142,19 +145,52 @@ export class Dashboard implements AfterViewInit {
     });
   }
 
-  loadStats() {
+  stations = signal<any[]>([]);
+  selectedStationId = signal<number | null>(null);
+
+  loadStats(stationId?: number) {
     this.isLoading.set(true);
-    this.proprietaireService.getMyStatistics().subscribe({
+    this.proprietaireService.getMyStatistics(stationId).subscribe({
       next: (data) => {
         this.stats.set(data.stats);
         this.revenueHistory.set(data.revenue_history);
-        this.isLoading.set(false);
+        this.isSubscribed.set(data.isSubscribed);
+
+        if (data.isSubscribed) {
+          this.loadSubscription();
+        }
+
+        setTimeout(() => {
+          this.initCharts();
+          this.isLoading.set(false);
+        }, 100);
       },
       error: (err) => {
         this.isLoading.set(false);
         Swal.fire('Erreur', err.error?.message || 'Impossible de charger les statistiques.', 'error');
       }
     });
+  }
+
+  loadSubscription() {
+    this.proprietaireService.getMySubscription().subscribe({
+      next: (sub) => this.subscription.set(sub),
+      error: (err) => console.error('Error fetching subscription', err)
+    });
+  }
+
+  loadStations() {
+    this.proprietaireService.getMyStations().subscribe({
+      next: (stations) => this.stations.set(stations),
+      error: (err) => console.error('Error loading stations', err)
+    });
+  }
+
+  onStationChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    const stationId = value ? parseInt(value, 10) : undefined;
+    this.selectedStationId.set(stationId || null);
+    this.loadStats(stationId);
   }
 
   getStatValue(key: string): number {

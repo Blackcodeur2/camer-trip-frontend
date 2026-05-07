@@ -1,0 +1,198 @@
+.page-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--color-dark);
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--color-text-muted);
+}
+
+.kyc-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.kyc-status-badge.approuve { background: rgba(0, 102, 68, 0.1); color: var(--color-primary); }
+.kyc-status-badge.rejete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.kyc-status-badge.en\ attente { background: rgba(255, 193, 7, 0.1); color: #b28900; }
+
+.documents-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.doc-card {
+    background: white;
+    border-radius: 24px;
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.5rem;
+    border: 1px solid var(--color-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.doc-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.doc-card.rejected {
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.doc-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--color-surface);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+
+.doc-icon mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.doc-content {
+    flex: 1;
+}
+
+.doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.doc-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-dark);
+    text-transform: capitalize;
+}
+
+.status-tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-tag.approuve { background: rgba(0, 102, 68, 0.1); color: var(--color-primary); }
+.status-tag.rejete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.status-tag.en\ attente { background: rgba(255, 193, 7, 0.1); color: #b28900; }
+
+.rejection-reason {
+    background: rgba(239, 68, 68, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    color: #ef4444;
+}
+
+.rejection-reason mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.rejection-reason p {
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+    color: var(--color-text-main);
+}
+
+.doc-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-view, .btn-resubmit {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-view {
+    background: var(--color-surface);
+    color: var(--color-dark);
+}
+
+.btn-view:hover {
+    background: var(--color-border);
+}
+
+.btn-resubmit {
+    background: var(--color-primary);
+    color: white;
+}
+
+.btn-resubmit:hover {
+    background: var(--color-primary-dark);
+}
+
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 5rem;
+    color: var(--color-text-muted);
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

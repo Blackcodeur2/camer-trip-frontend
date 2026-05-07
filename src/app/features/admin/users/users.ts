@@ -38,6 +38,7 @@ export class Users {
   avatarPreview = signal<string | null>(null);
   showCreateForm = signal<boolean>(false);
   isCreating = signal<boolean>(false);
+  selectedUser = signal<User | null>(null);
 
   // Filtre par rôle
   filterRole = signal<string>('');
@@ -183,5 +184,29 @@ export class Users {
     const first = user.prenom?.trim().charAt(0) ?? '';
     const last = user.nom?.trim().charAt(0) ?? '';
     return `${first || 'U'}${last || 'S'}`.toUpperCase();
+  }
+
+  viewDetails(user: User) {
+    this.selectedUser.set(user);
+  }
+
+  closeDetails() {
+    this.selectedUser.set(null);
+  }
+
+  getAgenceName(agenceId?: number | string): string {
+    if (!agenceId) return '—';
+    const agence = this.agences().find(a => a.id === Number(agenceId));
+    return agence?.nom || '—';
+  }
+
+  getStationName(stationId?: number | string): string {
+    if (!stationId) return '—';
+    // On cherche dans toutes les agences pour trouver la station
+    for (const agence of this.agences()) {
+      const station = agence.stations?.find(s => s.id === Number(stationId));
+      if (station) return station.nom ?? 'NA';
+    }
+    return '—';
   }
 }

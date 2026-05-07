@@ -1,1 +1,62 @@
-<p>kyc works!</p>
+<div class="page-container">
+    <div class="page-header">
+        <div class="header-title">
+            <h1 class="page-title">Mes Documents KYC</h1>
+            <p class="page-subtitle">Gérez vos documents d'identification et suivez leur validation</p>
+        </div>
+        <div class="kyc-status-badge" [class]="kycStatus()">
+            <mat-icon>{{ kycStatus() === 'approuve' ? 'verified' : (kycStatus() === 'rejete' ? 'error' : 'schedule') }}</mat-icon>
+            <span>État global: {{ getStatusLabel(kycStatus()) }}</span>
+        </div>
+    </div>
+
+    @if (isLoading()) {
+    <div class="loading-state">
+        <mat-icon class="spin large-icon">sync</mat-icon>
+        <p>Chargement de vos documents...</p>
+    </div>
+    } @else {
+    <div class="documents-grid">
+        @for (doc of documents(); track doc.id) {
+        <div class="doc-card" [class.rejected]="doc.statut === 'rejete'">
+            <div class="doc-icon">
+                <mat-icon>{{ doc.type === 'cni' ? 'badge' : 'description' }}</mat-icon>
+            </div>
+            <div class="doc-content">
+                <div class="doc-header">
+                    <h3>{{ doc.type || 'Document' }}</h3>
+                    <span class="status-tag" [class]="doc.statut">{{ getStatusLabel(doc.statut) }}</span>
+                </div>
+
+                @if (doc.commentaire && doc.statut === 'rejete') {
+                <div class="rejection-reason">
+                    <mat-icon>warning</mat-icon>
+                    <div>
+                        <strong>Raison du rejet:</strong>
+                        <p>{{ doc.commentaire }}</p>
+                    </div>
+                </div>
+                }
+
+                <div class="doc-actions">
+                    <a [href]="doc.chemin_fichier" target="_blank" class="btn-view">
+                        <mat-icon>visibility</mat-icon>
+                        Voir le fichier
+                    </a>
+
+                    @if (doc.statut === 'rejete') {
+                    <div class="upload-btn-wrapper">
+                        <button class="btn-resubmit" [disabled]="isUploading() === doc.id">
+                            <mat-icon>{{ isUploading() === doc.id ? 'sync' : 'cloud_upload' }}</mat-icon>
+                            {{ isUploading() === doc.id ? 'Envoi...' : 'Renvoyer le document' }}
+                        </button>
+                        <input type="file" (change)="onFileSelected($event, doc.id)" accept=".pdf,.jpg,.jpeg,.png" />
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+</div>

@@ -26,15 +26,40 @@ export class Reservations {
   reservations = signal<any[]>([]);
   isLoading = signal(true);
   isExporting = signal(false);
+  searchQuery = signal('');
+  selectedStatut = signal('');
   currentPage = signal(1);
   pageSize = signal(6);
 
   isChefAgence = computed(() => this.authService.currentUser()?.role_user === 'CHEF_AGENCE');
 
+  filteredReservations = computed(() => {
+    const query = this.searchQuery().toLowerCase();
+    const status = this.selectedStatut();
+    let list = this.reservations();
+
+    if (query) {
+      list = list.filter(r => 
+        (r.num_reservation?.toLowerCase().includes(query)) ||
+        (r.user?.prenom?.toLowerCase().includes(query)) ||
+        (r.user?.nom?.toLowerCase().includes(query)) ||
+        (r.nom_client?.toLowerCase().includes(query)) ||
+        (r.telephone_client?.toLowerCase().includes(query)) ||
+        (r.user?.telephone?.toLowerCase().includes(query))
+      );
+    }
+
+    if (status) {
+      list = list.filter(r => r.statut === status);
+    }
+
+    return list;
+  });
+
   paginatedReservations = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize();
     const end = start + this.pageSize();
-    return this.reservations().slice(start, end);
+    return this.filteredReservations().slice(start, end);
   });
 
   ngOnInit() {

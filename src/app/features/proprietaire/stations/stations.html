@@ -13,12 +13,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Ville</label>
-                    <select formControlName="ville_id" class="form-control">
-                        <option value="0">-- Sélectionner une ville --</option>
-                        @for (ville of villes(); track ville.id) {
-                        <option [value]="ville.id">{{ ville.nom }} ({{ ville.region }})</option>
-                        }
-                    </select>
+                    <input type="text" formControlName="ville" class="form-control" placeholder="Ex: Douala" required />
                 </div>
                 <div class="form-group">
                     <label>Quartier</label>
@@ -62,9 +57,9 @@
                     <button class="icon-btn" (click)="openForm(gare)" title="Modifier">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button class="icon-btn delete" (click)="delete(gare.id)" title="Supprimer">
+                    <!-- <button class="icon-btn delete" (click)="delete(gare.id)" title="Supprimer">
                         <mat-icon>delete</mat-icon>
-                    </button>
+                    </button> -->
                 </div>
             </div>
 

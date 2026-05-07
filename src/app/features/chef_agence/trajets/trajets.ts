@@ -36,10 +36,38 @@ export class Trajets {
   activeAutocompleteField = signal<'depart' | 'arrivee' | null>(null);
   currentPage = signal(1);
   pageSize = signal(5);
+  searchQuery = signal('');
+  selectedType = signal('');
+
+  filteredRoutes = computed(() => {
+    const query = this.searchQuery().toLowerCase();
+    const type = this.selectedType();
+    let list = this.routesList();
+
+    if (!Array.isArray(list)) return [];
+
+    if (query) {
+      list = list.filter(r => 
+        r.depart?.toLowerCase().includes(query) || 
+        r.arrivee?.toLowerCase().includes(query)
+      );
+    }
+
+    if (type) {
+      list = list.filter(r => r.type_trajet === type);
+    }
+
+    return list;
+  });
+
+  mostProfitableTrajetId = computed(() => {
+    const list = this.routesList();
+    if (list.length === 0) return null;
+    return list.reduce((prev, current) => ((prev.revenue || 0) > (current.revenue || 0)) ? prev : current).id;
+  });
 
   paginatedRoutes = computed(() => {
-    const list = this.routesList();
-    if (!Array.isArray(list)) return [];
+    const list = this.filteredRoutes();
     const start = (this.currentPage() - 1) * this.pageSize();
     const end = start + this.pageSize();
     return list.slice(start, end);

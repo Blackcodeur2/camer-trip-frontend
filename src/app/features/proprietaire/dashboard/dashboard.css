@@ -205,8 +205,8 @@
   align-items: center;
   margin-bottom: 1.5rem;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  border-radius: 24px;
-  padding: 1.5rem 2rem;
+  border-radius: 15px;
+  padding: 1rem 1rem;
   color: white;
   box-shadow: 0 20px 40px rgba(0, 102, 68, 0.2);
   position: relative;
@@ -221,7 +221,7 @@
   width: 500px;
   height: 500px;
   background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-  border-radius: 50%;
+  border-radius: 15px;
 }
 
 .banner-content {
@@ -229,9 +229,9 @@
   z-index: 1;
 }
 
-.banner-content h1 {
+.banner-content h2 {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 18px;
   font-weight: 800;
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
@@ -242,7 +242,7 @@
 }
 
 .banner-content p {
-  font-size: 0.8rem;
+  font-size: 0.5rem;
   opacity: 0.9;
   font-weight: 500;
   margin: 0;
@@ -257,9 +257,9 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 100px;
-  font-size: 0.9rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -281,15 +281,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 4rem 2rem;
+  padding: 2rem 2rem;
 }
 
 .sub-card {
   background: white;
-  padding: 4rem 3rem;
-  border-radius: 40px;
+  padding: 2rem 2rem;
+  border-radius: 15px;
   box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15);
-  max-width: 600px;
+  max-width: 500px;
   width: 100%;
   border: 1px solid var(--color-border);
   text-align: center;
@@ -297,11 +297,11 @@
 }
 
 .sub-icon {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   background: rgba(251, 191, 36, 0.1);
   color: #fbbf24;
-  border-radius: 24px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -316,15 +316,15 @@
 
 .sub-card h2 {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--color-dark);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .sub-card p {
   color: var(--color-text-muted);
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   line-height: 1.7;
   margin-bottom: 2.5rem;
 }
@@ -334,17 +334,17 @@
   align-items: baseline;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .price-tag .amount {
-  font-size: 3.5rem;
+  font-size: 1.5rem;
   font-weight: 900;
   color: var(--color-primary-dark);
 }
 
 .price-tag .period {
-  font-size: 1.25rem;
+  font-size: 1.45rem;
   color: var(--color-text-muted);
   font-weight: 600;
 }
@@ -353,7 +353,7 @@
   background: var(--color-primary);
   color: white;
   border: none;
-  padding: 1.5rem 3rem;
+  padding: 1rem 1rem;
   border-radius: 20px;
   font-weight: 800;
   font-size: 1.25rem;
@@ -383,7 +383,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2.5rem;
 }
 
 .stat-card {
@@ -463,14 +463,50 @@
 /* Charts Grid */
 .charts-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 1400px) {
   .charts-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 3fr 1.2fr;
   }
+}
+
+.filter-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #f8fafc;
+  padding: 0.6rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--color-border);
+  transition: all 0.3s ease;
+}
+
+.filter-box:hover {
+  border-color: var(--color-primary);
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.filter-box mat-icon {
+  color: var(--color-text-muted);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.filter-box select {
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-dark);
+  outline: none;
+  cursor: pointer;
+  padding-right: 0.5rem;
 }
 
 /* Chart Card */
@@ -514,3 +550,83 @@
   50% { transform: translateY(-12px); }
 }
 
+
+/* Welcome Banner */
+.welcome-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  border-radius: 40px;
+  color: white;
+  margin-bottom: 3.5rem;
+  box-shadow: 0 20px 40px -10px rgba(0, 102, 68, 0.25);
+}
+
+.banner-content h1 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.04em;
+}
+
+.banner-content .highlight {
+  color: #ffc107;
+}
+
+.banner-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.banner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.kyc-badge, .subscription-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.kyc-badge.verified {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.subscription-status-badge {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+.subscription-status-badge mat-icon {
+  color: #ffc107;
+}
+
+.sub-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.sub-expiry {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}

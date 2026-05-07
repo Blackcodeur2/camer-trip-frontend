@@ -82,19 +82,19 @@
         <div class="form-section-title field--full">Affectation & Accès</div>
 
         <div class="field field--full">
-          <label for="g-gare">Gare à gérer *</label>
+          <label for="g-gare">Station à gérer (optionnel)</label>
           <div class="input-wrap">
             <mat-icon>location_city</mat-icon>
             <select id="g-gare" formControlName="station_id">
-              <option value="0" disabled>-- Sélectionner une gare --</option>
+              <option value="0">-- Non affecté --</option>
               @for (gare of gares(); track gare.id) {
                 <option [value]="gare.id">{{ gare.nom || (gare.ville + ' - ' + gare.quartier) }}</option>
               }
             </select>
           </div>
-          @if (shouldShowError('station_id')) { <span class="field-error">Veuillez sélectionner une gare.</span> }
+          @if (shouldShowError('station_id')) { <span class="field-error">Veuillez sélectionner une station.</span> }
           @if (gares().length === 0) {
-            <span class="field-hint">⚠️ Aucune gare disponible. <a routerLink="/proprietaire/gares">Créez d'abord une gare.</a></span>
+            <span class="field-hint">⚠️ Aucune Station disponible. <a routerLink="/proprietaire/gares">Créez d'abord une station.</a></span>
           }
         </div>
 

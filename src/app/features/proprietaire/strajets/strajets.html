@@ -4,6 +4,15 @@
             <h1 class="page-title">Mes Trajets</h1>
             <p class="page-subtitle">Consultez tous vos trajets disponibles</p>
         </div>
+        <div class="filter-box">
+            <mat-icon>filter_list</mat-icon>
+            <select (change)="onStationChange($event)" [value]="selectedStationId() || ''">
+                <option value="">Toutes les stations</option>
+                @for (station of stations(); track station.id) {
+                    <option [value]="station.id">{{ station.ville }} - {{ station.quartier }}</option>
+                }
+            </select>
+        </div>
     </div>
 
     @if (isLoading()) {
@@ -11,15 +20,15 @@
         <mat-icon class="spin large-icon" style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
         <p>Chargement des trajets...</p>
     </div>
-    } @else if (routes().length === 0) {
+    } @else if (filteredRoutes().length === 0) {
     <div class="empty-state">
         <mat-icon style="font-size: 4rem; width: 64px; height: 64px; color: var(--color-border);">route</mat-icon>
         <h3>Aucun trajet</h3>
-        <p>Vous n'avez pas encore de trajets configurés</p>
+        <p>Aucun trajet ne correspond à votre filtre</p>
     </div>
     } @else {
     <div class="routes-grid">
-        @for (route of routes(); track route.id) {
+        @for (route of filteredRoutes(); track route.id) {
         <div class="route-card">
             <div class="route-path">
                 <div class="location">

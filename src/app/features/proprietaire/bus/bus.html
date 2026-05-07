@@ -4,6 +4,26 @@
             <h1 class="page-title">Mes Bus</h1>
             <p class="page-subtitle">Visualisez et gérez votre flotte de véhicules</p>
         </div>
+        <div class="filter-box">
+            <mat-icon>filter_list</mat-icon>
+            <select (change)="onStationChange($event)" [value]="selectedStationId() || ''">
+                <option value="">Toutes les stations</option>
+                @for (station of stations(); track station.id) {
+                    <option [value]="station.id">{{ station.ville }} - {{ station.quartier }}</option>
+                }
+            </select>
+            <select (change)="selectedType.set($any($event.target).value)">
+                <option value="">Tous les types</option>
+                <option value="coaster">Coaster</option>
+                <option value="gros porteur">Gros Porteur</option>
+            </select>
+            <select (change)="selectedCapacity.set($any($event.target).value ? +$any($event.target).value : null)">
+                <option value="">Toutes capacités</option>
+                <option value="35">35 places</option>
+                <option value="70">70 places</option>
+                <option value="80">80 places</option>
+            </select>
+        </div>
     </div>
 
     @if (isLoading()) {
@@ -11,15 +31,15 @@
         <mat-icon class="spin large-icon" style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
         <p>Chargement de votre flotte...</p>
     </div>
-    } @else if (buses().length === 0) {
+    } @else if (filteredBuses().length === 0) {
     <div class="empty-state">
         <mat-icon style="font-size: 4rem; width: 64px; height: 64px; color: var(--color-border);">directions_bus</mat-icon>
         <h3>Aucun bus</h3>
-        <p>Vous n'avez pas encore de bus enregistrés</p>
+        <p>Aucun bus ne correspond à votre filtre</p>
     </div>
     } @else {
     <div class="buses-grid">
-        @for (bus of buses(); track bus.id) {
+        @for (bus of filteredBuses(); track bus.id) {
         <div class="bus-card">
             <div class="card-header">
                 <h3>{{ bus.marque }} {{ bus.modele }}</h3>

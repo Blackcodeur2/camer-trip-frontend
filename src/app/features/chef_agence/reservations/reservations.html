@@ -4,14 +4,21 @@
             <h1 class="page-title">Historique des Réservations</h1>
             <p class="page-subtitle">Consultez et gérez les réservations enregistrées par l'agence.</p>
         </div>
-        <div style="display: flex; align-items: center; gap: 1.5rem;">
-            <div class="stats-mini">
-                <div class="stat-item">
-                    <span class="label">Total</span>
-                    <span class="value">{{ reservations().length }}</span>
-                </div>
+        <div class="header-actions">
+            <div class="search-box">
+                <mat-icon>search</mat-icon>
+                <input type="text" [value]="searchQuery()" (input)="searchQuery.set($any($event.target).value)"
+                    placeholder="Ref, nom, téléphone..." />
             </div>
-            <button class="btn-primary" (click)="newReservation()" style="display: flex; align-items: center; gap: 0.5rem; background: var(--color-primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+
+            <select class="filter-select" (change)="selectedStatut.set($any($event.target).value)">
+                <option value="">Tous les statuts</option>
+                <option value="validee">Validée</option>
+                <option value="en attente">En attente</option>
+                <option value="annule">Annulée</option>
+            </select>
+
+            <button class="btn-primary" (click)="newReservation()">
                 <mat-icon>add</mat-icon> <span>Nouvelle</span>
             </button>
             @if (isChefAgence()) {
@@ -50,12 +57,12 @@
                     </td>
                     <td>
                         <div class="client-info">
-                            <span class="name">{{ (res.user?.prenom ? (res.user.prenom + ' ' + res.user.nom) :
-                                (res.client?.prenom ? (res.client.prenom + ' ' + res.client.nom) : res.client_name)) ||
-                                'N/A' }}</span>
+                            <span class="name">
+                                {{ res.user ? (res.user.prenom + ' ' + res.user.nom) : (res.nom_client || 'N/A') }}
+                            </span>
                             <span class="phone">
                                 <mat-icon>phone</mat-icon>
-                                {{ res.user?.telephone || res.client?.telephone || 'Non fourni' }}
+                                {{ res.user?.telephone || res.telephone_client || 'Non fourni' }}
                             </span>
                         </div>
                     </td>

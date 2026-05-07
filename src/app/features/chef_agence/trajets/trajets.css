@@ -282,6 +282,68 @@
     border-color: var(--color-primary);
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.search-box {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: 48px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    width: 200px;
+}
+
+.filter-select {
+    height: 48px;
+    padding: 0 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--color-border);
+    background: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.most-profitable {
+    background-color: rgba(0, 102, 68, 0.05) !important;
+    position: relative;
+}
+
+.profit-star {
+    color: #f59e0b;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 18px;
+}
+
+.stats-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stats-info .revenue {
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.stats-info .count {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
 /* Empty State */
 .empty-state {
     padding: 5rem;
