@@ -69,40 +69,44 @@ export class Dashboard implements AfterViewInit {
   ];
 
   ngOnInit() {
+    this.isLoading.set(true);
+    
+    // On commence par charger ce qu'on a en local pour un affichage rapide
     const localUser = this.authService.currentUser();
-
     if (localUser) {
       this.userName.set(`${localUser.prenom || ''} ${localUser.nom || ''}`.trim());
       this.kycStatus.set(localUser.kyc_status || localUser.statut || '');
       this.isSubscribed.set(!!localUser.is_subscribed);
-      
-      if (localUser.is_subscribed && this.kycStatus() === 'approuve') {
-        this.loadStats();
-        this.loadStations();
-      } else {
-        this.isLoading.set(false);
-      }
-    } else {
-      this.authService.fetchUser().subscribe({
-        next: (user) => {
-          if (user && user.role_user === 'PROPRIETAIRE') {
-            this.userName.set(`${user.prenom || ''} ${user.nom || ''}`.trim());
-            this.kycStatus.set(user.kyc_status || user.statut || '');
-            this.isSubscribed.set(!!user.is_subscribed);
-            
-            if (user.is_subscribed && this.kycStatus() === 'approuve') {
-              this.loadStats();
-              this.loadStations();
-            } else {
-              this.isLoading.set(false);
-            }
+    }
+
+    // Mais on force TOUJOURS un fetch pour avoir le statut réel (abonnement, KYC)
+    this.authService.fetchUser().subscribe({
+      next: (user) => {
+        if (user && user.role_user === 'PROPRIETAIRE') {
+          this.userName.set(`${user.prenom || ''} ${user.nom || ''}`.trim());
+          this.kycStatus.set(user.kyc_status || user.statut || '');
+          this.isSubscribed.set(!!user.is_subscribed);
+          
+          if (user.is_subscribed && this.kycStatus() === 'approuve') {
+            this.loadStats();
+            this.loadStations();
           } else {
             this.isLoading.set(false);
           }
-        },
-        error: () => this.isLoading.set(false)
-      });
-    }
+        } else {
+          this.isLoading.set(false);
+        }
+      },
+      error: () => {
+        // En cas d'erreur réseau, on tente quand même de charger les stats si le local dit qu'on est abonné
+        if (localUser?.is_subscribed && this.kycStatus() === 'approuve') {
+          this.loadStats();
+          this.loadStations();
+        } else {
+          this.isLoading.set(false);
+        }
+      }
+    });
   }
 
   onLogout() {
@@ -149,20 +153,36 @@ export class Dashboard implements AfterViewInit {
   selectedStationId = signal<number | null>(null);
 
   loadStats(stationId?: number) {
-    this.isLoading.set(true);
+    // On ne montre le loader principal que lors du tout premier chargement
+    // Pour les filtres, on évite de détruire tout le DOM pour préserver les charts
+    const isInitialLoad = !this.stats();
+    if (isInitialLoad) {
+      this.isLoading.set(true);
+    }
+
     this.proprietaireService.getMyStatistics(stationId).subscribe({
       next: (data) => {
         this.stats.set(data.stats);
         this.revenueHistory.set(data.revenue_history);
-        this.isSubscribed.set(data.isSubscribed);
+        
+        if (data.isSubscribed !== undefined) {
+          this.isSubscribed.set(!!data.isSubscribed);
+        }
 
-        if (data.isSubscribed) {
+        if (this.isSubscribed()) {
           this.loadSubscription();
         }
 
         setTimeout(() => {
-          this.initCharts();
-          this.isLoading.set(false);
+          if (isInitialLoad) {
+            this.initCharts();
+            this.isLoading.set(false);
+          } else {
+            // Si ce n'est pas le chargement initial, l'effect se chargera d'appeler updateActivityChart
+            // Mais on peut forcer une mise à jour ici au cas où
+            this.updateActivityChart(data.revenue_history);
+            this.initPersonnelChart();
+          }
         }, 100);
       },
       error: (err) => {
@@ -288,9 +308,20 @@ export class Dashboard implements AfterViewInit {
   }
 
   private updateActivityChart(history: any[]) {
-    if (!this.chart) return;
-    this.chart.data.labels = history.map(h => h.label);
-    this.chart.data.datasets[0].data = history.map(h => h.amount);
+    if (!this.chart) {
+      this.initActivityChart();
+      return;
+    }
+    
+    // Vérifier si le canvas de la chart actuelle est toujours dans le DOM
+    if (!document.body.contains(this.chart.canvas)) {
+      this.chart.destroy();
+      this.initActivityChart();
+      return;
+    }
+
+    this.chart.data.labels = history.length > 0 ? history.map(h => h.label) : ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+    this.chart.data.datasets[0].data = history.length > 0 ? history.map(h => h.amount) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     this.chart.update();
   }
 

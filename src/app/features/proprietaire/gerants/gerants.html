@@ -86,7 +86,7 @@
           <div class="input-wrap">
             <mat-icon>location_city</mat-icon>
             <select id="g-gare" formControlName="station_id">
-              <option value="0">-- Non affecté --</option>
+              <option value="null">-- Non affecté --</option>
               @for (gare of gares(); track gare.id) {
                 <option [value]="gare.id">{{ gare.nom || (gare.ville + ' - ' + gare.quartier) }}</option>
               }
@@ -209,13 +209,13 @@
                 </span>
               </td>
               <td>
-                <div class="action-btn-group">
+                <div class="" style="display: flex;">
                   <button class="table-action-btn edit" (click)="openForm(manager)" title="Modifier le gérant">
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button class="table-action-btn delete" (click)="removeManager(manager)" title="Retirer le gérant">
+                  <!--<button class="table-action-btn delete" (click)="removeManager(manager)" title="Retirer le gérant">
                     <mat-icon>person_remove</mat-icon>
-                  </button>
+                  </button>-->
                 </div>
               </td>
             </tr>

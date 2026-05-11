@@ -42,7 +42,7 @@
         @for (bus of filteredBuses(); track bus.id) {
         <div class="bus-card">
             <div class="card-header">
-                <h3>{{ bus.marque }} {{ bus.modele }}</h3>
+                <h3>{{ bus.type_bus | uppercase }}</h3>
                 <span class="plate">{{ bus.immatriculation }}</span>
             </div>
 
@@ -59,7 +59,7 @@
                     <mat-icon>info</mat-icon>
                     <div>
                         <span class="label">Statut</span>
-                        <span class="value" [class.active]="bus.statut === 'ACTIF'">{{ bus.statut || 'Actif' }}</span>
+                        <span class="value" [class.active]="bus.statut === 'ACTIF' || bus.statut === 'disponible'">{{ bus.statut || 'Actif' }}</span>
                     </div>
                 </div>
             </div>

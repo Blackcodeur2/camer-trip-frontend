@@ -88,7 +88,7 @@ export class Gerants implements OnInit {
         telephone: manager.telephone ?? '',
         num_cni: manager.num_cni ?? '',
         date_naissance: manager.date_naissance ?? '',
-        station_id: manager.station_id ?? 0,
+        station_id: manager.station_id ?? null,
         password: '',
         password_confirmation: ''
       });
@@ -121,7 +121,7 @@ export class Gerants implements OnInit {
     this.isSubmitting.set(true);
     const payload = this.gerantForm.getRawValue();
     
-    if (payload.station_id === 0) {
+    if (payload.station_id === null || payload.station_id === 0) {
       (payload as any).station_id = null;
     }
     

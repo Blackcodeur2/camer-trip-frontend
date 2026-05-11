@@ -21,7 +21,7 @@ export class Voyages {
   filteredVoyages = computed(() => {
     const stationId = this.selectedStationId();
     if (!stationId) return this.voyages();
-    return this.voyages().filter(v => v.station_id === stationId);
+    return this.voyages().filter(v => v.station_id == stationId);
   });
 
   ngOnInit() {

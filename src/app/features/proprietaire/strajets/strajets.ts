@@ -21,7 +21,7 @@ export class Strajets {
   filteredRoutes = computed(() => {
     const stationId = this.selectedStationId();
     if (!stationId) return this.routes();
-    return this.routes().filter(r => r.station_id === stationId);
+    return this.routes().filter(r => r.station_id == stationId);
   });
 
   ngOnInit() {

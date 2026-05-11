@@ -130,7 +130,7 @@ export const routes: Routes = [
             },
             {
                 path: 'personnels',
-                loadComponent: () => import('./features/proprietaire/personnels/personnels').then(m => m.Personnels)
+                loadComponent: () => import('./features/proprietaire/gerants/gerants').then(m => m.Gerants)
             },
             {
                 path: 'kyc',

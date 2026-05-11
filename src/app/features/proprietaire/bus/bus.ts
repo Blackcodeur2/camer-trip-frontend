@@ -27,7 +27,7 @@ export class Bus {
     const capFilter = this.selectedCapacity();
 
     if (stationId) {
-      list = list.filter(b => b.station_id === stationId);
+      list = list.filter(b => b.station_id == stationId);
     }
     
     if (typeFilter) {
