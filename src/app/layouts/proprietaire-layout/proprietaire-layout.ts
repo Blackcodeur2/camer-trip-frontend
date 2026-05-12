@@ -26,8 +26,8 @@ export class ProprietaireLayout {
     { label: 'Gestion Bus', route: '/proprietaire/bus', icon: 'directions_bus', badge: null },
     { label: 'Trajets', route: '/proprietaire/trajets', icon: 'route', badge: null },
     { label: 'Voyages', route: '/proprietaire/voyages', icon: 'explore', badge: null },
-    { label: 'Gérants', route: '/proprietaire/personnels', icon: 'manage_accounts', badge: null },
-    /*{ label: 'Abonnements', route: '/proprietaire/abonnements', icon: 'subscriptions', badge: null },*/
+    { label: 'Gérants', route: '/proprietaire/gerants', icon: 'manage_accounts', badge: null },
+    { label: 'Agents & Chauffeurs', route: '/proprietaire/personnels', icon: 'manage_accounts', badge: null },
     { label: 'KYC / Documents', route: '/proprietaire/kyc', icon: 'verified_user', badge: null },
   ];
 

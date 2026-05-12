@@ -29,6 +29,7 @@
                         <th>Destinataire</th>
                         <th>Trajet</th>
                         <th>Statut</th>
+                        <th>Enregistré par</th>
                         <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
@@ -78,6 +79,20 @@
                             <span class="status-badge status--{{ colis.statut === 'retire' ? 'success' : 'pending' }}">
                                 {{ colis.statut }}
                             </span>
+                            @if (colis.statut === 'retire' && colis.modified_by) {
+                            <div class="modifier-info">
+                                Retiré par: {{ colis.modified_by.nom }}
+                            </div>
+                            }
+                        </td>
+                        <td>
+                            @if (colis.agent) {
+                            <div class="agent-info">
+                                <span class="agent-name">{{ colis.agent.nom }} {{ colis.agent.prenom }}</span>
+                            </div>
+                            } @else {
+                            <span class="text-muted">En ligne</span>
+                            }
                         </td>
                         <td style="text-align: right;">
                             <div class="action-btn-group" style="justify-content: flex-end;">

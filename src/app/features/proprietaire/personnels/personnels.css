@@ -223,3 +223,19 @@
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+.role-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-weight: 600;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+.role-badge.chauffeur {
+    background: #fef3c7;
+    color: #92400e;
+}

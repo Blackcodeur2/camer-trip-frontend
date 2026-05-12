@@ -22,4 +22,6 @@ export interface Colis {
     station?: Station;
     station_id?: number;
     id: number;
+    agent?: User;
+    modified_by?: User;
 }

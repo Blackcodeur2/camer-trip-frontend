@@ -46,6 +46,7 @@
                     <th>Prix</th>
                     <th>Date Dédiée</th>
                     <th>Statut</th>
+                    <th>Enregistré par</th>
                     <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
@@ -83,6 +84,20 @@
                         <span class="status-badge status--{{ res.statut === 'validee' ? 'success' : res.statut === 'annule' ? 'rejected' : 'pending' }}">
                             {{ res.statut || res.statusLabel || res.status || 'Inconnu' }}
                         </span>
+                        @if (res.statut === 'annulee' && res.modified_by) {
+                        <div class="modifier-info">
+                            Annulé par: {{ res.modified_by.nom }}
+                        </div>
+                        }
+                    </td>
+                    <td>
+                        @if (res.agent) {
+                        <div class="agent-info">
+                            <span class="agent-name">{{ res.agent.nom }} {{ res.agent.prenom }}</span>
+                        </div>
+                        } @else {
+                        <span class="text-muted">En ligne</span>
+                        }
                     </td>
                     <td style="text-align: right;">
                         <div class="action-btn-group" style="justify-content: flex-end;">

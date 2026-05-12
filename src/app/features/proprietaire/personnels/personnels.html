@@ -1,142 +1,33 @@
 <div class="page-container">
     <div class="page-header">
         <div class="header-text">
-            <h1 class="page-title">Mes Chefs d'agences</h1>
-            <p class="page-subtitle">Ajoutez les chefs d'agences de votre réseau</p>
+            <h1 class="page-title">Mes Personnels</h1>
+            <p class="page-subtitle">Visualisez et gérez les agents et chauffeurs de votre réseau</p>
         </div>
-        @if (!showForm()) {
-        <button class="btn-primary" (click)="openForm()">
-            <mat-icon>person_add</mat-icon> Nouveau chefs d'agence
-        </button>
-        }
     </div>
-
-    @if (showForm()) {
-    <div class="form-card animate-in">
-        <div class="form-card__header">
-            <h2>
-                <mat-icon class="accent">person_add</mat-icon>
-                {{ editingGerant() ? 'Mettre a le chefs d\'agence' : 'Nouveau chefs d\'agence' }}
-            </h2>
-            <button class="icon-btn" (click)="closeForm()" style="background: none; border: none; color: var(--color-text-muted); cursor: pointer;">
-                <mat-icon>close</mat-icon>
-            </button>
-        </div>
-
-        <form [formGroup]="gerantForm" (ngSubmit)="onSubmit()" class="form-grid">
-            <div class="field">
-                <label>Prénom *</label>
-                <div class="input-wrap">
-                    <mat-icon>person</mat-icon>
-                    <input type="text" formControlName="prenom" placeholder="Prénom">
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Nom *</label>
-                <div class="input-wrap">
-                    <mat-icon>person</mat-icon>
-                    <input type="text" formControlName="nom" placeholder="Nom">
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Email *</label>
-                <div class="input-wrap">
-                    <mat-icon>email</mat-icon>
-                    <input type="email" formControlName="email" placeholder="email@exemple.com">
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Téléphone *</label>
-                <div class="input-wrap">
-                    <mat-icon>phone</mat-icon>
-                    <input type="tel" formControlName="telephone" placeholder="6xx xxx xxx">
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Numéro CNI *</label>
-                <div class="input-wrap">
-                    <mat-icon>badge</mat-icon>
-                    <input type="text" formControlName="num_cni" placeholder="Numéro CNI">
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Date de naissance *</label>
-                <div class="input-wrap">
-                    <mat-icon>cake</mat-icon>
-                    <input type="date" formControlName="date_naissance">
-                </div>
-            </div>
-
-            <div class="field field--full">
-                <label>Gare à gérer *</label>
-                <div class="input-wrap">
-                    <mat-icon>location_city</mat-icon>
-                    <select formControlName="station_id">
-                        <option value="0" disabled>-- Sélectionner une gare --</option>
-                        @for (gare of gares(); track gare.id) {
-                        <option [value]="gare.id">{{ gare.nom || (gare.ville + ' - ' + gare.quartier) }}</option>
-                        }
-                    </select>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Mot de passe {{ editingGerant() ? '(Laisser vide pour ne pas changer)' : '*' }}</label>
-                <div class="input-wrap">
-                    <mat-icon>lock</mat-icon>
-                    <input [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="••••••••">
-                    <button type="button" (click)="togglePassword()" style="position: absolute; right: 1rem; background: none; border: none; color: var(--color-text-muted); cursor: pointer;">
-                        <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-                    </button>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Confirmer {{ editingGerant() ? '(Laisser vide)' : '*' }}</label>
-                <div class="input-wrap">
-                    <mat-icon>lock</mat-icon>
-                    <input [type]="showPassword() ? 'text' : 'password'" formControlName="password_confirmation" placeholder="••••••••">
-                </div>
-            </div>
-
-            <div class="form-actions" style="grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
-                <button type="button" class="btn-secondary" (click)="closeForm()" style="background: var(--color-surface); color: var(--color-text-muted); border-radius: 12px; padding: 0.85rem 1.5rem; border: none; font-weight: 700; cursor: pointer;">
-                    Annuler
-                </button>
-                <button type="submit" class="btn-primary" [disabled]="isSubmitting()">
-                    <mat-icon *ngIf="isSubmitting()" class="spin">sync</mat-icon>
-                    {{ isSubmitting() ? 'Traitement...' : (editingGerant() ? 'Mettre à jour' : 'Créer le compte') }}
-                </button>
-            </div>
-        </form>
-    </div>
-    }
 
     @if (isLoading()) {
     <div class="loading-state" style="text-align: center; padding: 4rem;">
-        <mat-icon class="spin" style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
-        <p>Chargement des chefs d'agences...</p>
+        <mat-icon class="spin"
+            style="font-size: 3rem; width: 48px; height: 48px; color: var(--color-primary);">sync</mat-icon>
+        <p>Chargement des personnels...</p>
     </div>
-    } @else if (managers().length === 0 && !showForm()) {
+    } @else if (personnels().length === 0) {
     <div class="empty-state" style="text-align: center; padding: 4rem;">
         <mat-icon style="font-size: 4rem; width: 64px; height: 64px; color: var(--color-border);">group_off</mat-icon>
-        <h3>Aucun chefs d'agence pour le moment</h3>
-        <p>Ajoutez des chefs d'agences pour déléguer la gestion de vos agences.</p>
+        <h3>Aucun personnel pour le moment</h3>
+        <p>Les agents et chauffeurs créés par vos gérants apparaîtront ici.</p>
     </div>
-    } @else if (managers().length > 0) {
+    } @else if (personnels().length > 0) {
     <div class="managers-list">
-        @for (manager of managers(); track manager.id) {
+        @for (manager of personnels(); track manager.id) {
         <div class="manager-card animate-in">
             <div class="manager-avatar">
                 {{ getInitials(manager) }}
             </div>
             <div class="manager-info">
-                <h3>{{ manager.prenom }} {{ manager.nom }}</h3>
+                <h3>{{ manager.prenom }} {{ manager.nom }} <span class="role-badge"
+                        [class.chauffeur]="manager.role_user === 'CHAUFFEUR'">{{ manager.role_user }}</span></h3>
                 <div class="manager-meta">
                     <span><mat-icon>email</mat-icon> {{ manager.email }}</span>
                     <span><mat-icon>phone</mat-icon> {{ manager.telephone }}</span>
@@ -146,14 +37,6 @@
                     </span>
                     }
                 </div>
-            </div>
-            <div class="manager-actions">
-                <button class="action-btn--edit" (click)="openForm(manager)" title="Modifier le compte" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--color-border); background: white; color: var(--color-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-                    <mat-icon>edit</mat-icon>
-                </button>
-                <button class="action-btn--delete" (click)="removeManager(manager)" title="Supprimer le compte">
-                    <mat-icon>person_remove</mat-icon>
-                </button>
             </div>
         </div>
         }

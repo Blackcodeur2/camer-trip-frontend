@@ -9,5 +9,7 @@ export interface Reservation {
     statut: string;
     prix: number;
     voyage: Voyage;
-    user?: User; 
+    user?: User;
+    agent?: User;
+    modified_by?: User;
 }

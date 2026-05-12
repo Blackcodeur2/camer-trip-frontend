@@ -141,6 +141,11 @@ export class ProprietaireService {
     return this.http.delete(`${this.API}/proprietaire/gerants/${userId}`);
   }
 
+  getMyPersonnels(): Observable<User[]> {
+    return this.http.get<any>(`${this.API}/proprietaire/personnels`)
+      .pipe(map(res => Array.isArray(res.data) ? res.data : Object.values(res.data || {})));
+  }
+
   // ── KYC ──
   getKycStatus(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API}/proprietaire/kyc/status`);

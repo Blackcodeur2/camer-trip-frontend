@@ -129,8 +129,12 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/proprietaire/voyages/voyages').then(m => m.Voyages)
             },
             {
-                path: 'personnels',
+                path: 'gerants',
                 loadComponent: () => import('./features/proprietaire/gerants/gerants').then(m => m.Gerants)
+            },
+            {
+                path: 'personnels',
+                loadComponent: () => import('./features/proprietaire/personnels/personnels').then(m => m.Personnels)
             },
             {
                 path: 'kyc',

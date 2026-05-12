@@ -36,7 +36,7 @@ export class Gerants implements OnInit {
     telephone:            ['', [Validators.required, Validators.pattern(/^[0-9]{9,15}$/)]],
     num_cni:              ['', Validators.required],
     date_naissance:       ['', Validators.required],
-    station_id: [null as number | null | undefined, [Validators.required]],// Optional
+    station_id: [null as number | null | undefined],// Optional
     password:             [''],
     password_confirmation: [''],
   }, { validators: this.passwordMatchValidator });
@@ -121,7 +121,8 @@ export class Gerants implements OnInit {
     this.isSubmitting.set(true);
     const payload = this.gerantForm.getRawValue();
     
-    if (payload.station_id === null || payload.station_id === 0) {
+    const sid: any = payload.station_id;
+    if (!sid || sid === '0' || sid === 0 || sid === 'null') {
       (payload as any).station_id = null;
     }
     

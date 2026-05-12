@@ -86,7 +86,7 @@
           <div class="input-wrap">
             <mat-icon>location_city</mat-icon>
             <select id="g-gare" formControlName="station_id">
-              <option value="null">-- Non affecté --</option>
+              <option value="">-- Non affecté --</option>
               @for (gare of gares(); track gare.id) {
                 <option [value]="gare.id">{{ gare.nom || (gare.ville + ' - ' + gare.quartier) }}</option>
               }
