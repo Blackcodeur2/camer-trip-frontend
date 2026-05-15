@@ -34,7 +34,7 @@ export class Users {
   // Pagination serveur
   currentPage = signal<number>(1);
   totalItems = signal<number>(0);
-  pageSize = signal<number>(20);
+  pageSize = signal<number>(4);
   avatarPreview = signal<string | null>(null);
   showCreateForm = signal<boolean>(false);
   isCreating = signal<boolean>(false);

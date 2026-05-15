@@ -35,7 +35,7 @@ export class Trajets {
   filteredVilles = signal<string[]>([]);
   activeAutocompleteField = signal<'depart' | 'arrivee' | null>(null);
   currentPage = signal(1);
-  pageSize = signal(5);
+  pageSize = signal(4);
   searchQuery = signal('');
   selectedType = signal('');
 

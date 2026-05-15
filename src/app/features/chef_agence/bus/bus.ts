@@ -29,7 +29,7 @@ export class BusPage {
   editId = signal<number | null>(null);
 
   currentPage = signal(1);
-  pageSize = signal(5);
+  pageSize = signal(4);
   searchQuery = signal('');
   selectedType = signal('');
   selectedCapacity = signal<number | null>(null);

@@ -29,7 +29,7 @@ export class Reservations {
   searchQuery = signal('');
   selectedStatut = signal('');
   currentPage = signal(1);
-  pageSize = signal(6);
+  pageSize = signal(4);
 
   isChefAgence = computed(() => this.authService.currentUser()?.role_user === 'CHEF_AGENCE');
 

@@ -20,7 +20,7 @@ export class Abonnements implements OnInit {
   error = signal<string | null>(null);
   searchQuery = signal('');
   currentPage = signal(1);
-  pageSize = signal(10);
+  pageSize = signal(4);
 
   filteredAbonnements = computed(() => {
     const q = this.searchQuery().toLowerCase();

@@ -24,7 +24,7 @@ export class Agences {
 
   // Pagination
   currentPage = signal<number>(1);
-  pageSize = signal<number>(6);
+  pageSize = signal<number>(4);
 
   paginatedAgences = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize();
