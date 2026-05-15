@@ -34,7 +34,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (sub of submissions(); track sub.user.id) {
+                @for (sub of paginatedSubmissions(); track sub.user.id) {
                 <tr>
                     <td>
                         <div class="user-info">
@@ -70,7 +70,9 @@
                                 <mat-icon>folder_open</mat-icon>
                             </button>
                             @if (sub.statutGlobal === 'en attente') {
-                                <!-- Les actions globales ont été retirées pour forcer la vérification document par document via le dossier -->
+                                <!--<button class="table-action-btn" title="Approuver Global" (click)="approveGlobal(sub)">
+                                    <mat-icon>check_circle</mat-icon>
+                                </button>-->
                             }
                         </div>
                     </td>
@@ -79,6 +81,10 @@
             </tbody>
         </table>
     </div>
+
+    <gev-pagination [totalItems]="submissions().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+        (pageChange)="currentPage.set($any($event))">
+    </gev-pagination>
     }
 
     <!-- Modal pour afficher les documents d'un utilisateur -->

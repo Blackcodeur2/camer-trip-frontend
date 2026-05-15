@@ -3,10 +3,12 @@ import { CommonModule, CurrencyPipe, DatePipe, NgClass } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { AdminService } from '../../../services/admin/admin-service';
 
+import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
+
 @Component({
   selector: 'app-abonnements',
   standalone: true,
-  imports: [CommonModule, MatIconModule, DatePipe, CurrencyPipe, NgClass],
+  imports: [CommonModule, MatIconModule, DatePipe, CurrencyPipe, NgClass, PaginationComponent],
   templateUrl: './abonnements.html',
   styleUrl: './abonnements.css'
 })
@@ -17,13 +19,21 @@ export class Abonnements implements OnInit {
   isLoading = signal(true);
   error = signal<string | null>(null);
   searchQuery = signal('');
+  currentPage = signal(1);
+  pageSize = signal(10);
 
   filteredAbonnements = computed(() => {
     const q = this.searchQuery().toLowerCase();
-    if (!q) return this.abonnements();
-    return this.abonnements().filter(a =>
-      `${a.nom} ${a.prenom} ${a.email}`.toLowerCase().includes(q)
-    );
+    const list = q 
+      ? this.abonnements().filter(a => `${a.nom} ${a.prenom} ${a.email}`.toLowerCase().includes(q))
+      : this.abonnements();
+    return list;
+  });
+
+  paginatedAbonnements = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.filteredAbonnements().slice(start, end);
   });
 
   stats = computed(() => {

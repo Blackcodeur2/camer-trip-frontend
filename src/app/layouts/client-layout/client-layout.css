@@ -105,8 +105,11 @@
 }
 
 .bottom-nav {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  overflow-x: auto;
+  gap: 0.25rem;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
   background: var(--color-dark);
   border-radius: 20px;
   padding: 0.5rem;
@@ -116,7 +119,13 @@
   pointer-events: all;
 }
 
+.bottom-nav::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
 .nav-item {
+  flex: 0 0 20%;
+  min-width: 70px;
   display: flex;
   flex-direction: column;
   align-items: center;

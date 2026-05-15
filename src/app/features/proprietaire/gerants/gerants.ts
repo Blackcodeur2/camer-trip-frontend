@@ -9,9 +9,12 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../services/auth/auth-service';
 
+import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
+import { computed } from '@angular/core';
+
 @Component({
   selector: 'app-gerants',
-  imports: [CommonModule, MatIconModule, ReactiveFormsModule],
+  imports: [CommonModule, MatIconModule, ReactiveFormsModule, PaginationComponent],
   templateUrl: './gerants.html',
   styleUrl: './gerants.css',
 })
@@ -28,6 +31,15 @@ export class Gerants implements OnInit {
   showForm = signal(false);
   showPassword = signal(false);
   selectedManager = signal<User | null>(null);
+
+  currentPage = signal(1);
+  pageSize = signal(10);
+
+  paginatedManagers = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.managers().slice(start, end);
+  });
 
   gerantForm = this.fb.nonNullable.group({
     prenom:               ['', Validators.required],

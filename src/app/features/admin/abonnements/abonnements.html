@@ -83,7 +83,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of filteredAbonnements(); track item.user_id) {
+            @for (item of paginatedAbonnements(); track item.user_id) {
               <tr>
                 <!-- Propriétaire -->
                 <td>
@@ -163,6 +163,10 @@
           </tbody>
         </table>
       </div>
+
+      <gev-pagination [totalItems]="filteredAbonnements().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+        (pageChange)="currentPage.set($event)">
+      </gev-pagination>
     }
   </div>
 </div>

@@ -35,6 +35,7 @@ export class Voyages {
   searchTerm = signal('');
   currentPage = signal(1);
   pageSize = signal(10);
+  today = new Date().toISOString().split('T')[0];
 
   voyageForm = this.fb.group({
     date_depart: ['', Validators.required],

@@ -69,7 +69,7 @@
                         <label>Date de voyage</label>
                         <div class="input-wrapper">
                             <mat-icon>calendar_today</mat-icon>
-                            <input type="date" formControlName="date">
+                            <input type="date" formControlName="date" [min]="today">
                         </div>
                     </div>
                 </div>

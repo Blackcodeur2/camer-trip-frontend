@@ -161,13 +161,12 @@
             <th>Gérant</th>
             <th>Matricule</th>
             <th>Contact</th>
-            <th>Gare Affectée</th>
-            <th>Statut</th>
+            <th>Station Affectée</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          @for (manager of managers(); track manager.id) {
+          @for (manager of paginatedManagers(); track manager.id) {
             <tr>
               <td>
                 <div class="user-info">
@@ -203,12 +202,6 @@
                 }
               </td>
               <td>
-                <span class="status-badge" [class.status--active]="manager.statut === 'approuve'" [class.status--pending]="manager.statut === 'en_attente'">
-                  <mat-icon>{{ manager.statut === 'approuve' ? 'check_circle' : 'history' }}</mat-icon>
-                  {{ manager.statut }}
-                </span>
-              </td>
-              <td>
                 <div class="" style="display: flex;">
                   <button class="table-action-btn edit" (click)="openForm(manager)" title="Modifier le gérant">
                     <mat-icon>edit</mat-icon>
@@ -223,5 +216,9 @@
         </tbody>
       </table>
     </div>
+
+    <gev-pagination [totalItems]="managers().length" [pageSize]="pageSize()" [currentPage]="currentPage()"
+      (pageChange)="currentPage.set($any($event))">
+    </gev-pagination>
   }
 </div>

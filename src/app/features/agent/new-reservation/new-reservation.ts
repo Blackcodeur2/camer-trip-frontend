@@ -20,6 +20,7 @@ export class NewReservation {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   //private ticketService = inject(TicketService);
+  today = new Date().toISOString().split('T')[0];
 
   // -- State --
   currentStep = signal(1); // 1: Trip, 2: Voyage, 3: Client, 4: Seat, 5: Review

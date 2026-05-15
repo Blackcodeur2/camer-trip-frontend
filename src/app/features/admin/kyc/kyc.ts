@@ -7,9 +7,12 @@ import { DocumentKYC, KycGroupedByUser, KycStatus } from '../../../models/docume
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 
+import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
+import { computed } from '@angular/core';
+
 @Component({
   selector: 'app-kyc',
-  imports: [MatIconModule, CommonModule],
+  imports: [MatIconModule, CommonModule, PaginationComponent],
   templateUrl: './kyc.html',
   styleUrl: './kyc.css',
 })
@@ -21,6 +24,15 @@ export class Kyc {
   submissions = signal<KycGroupedByUser[]>([]);
   isLoading = signal(true);
   isProcessing = signal(false);
+
+  currentPage = signal(1);
+  pageSize = signal(10);
+
+  paginatedSubmissions = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    return this.submissions().slice(start, end);
+  });
 
   // Modal de prévisualisation
   previewDocument = signal<{ url: SafeResourceUrl | string, rawUrl: string, type: string, comment: string, isPdf: boolean, doc: DocumentKYC } | null>(null);
