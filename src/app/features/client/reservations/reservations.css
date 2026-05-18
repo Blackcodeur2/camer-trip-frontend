@@ -224,6 +224,16 @@
 
 .pay-btn:hover { background: #2563eb; }
 
+.incident-btn {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.incident-btn:hover {
+    background: #fca5a5;
+    color: #b91c1c;
+}
+
 .ticket-btn {
     background: #f1f5f9;
     color: #475569;

@@ -130,6 +130,13 @@
                     <p>{{ incident.description }}</p>
                 </div>
 
+                @if (incident.photo_url) {
+                <div class="incident-photo-container">
+                    <img [src]="incident.photo_url" alt="Preuve d'incident" class="incident-photo-thumb" (click)="viewFullPhoto(incident.photo_url)">
+                    <span class="zoom-badge"><mat-icon>zoom_in</mat-icon> Zoomer</span>
+                </div>
+                }
+
                 <div class="incident-footer">
                     <div class="reporter-info">
                         <mat-icon>person</mat-icon>

@@ -62,6 +62,9 @@
                     <button class="pay-btn" *ngIf="r.statut === 'en attente'" (click)="onPayReservation(r)">
                         Payer <mat-icon>payments</mat-icon>
                     </button>
+                    <button class="incident-btn" *ngIf="r.statut === 'validee' && r.voyage?.statut === 'en cours'" (click)="onReportIncident(r)" title="Signaler un incident sur ce voyage">
+                        <mat-icon>report_problem</mat-icon>
+                    </button>
                     <button class="ticket-btn" *ngIf="r.statut === 'validee'">
                         Ticket <mat-icon>file_download</mat-icon>
                     </button>

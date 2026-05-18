@@ -96,7 +96,11 @@
                 <td>
                   <div class="owner-info">
                     <div class="owner-avatar">
-                      {{ item.prenom?.[0] ?? '?' }}{{ item.nom?.[0] ?? '' }}
+                      @if (item.profil_url) {
+                        <img [src]="item.profil_url" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                      } @else {
+                        {{ item.prenom?.[0] ?? '?' }}{{ item.nom?.[0] ?? '' }}
+                      }
                     </div>
                     <div>
                       <span class="owner-name">{{ item.prenom }} {{ item.nom }}</span>

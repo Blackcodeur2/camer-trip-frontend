@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ChauffeurService } from '../../../services/chauffeur/chauffeur-service';
@@ -15,15 +15,18 @@ import Swal from 'sweetalert2';
 export class Incidents {
   private chauffeurService = inject(ChauffeurService);
 
+  private cdr = inject(ChangeDetectorRef);
+
+  selectedFile: File | null = null;
+  previewUrl: string | null = null;
+
   selectedType: string = '';
   isSubmitting = false;
 
   incidentTypes = [
     { id: 'panne', label: 'Panne', icon: 'build' },
     { id: 'accident', label: 'Accident', icon: 'minor_crash' },
-    { id: 'bouchon', label: 'Embouteillage', icon: 'traffic' },
-    { id: 'meteo', label: 'Météo', icon: 'cloudy_filled' },
-    { id: 'autre', label: 'Autre', icon: 'more_horiz' }
+    { id: 'meteo', label: 'Météo', icon: 'cloudy_filled' }
   ];
 
   incidentData = {
@@ -42,8 +45,33 @@ export class Incidents {
       const current = voyages.find(v => v.statut === 'en cours');
       if (current) {
         this.incidentData.voyage_id = current.id;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      // Limite PHP par défaut (2 Mo) pour éviter les erreurs CORS 413 ou 500
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire('Fichier trop lourd', 'La taille maximale de la photo est de 2 Mo. Veuillez en choisir une plus petite.', 'warning');
+        return;
+      }
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removePhoto(event: Event) {
+    event.stopPropagation();
+    this.selectedFile = null;
+    this.previewUrl = null;
   }
 
   onSubmit() {
@@ -57,17 +85,30 @@ export class Incidents {
       return;
     }
 
-    this.incidentData.type = this.selectedType;
+    if (!this.selectedFile) {
+      Swal.fire('Photo requise', 'Veuillez ajouter une photo pour décrire l\'incident.', 'warning');
+      return;
+    }
+
     this.isSubmitting = true;
 
-    this.chauffeurService.reportIncident(this.incidentData).subscribe({
+    const formData = new FormData();
+    formData.append('voyage_id', String(this.incidentData.voyage_id));
+    formData.append('type', this.selectedType);
+    formData.append('description', this.incidentData.description);
+    formData.append('niveau_gravite', this.incidentData.niveau_gravite);
+    formData.append('photo', this.selectedFile);
+
+    this.chauffeurService.reportIncident(formData).subscribe({
       next: () => {
         this.isSubmitting = false;
+        this.cdr.detectChanges();
         Swal.fire('Signalé !', 'L\'incident a été transmis à l\'agence.', 'success');
         this.resetForm();
       },
       error: () => {
         this.isSubmitting = false;
+        this.cdr.detectChanges();
         Swal.fire('Erreur', 'Impossible d\'envoyer le signalement.', 'error');
       }
     });
@@ -77,5 +118,8 @@ export class Incidents {
     this.selectedType = '';
     this.incidentData.description = '';
     this.incidentData.niveau_gravite = 'MOYEN';
+    this.selectedFile = null;
+    this.previewUrl = null;
+    this.cdr.detectChanges();
   }
 }

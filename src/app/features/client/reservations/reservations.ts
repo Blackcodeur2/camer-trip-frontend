@@ -142,4 +142,73 @@ export class Reservations implements OnInit {
   goToVoyages(): void {
     this.router.navigate(['/client/agences']);
   }
+
+  async onReportIncident(reservation: Reservation) {
+    const { value: formValues } = await Swal.fire({
+      title: 'Signaler un incident',
+      html: `
+        <select id="swal-input-type" class="swal2-input" style="width: 80%; max-width: 100%;">
+          <option value="" disabled selected>Type d'incident...</option>
+          <option value="panne">Panne</option>
+          <option value="accident">Accident</option>
+          <option value="retard">Retard important</option>
+          <option value="perte">Perte de bagage</option>
+          <option value="autre">Autre</option>
+        </select>
+        <textarea id="swal-input-desc" class="swal2-textarea" placeholder="Description détaillée de l'incident..." style="width: 80%; max-width: 100%;"></textarea>
+        <div style="margin-top: 15px; text-align: left; width: 80%; max-width: 100%; margin-left: auto; margin-right: auto;">
+          <label style="font-size: 0.9em; font-weight: bold;">Preuve en photo (Requise)</label>
+          <input type="file" id="swal-input-file" class="swal2-file" accept="image/*" style="width: 100%; margin-top: 8px;">
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Signaler',
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: '#E21E26',
+      preConfirm: () => {
+        const type = (document.getElementById('swal-input-type') as HTMLSelectElement).value;
+        const desc = (document.getElementById('swal-input-desc') as HTMLTextAreaElement).value;
+        const fileInput = document.getElementById('swal-input-file') as HTMLInputElement;
+        const file = fileInput.files ? fileInput.files[0] : null;
+
+        if (!type || !desc || !file) {
+          Swal.showValidationMessage('Veuillez remplir tous les champs et joindre une photo.');
+          return false;
+        }
+        
+        if (file.size > 2 * 1024 * 1024) {
+          Swal.showValidationMessage('La taille de la photo ne doit pas dépasser 2 Mo.');
+          return false;
+        }
+
+        return { type, desc, file };
+      }
+    });
+
+    if (formValues) {
+      Swal.fire({
+        title: 'Envoi en cours...',
+        text: 'Veuillez patienter pendant le téléchargement de la photo.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      const formData = new FormData();
+      formData.append('voyage_id', String(reservation.voyage.id));
+      formData.append('type', formValues.type);
+      formData.append('description', formValues.desc);
+      formData.append('niveau_gravite', 'MOYEN'); // Par défaut pour les clients
+      formData.append('photo', formValues.file);
+
+      this.clientService.reportIncident(formData).subscribe({
+        next: () => {
+          Swal.fire('Signalé !', 'L\'incident a été transmis à l\'agence avec succès.', 'success');
+        },
+        error: (err) => {
+          Swal.fire('Erreur', err.error?.message || 'Impossible d\'envoyer le signalement.', 'error');
+        }
+      });
+    }
+  }
 }

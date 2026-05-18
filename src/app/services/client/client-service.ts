@@ -63,4 +63,9 @@ export class ClientService {
     return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/client/colis`)
       .pipe(map(response => response.data));
   }
+
+  // ── Incidents ──
+  reportIncident(incidentData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.API}/client/incidents`, incidentData);
+  }
 }

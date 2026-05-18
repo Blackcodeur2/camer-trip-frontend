@@ -44,11 +44,31 @@
                     <textarea [(ngModel)]="incidentData.description" name="description"
                         placeholder="Expliquez brièvement la situation..." rows="4"></textarea>
                 </div>
+            <div class="form-section">
+                <label class="section-label">Preuve en photo (Requise)</label>
+                <div class="photo-upload-zone" (click)="fileInput.click()">
+                    <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" style="display: none;">
+                    
+                    @if (previewUrl) {
+                        <div class="photo-preview-container">
+                            <img [src]="previewUrl" class="photo-preview" alt="Preview incident">
+                            <button class="remove-photo-btn" (click)="removePhoto($event)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    } @else {
+                        <div class="upload-placeholder">
+                            <mat-icon class="upload-icon">add_a_photo</mat-icon>
+                            <span class="upload-text">Prendre une photo ou sélectionner un fichier</span>
+                            <span class="upload-subtext">Formats acceptés : JPG, PNG, WEBP (Max 10Mo)</span>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
 
         <div class="card-footer">
-            <button class="submit-btn" (click)="onSubmit()" [disabled]="!incidentData.description || !selectedType || isSubmitting">
+            <button class="submit-btn" (click)="onSubmit()" [disabled]="!incidentData.description || !selectedType || !selectedFile || isSubmitting">
                 <mat-icon>{{ isSubmitting ? 'sync' : 'send' }}</mat-icon>
                 {{ isSubmitting ? 'ENVOI EN COURS...' : 'ENVOYER LE SIGNALEMENT' }}
             </button>

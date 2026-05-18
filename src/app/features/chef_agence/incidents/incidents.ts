@@ -131,6 +131,17 @@ export class Incidents implements OnInit {
     }
   }
 
+  viewFullPhoto(photoUrl: string) {
+    Swal.fire({
+      imageUrl: photoUrl,
+      imageAlt: "Photo de l'incident",
+      showConfirmButton: false,
+      showCloseButton: true,
+      background: '#fff',
+      width: '600px',
+    });
+  }
+
   // Counts for summary cards
   get criticalCount() { return this.incidents().filter(i => i.niveau_gravite === 'CRITIQUE').length; }
   get pendingCount()  { return this.incidents().filter(i => i.statut !== 'resolu').length; }
