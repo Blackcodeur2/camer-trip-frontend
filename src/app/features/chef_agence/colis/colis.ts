@@ -32,10 +32,15 @@ export class ColisPage {
     return this.colisList().slice(start, start + this.pageSize());
   });
 
-  // Client search support
+  // Client (Expéditeur) search support
   clientSearchQuery$ = new Subject<string>();
   clientSearchResults = signal<any[]>([]);
   selectedClient = signal<any>(null);
+
+  // Destinataire search support
+  destSearchQuery$ = new Subject<string>();
+  destSearchResults = signal<any[]>([]);
+  selectedDest = signal<any>(null);
 
   // Trajets
   availableTrajets = signal<any[]>([]);
@@ -46,6 +51,7 @@ export class ColisPage {
   constructor() {
     this.colisForm = this.fb.group({
       clientSearchQuery: [''],
+      destSearchQuery: [''],
       nom_expediteur: [''],
       tel_expediteur: [''],
       nom_colis: ['', Validators.required],
@@ -57,7 +63,7 @@ export class ColisPage {
       poids: [0, [Validators.min(0)]]
     });
 
-    // Handle Client search stream
+    // Handle Client (Expéditeur) search stream
     this.clientSearchQuery$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -67,6 +73,18 @@ export class ColisPage {
       })
     ).subscribe(results => {
       this.clientSearchResults.set(results);
+    });
+
+    // Handle Destinataire search stream
+    this.destSearchQuery$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (!query || query.length < 2) return of([]);
+        return this.agentService.searchClients(query).pipe(catchError(() => of([])));
+      })
+    ).subscribe(results => {
+      this.destSearchResults.set(results);
     });
   }
 
@@ -78,8 +96,9 @@ export class ColisPage {
   toggleViewMode() {
     if (this.viewMode() === 'list') {
       this.viewMode.set('create');
-      this.colisForm.reset({ prix: 0, poids: 0, clientSearchQuery: '', trajet_id: '', destination: '' });
+      this.colisForm.reset({ prix: 0, poids: 0, clientSearchQuery: '', destSearchQuery: '', trajet_id: '', destination: '' });
       this.selectedClient.set(null);
+      this.selectedDest.set(null);
       this.isGuestSender.set(false);
     } else {
       this.viewMode.set('list');
@@ -131,6 +150,34 @@ export class ColisPage {
     this.selectedClient.set(client);
     this.clientSearchResults.set([]);
     this.colisForm.get('clientSearchQuery')?.setValue('');
+  }
+
+  onDestSearch(event: Event) {
+    const query = (event.target as HTMLInputElement).value;
+    if (query.length < 2) {
+      this.destSearchResults.set([]);
+    } else {
+      this.destSearchQuery$.next(query);
+    }
+  }
+
+  selectDest(client: any) {
+    this.selectedDest.set(client);
+    this.destSearchResults.set([]);
+    this.colisForm.get('destSearchQuery')?.setValue('');
+    // Auto-fill destinataire fields
+    this.colisForm.patchValue({
+      nom_destinataire: `${client.nom} ${client.prenom || ''}`.trim(),
+      tel_destinataire: client.telephone
+    });
+  }
+
+  clearDest() {
+    this.selectedDest.set(null);
+    this.colisForm.patchValue({
+      nom_destinataire: '',
+      tel_destinataire: ''
+    });
   }
 
   toggleGuestSender() {

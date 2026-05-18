@@ -164,6 +164,17 @@ export class Kyc {
   }
 
   rejectDocument(doc: DocumentKYC) {
+    const sub = this.selectedSubmission();
+    if (sub?.user?.is_subscribed) {
+      Swal.fire({
+        title: 'Rejet impossible',
+        text: 'Ce propriétaire possède un abonnement actif. Ses documents ne peuvent plus être rejetés.',
+        icon: 'warning',
+        confirmButtonColor: '#10b981'
+      });
+      return;
+    }
+
     Swal.fire({
       title: 'Rejeter ce document ?',
       text: 'Veuillez saisir le motif du rejet :',

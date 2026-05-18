@@ -86,59 +86,52 @@
     </div>
     }
 
-    <div class="table-container">
-        <table class="premium-table">
-            <thead>
-                <tr>
-                    <th>Bus / Immat</th>
-                    <th>Code</th>
-                    <th>Capacité</th>
-                    <th>Type</th>
-                    <th>Classe</th>
-                    <th>Statut</th>
-                    <th style="text-align: right;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (bus of paginatedBuses(); track bus.id) {
-                <tr>
-                    <td>
-                        <div class="bus-info">
-                            <div class="bus-icon"><mat-icon>directions_bus</mat-icon></div>
-                            <span class="immat">{{ bus.immatriculation }}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <span style="font-weight: 800; color: var(--color-dark);">{{ bus.code_bus }}</span>
-                    </td>
-                    <td><span style="font-weight: 700;">{{ bus.nb_places }} places</span></td>
-                    <td><span style="text-transform: capitalize; font-weight: 600;">{{ bus.type_bus }}</span></td>
-                    <td><span style="text-transform: capitalize; font-weight: 700; color: var(--color-primary);">{{ bus.classe_bus }}</span></td>
-                    <td>
-                        <span class="status-badge status--{{ bus.statut === 'disponible' ? 'success' : bus.statut === 'en_voyage' ? 'active' : 'pending' }}">
-                            {{ bus.statut }}
-                        </span>
-                    </td>
-                    <td style="text-align: right;">
-                        <div class="action-btn-group" style="justify-content: flex-end;">
-                            <button class="table-action-btn" (click)="editBus(bus)" title="Modifier">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                } @empty {
-                <tr>
-                    <td colspan="7">
-                        <div class="state-container">
-                            <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: var(--color-primary);">directions_bus</mat-icon>
-                            <p style="font-weight: 700; color: var(--color-text-muted)">Aucun véhicule trouvé.</p>
-                        </div>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+    <div class="bus-grid">
+        @for (bus of paginatedBuses(); track bus.id) {
+        <div class="bus-card" 
+             [class.status-disponible]="bus.statut === 'disponible'" 
+             [class.status-voyage]="bus.statut === 'en_voyage' || bus.statut === 'en voyage'" 
+             [class.status-maintenance]="bus.statut === 'en maintenance' || bus.statut === 'maintenance'">
+            
+            <div class="bus-card__header">
+                <div class="bus-card__avatar">
+                    <mat-icon>directions_bus</mat-icon>
+                </div>
+                <div class="bus-card__title">
+                    <span class="immatriculation">{{ bus.immatriculation }}</span>
+                    <span class="code">{{ bus.code_bus }}</span>
+                </div>
+                <button class="bus-card__edit-btn" (click)="editBus(bus)" title="Modifier">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </div>
+            
+            <div class="bus-card__status">
+                <span class="status-dot"></span>
+                <span class="status-text">{{ bus.statut }}</span>
+            </div>
+
+            <div class="bus-card__details">
+                <div class="detail-item">
+                    <span class="detail-label">Type</span>
+                    <span class="detail-value">{{ bus.type_bus }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Classe</span>
+                    <span class="detail-value class-badge" [class.vip]="bus.classe_bus === 'vip'">{{ bus.classe_bus }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Capacité</span>
+                    <span class="detail-value">{{ bus.nb_places }} places</span>
+                </div>
+            </div>
+        </div>
+        } @empty {
+        <div class="empty-state-card">
+            <mat-icon>directions_bus</mat-icon>
+            <p>Aucun véhicule trouvé.</p>
+        </div>
+        }
     </div>
 
     <gev-pagination [totalItems]="buses().length" [pageSize]="pageSize()" [currentPage]="currentPage()"

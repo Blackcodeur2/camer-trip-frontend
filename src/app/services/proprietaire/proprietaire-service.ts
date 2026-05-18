@@ -170,6 +170,11 @@ export class ProprietaireService {
       .pipe(map(res => res.data));
   }
 
+  getSubscriptionPlan(): Observable<any> {
+    return this.http.get<{ statut: boolean; data: any }>(`${this.API}/proprietaire/subscription-plan`)
+      .pipe(map(res => res.data));
+  }
+
   getKYCDocuments(): Observable<any> {
     return this.http.get<any>(`${this.API}/proprietaire/documents`);
   }
@@ -182,5 +187,13 @@ export class ProprietaireService {
 
   initiateSubscriptionPayment(phone: string): Observable<any> {
     return this.http.post<any>(`${this.API}/payments/subscription`, { phone });
+  }
+
+  exportPersonnelPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/proprietaire/export-personnel`, { responseType: 'blob' });
+  }
+
+  exportPassagersPdf(voyageId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/proprietaire/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
   }
 }

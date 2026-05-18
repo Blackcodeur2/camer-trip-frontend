@@ -21,6 +21,7 @@ export class Dashboard implements OnInit {
   today = new Date();
   isLoading = signal(true);
   isProcessing = signal(false);
+  exportingVoyageId = signal<number | null>(null);
   nextTrip = signal<Voyage | null>(null);
   upcomingVoyages = signal<Voyage[]>([]);
 
@@ -99,6 +100,23 @@ export class Dashboard implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         window.location.href = 'tel:658135105'; 
+      }
+    });
+  }
+
+  exportManifeste(voyage: Voyage) {
+    this.exportingVoyageId.set(voyage.id ?? null);
+    this.chauffeurService.exportPassagersPdf(voyage.id!).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        // Libérer la mémoire après un court délai
+        setTimeout(() => window.URL.revokeObjectURL(url), 1000);
+        this.exportingVoyageId.set(null);
+      },
+      error: () => {
+        this.exportingVoyageId.set(null);
+        Swal.fire('Erreur', 'Impossible de générer le manifeste', 'error');
       }
     });
   }

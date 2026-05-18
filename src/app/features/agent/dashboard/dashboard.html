@@ -60,6 +60,12 @@
                         {{ voyage.isFull ? 'Complet' : voyage.freeSeats + ' places libres' }}
                     </span>
                 </div>
+                <div class="trip-actions" style="margin-top: 10px; text-align: right;">
+                    <button class="btn btn-outline" (click)="exportManifeste(voyage.id)" [disabled]="exportingVoyageId() === voyage.id" style="font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--color-primary); background: transparent; color: var(--color-primary); cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        <mat-icon style="font-size: 14px; width: 14px; height: 14px;">{{ exportingVoyageId() === voyage.id ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
+                        Manifeste
+                    </button>
+                </div>
             </div>
             <div *ngIf="liveTrips().length === 0" class="empty-state">
                 Aucun départ prévu prochainement.

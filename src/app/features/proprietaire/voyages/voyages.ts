@@ -17,6 +17,7 @@ export class Voyages {
   stations = signal<any[]>([]);
   selectedStationId = signal<number | null>(null);
   isLoading = signal(true);
+  exportingVoyageId = signal<number | null>(null);
 
   filteredVoyages = computed(() => {
     const stationId = this.selectedStationId();
@@ -69,5 +70,26 @@ export class Voyages {
       default:
         return 'status-unknown';
     }
+  }
+
+  exportManifeste(voyage: any) {
+    this.exportingVoyageId.set(voyage.id);
+    this.proprietaireService.exportPassagersPdf(voyage.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `manifeste_voyage_${voyage.num_voyage}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.exportingVoyageId.set(null);
+      },
+      error: () => {
+        this.exportingVoyageId.set(null);
+        Swal.fire('Erreur', 'Impossible de générer le manifeste', 'error');
+      }
+    });
   }
 }

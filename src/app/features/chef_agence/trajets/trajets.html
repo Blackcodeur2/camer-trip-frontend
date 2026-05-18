@@ -19,7 +19,7 @@
 
             <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
                 <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
-                <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
+                <span>{{ isExporting() ? 'Export...' : 'Exporter' }}</span>
             </button>
             <button class="btn-primary" (click)="toggleForm()">
                 <mat-icon>{{ showForm() ? 'close' : 'add_road' }}</mat-icon>

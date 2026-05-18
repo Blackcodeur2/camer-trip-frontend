@@ -63,4 +63,8 @@ export class ChauffeurService {
     return this.http.get<{ status: boolean; data: any[] }>(`${this.API}/chauffeur/incidents`)
       .pipe(map(response => response.data));
   }
+
+  exportPassagersPdf(voyageId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/chauffeur/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
+  }
 }

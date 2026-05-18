@@ -1,5 +1,20 @@
 <div class="dashboard-page">
-    <div class="header-row">
+    <!-- En-tête de la Station -->
+    <div class="station-banner" *ngIf="station()">
+        <div class="station-banner__logo" *ngIf="station().agence_logo">
+            <img [src]="station().agence_logo" alt="Logo de l'Agence" />
+        </div>
+        <div class="station-banner__info">
+            <span class="agency-tag">{{ station().agence_nom }}</span>
+            <h2>Gare de {{ station().nom }}</h2>
+            <div class="meta-row">
+                <span><mat-icon style="font-size: 18px; width: 18px; height: 18px;">location_on</mat-icon> {{ station().ville }} - {{ station().adresse }}</span>
+                <span><mat-icon style="font-size: 18px; width: 18px; height: 18px;">phone</mat-icon> {{ station().telephone }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-row" *ngIf="!station()">
         <div>
             <h1>{{ agencyName() }}</h1>
             <p class="subtitle">{{ agencyStatus() }}</p>

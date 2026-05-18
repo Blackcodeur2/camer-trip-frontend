@@ -31,6 +31,7 @@ export class Voyages {
   isSubmitting = signal(false);
   isEditing = signal(false);
   editId = signal<number | null>(null);
+  exportingVoyageId = signal<number | null>(null);
 
   searchTerm = signal('');
   currentPage = signal(1);
@@ -219,6 +220,27 @@ export class Voyages {
           Swal.fire('Terminé', 'Le voyage est fini.', 'success');
           this.loadVoyages();
         });
+      }
+    });
+  }
+
+  exportManifeste(voyage: any) {
+    this.exportingVoyageId.set(voyage.id);
+    this.chefService.exportPassagersPdf(voyage.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `manifeste_voyage_${voyage.num_voyage}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.exportingVoyageId.set(null);
+      },
+      error: () => {
+        this.exportingVoyageId.set(null);
+        Swal.fire('Erreur', 'Impossible de générer le manifeste', 'error');
       }
     });
   }

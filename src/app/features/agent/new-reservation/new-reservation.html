@@ -108,18 +108,30 @@
                 @for (voyage of voyages(); track voyage.id) {
                 <div class="voyage-item" (click)="selectVoyage(voyage)"
                     [class.selected]="selectedVoyage()?.id === voyage.id" [class.disabled]="isVoyageDisabled(voyage)">
-                    <div class="voyage-time">
-                        <span class="time">{{ voyage.heure_depart || '--:--' }}</span>
-                        <span class="label">Départ</span>
-                    </div>
-                    <div class="voyage-info">
-                        <span class="bus-type">Standard Coaster</span>
-                        <span class="bus-id">{{ voyage.vehicule_immatriculation }}</span>
-                    </div>
-                    <div class="voyage-status">
+                    
+                    <div class="voyage-item__top">
+                        <div class="voyage-time">
+                            <span class="time">{{ voyage.heure_depart || '--:--' }}</span>
+                            <span class="label">Départ</span>
+                        </div>
                         <span class="badge" [class]="voyage.statut">{{ voyage.statut }}</span>
                     </div>
-                    <mat-icon class="chevron">chevron_right</mat-icon>
+
+                    <div class="voyage-info">
+                        <span class="bus-type">{{ voyage.bus?.type_bus || 'Coaster' }} - {{ voyage.bus?.classe_bus || 'Classique' }}</span>
+                        <span class="bus-id">
+                            <mat-icon style="font-size: 16px; width: 16px; height: 16px; margin-right: 4px; color: #9CA3AF;">directions_bus</mat-icon>
+                            {{ voyage.bus?.immatriculation || voyage.vehicule_immatriculation || 'N/A' }}
+                        </span>
+                    </div>
+
+                    <div class="voyage-seats-indicator">
+                        <span class="seats-left-badge" [class.few-seats]="((voyage.bus?.nb_places || 70) - 2 - (voyage.reservations_count || 0)) <= 5">
+                            <mat-icon>event_seat</mat-icon>
+                            {{ ((voyage.bus?.nb_places || 70) - 2 - (voyage.reservations_count || 0)) > 0 ? ((voyage.bus?.nb_places || 70) - 2 - (voyage.reservations_count || 0)) : 0 }} places libres
+                        </span>
+                        <span class="seats-total-text">sur {{ ((voyage.bus?.nb_places || 70) - 2) > 0 ? ((voyage.bus?.nb_places || 70) - 2) : 0 }} places</span>
+                    </div>
                 </div>
                 }
             </div>
@@ -281,22 +293,31 @@
 
                 <div class="bus-map">
                     <div class="bus-inner">
-                        <div class="bus-front">
-                            <div class="driver-area"><mat-icon>settings</mat-icon></div>
-                            <div class="entrance"><mat-icon>door_front</mat-icon></div>
-                        </div>
-
                         <div class="seats-grid">
-                            @for (seat of getTotalSeatsArray(); track seat) {
-                            <button class="seat" [class.occupied]="!isSeatAvailable(seat) || seat === 1"
-                                [class.selected]="selectedSeat() === seat.toString()"
-                                [disabled]="!isSeatAvailable(seat) || seat === 1" (click)="seat !== 1 ? selectSeat(seat.toString()) : null">
-                                @if (seat === 1) {
-                                    <mat-icon style="font-size: 20px; width: 20px; height: 20px; margin-top: 4px;">airline_seat_recline_normal</mat-icon>
+                            @for (cell of getBusLayoutCells(); track $index) {
+                                @if (cell.type === 'driver') {
+                                    <button class="seat crew-seat occupied" disabled title="Chauffeur">
+                                        <mat-icon>airline_seat_recline_normal</mat-icon>
+                                    </button>
+                                } @else if (cell.type === 'motorboy') {
+                                    <button class="seat crew-seat occupied" disabled title="Motorboy">
+                                        <mat-icon>support_agent</mat-icon>
+                                    </button>
+                                } @else if (cell.type === 'door') {
+                                    <div class="bus-door-cell" title="Entrée du bus">
+                                        <mat-icon>sensor_door</mat-icon>
+                                    </div>
+                                } @else if (cell.type === 'empty') {
+                                    <div class="bus-empty-cell"></div>
                                 } @else {
-                                    {{ seat }}
+                                    <button class="seat" 
+                                        [class.occupied]="!isSeatAvailable(cell.seatNumber)"
+                                        [class.selected]="selectedSeat() === cell.seatNumber.toString()"
+                                        [disabled]="!isSeatAvailable(cell.seatNumber)" 
+                                        (click)="selectSeat(cell.seatNumber.toString())">
+                                        {{ cell.seatNumber }}
+                                    </button>
                                 }
-                            </button>
                             }
                         </div>
                     </div>
@@ -357,7 +378,8 @@
                 </div>
                 <div class="summary-item">
                     <span class="label">Véhicule</span>
-                    <span class="val">{{ selectedVoyage()?.vehicule_immatriculation }}</span>
+                    <span class="val">{{ selectedVoyage()?.bus?.immatriculation || selectedVoyage()?.vehicule_immatriculation }}</span>
+                    <span class="sub" *ngIf="selectedVoyage()?.bus?.code_bus">{{ selectedVoyage()?.bus?.code_bus }}</span>
                 </div>
             </div>
 

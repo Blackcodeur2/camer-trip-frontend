@@ -189,11 +189,11 @@
 .date-cell .time { font-size: 0.85rem; color: var(--color-primary); font-weight: 600; }
 
 .voyage-info .num {
-    background: var(--color-dark);
-    color: white;
-    padding: 2px 8px;
+    background: rgb(247, 173, 42);
+    color: rgb(255, 255, 255);
+    padding: 2px 4px;
     border-radius: 6px;
-    font-size: 0.75rem;
+    font-size: 0.35rem;
     font-weight: 800;
 }
 

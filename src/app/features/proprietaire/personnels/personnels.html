@@ -1,8 +1,14 @@
 <div class="page-container">
-  <div class="page-header">
+  <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
     <div class="header-text">
       <h1 class="page-title">Mes Personnels</h1>
       <p class="page-subtitle">Visualisez et gérez les agents et chauffeurs de votre réseau</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="exportPdf()" [disabled]="isExporting()" style="display: flex; align-items: center; gap: 8px; background-color: var(--color-primary); color: white; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer;">
+        <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
+        {{ isExporting() ? 'Export...' : 'Exporter PDF' }}
+      </button>
     </div>
   </div>
 

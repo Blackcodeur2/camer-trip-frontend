@@ -22,6 +22,7 @@ export class Dashboard implements AfterViewInit {
   stats = signal({ salesToday: 0, activeReservations: 0, revenueToday: 0, pendingValidations: 0 });
   revenueHistory = signal<any[]>([]);
   liveTrips = signal<any[]>([]);
+  exportingVoyageId = signal<number | null>(null);
   chart: any;
 
   constructor() {
@@ -73,5 +74,28 @@ export class Dashboard implements AfterViewInit {
         this.liveTrips.set(data.live_trips || []);
         this.isLoading.set(false);
       });
+  }
+
+  exportManifeste(voyageId: number) {
+    this.exportingVoyageId.set(voyageId);
+    this.agentService.exportPassagersPdf(voyageId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `manifeste_voyage_${voyageId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.exportingVoyageId.set(null);
+      },
+      error: () => {
+        this.exportingVoyageId.set(null);
+        // SweetAlert n'est peut être pas importé, mais si on l'ajoute on peut l'utiliser
+        // Swal.fire('Erreur', 'Impossible de générer le manifeste', 'error');
+        alert('Impossible de générer le manifeste');
+      }
+    });
   }
 }

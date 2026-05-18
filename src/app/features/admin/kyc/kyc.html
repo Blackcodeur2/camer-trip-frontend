@@ -162,21 +162,35 @@
                 
                 @if (previewDocument()!.doc.statut === 'en attente') {
                 <div class="modal-actions" style="margin-top: 1.5rem;">
-                    <button class="btn-reject" (click)="rejectDocument(previewDocument()!.doc)">
-                        <mat-icon>close</mat-icon> Rejeter
-                    </button>
-                    <button class="btn-approve" (click)="approveDocument(previewDocument()!.doc)">
-                        <mat-icon>check</mat-icon> Approuver
-                    </button>
+                    @if (selectedSubmission()?.user?.is_subscribed) {
+                        <div style="width: 100%; grid-column: span 2; margin-bottom: 0.5rem; text-align: center;">
+                            <span class="status-badge status--success" style="font-size: 0.85rem; padding: 8px 12px; width: 100%; justify-content: center; border-radius: 10px; background: rgba(0, 102, 68, 0.05); color: var(--color-primary); border: 1px solid rgba(0, 102, 68, 0.15);">
+                                <mat-icon style="font-size: 18px; margin-right: 6px;">star</mat-icon>
+                                Propriétaire abonné : Rejet du document désactivé
+                            </span>
+                        </div>
+                        <button class="btn-approve" (click)="approveDocument(previewDocument()!.doc)" style="grid-column: span 2; border: 1px solid var(--color-border); border-radius: 16px; padding: 1.25rem;">
+                            <mat-icon>check</mat-icon> Approuver le document
+                        </button>
+                    } @else {
+                        <button class="btn-reject" (click)="rejectDocument(previewDocument()!.doc)">
+                            <mat-icon>close</mat-icon> Rejeter
+                        </button>
+                        <button class="btn-approve" (click)="approveDocument(previewDocument()!.doc)">
+                            <mat-icon>check</mat-icon> Approuver
+                        </button>
+                    }
                 </div>
                 } @else {
-                    <div style="margin-top: 1.5rem; text-align: center;">
-                        <span class="status-badge status--{{ previewDocument()!.doc.statut === 'approuve' ? 'success' : 'rejected' }}" style="font-size: 1rem; padding: 8px 16px; justify-content: center;">
-                            Ce document a été marqué comme {{ previewDocument()!.doc.statut }}
+                    <div style="margin-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                        <span class="status-badge status--{{ previewDocument()!.doc.statut === 'approuve' ? 'success' : 'rejected' }}" style="font-size: 0.9rem; padding: 10px 16px; justify-content: center; width: 100%; font-weight: 700; border-radius: 12px; gap: 0.5rem;">
+                            <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ previewDocument()!.doc.statut === 'approuve' ? 'verified' : 'cancel' }}</mat-icon>
+                            Ce document a été marqué comme {{ previewDocument()!.doc.statut === 'approuve' ? 'approuvé' : 'rejeté' }}
                         </span>
-                        <div style="margin-top: 10px;">
-                            <button class="table-action-btn" (click)="previewDocument()!.doc.statut = 'en attente'; previewDocument()!.doc.commentaire = '';" style="background: var(--color-surface); padding: 8px 16px; border-radius: 8px;">
-                                <mat-icon style="font-size: 18px; margin-right: 5px;">undo</mat-icon> Annuler la décision
+                        <div class="modal-actions" style="margin-top: 0; width: 100%; grid-template-columns: 1fr;">
+                            <button class="btn-undo" (click)="previewDocument()!.doc.statut = 'en attente'; previewDocument()!.doc.commentaire = '';">
+                                <mat-icon>undo</mat-icon>
+                                <span>Annuler la décision</span>
                             </button>
                         </div>
                     </div>

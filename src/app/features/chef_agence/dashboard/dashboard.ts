@@ -39,6 +39,7 @@ export class Dashboard implements AfterViewInit {
   isLoading = signal(true);
   dashboardData = signal<any>(null);
   user = this.authService.currentUser;
+  station = computed(() => this.dashboardData()?.station);
 
   recentReservations = signal<any[]>([]);
 

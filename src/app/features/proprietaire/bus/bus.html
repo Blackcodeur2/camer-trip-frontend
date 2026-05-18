@@ -9,7 +9,7 @@
             <select (change)="onStationChange($event)" [value]="selectedStationId() || ''">
                 <option value="">Toutes les stations</option>
                 @for (station of stations(); track station.id) {
-                    <option [value]="station.id">{{ station.ville }} - {{ station.quartier }}</option>
+                    <option [value]="station.id">{{ station.ville }} - {{ station.adresse }}</option>
                 }
             </select>
             <select (change)="selectedType.set($any($event.target).value)">

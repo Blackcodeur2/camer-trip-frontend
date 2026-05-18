@@ -46,10 +46,10 @@
             <mat-icon>star</mat-icon>
           </div>
           <h2>Activez votre réseau d'agences</h2>
-          <p>Félicitations ! Vos documents KYC ont été validés. Pour commencer à créer vos agences, gérer vos bus et vos trajets, vous devez souscrire à l'abonnement annuel.</p>
+          <p>Félicitations ! Vos documents KYC ont été validés. Pour commencer à créer vos agences, gérer vos bus et vos trajets, vous devez souscrire à l'abonnement.</p>
           <div class="price-tag">
-            <span class="amount">100,000 FCFA</span>
-            <span class="period">/ an</span>
+            <span class="amount">{{ planMontant() | number }} FCFA</span>
+            <span class="period">/ {{ planDuree() === 12 ? 'an' : planDuree() + ' mois' }}</span>
           </div>
           <button class="btn-subscribe" (click)="subscribe()" [disabled]="isPaying()">
             <mat-icon>payment</mat-icon>
@@ -86,7 +86,7 @@
               <select (change)="onStationChange($event)" [value]="selectedStationId() || ''">
                 <option value="">Toutes les stations</option>
                 @for (station of stations(); track station.id) {
-                  <option [value]="station.id">{{ station.ville }} - {{ station.quartier }}</option>
+                  <option [value]="station.id">{{ station.ville }} - {{ station.adresse}}</option>
                 }
               </select>
             </div>

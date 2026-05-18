@@ -41,6 +41,21 @@ export class Gerants implements OnInit {
     return this.managers().slice(start, end);
   });
 
+  availableGares = computed(() => {
+    const allGares = this.gares();
+    const allManagers = this.managers();
+    const currentSelected = this.selectedManager();
+    
+    // Trouver les IDs des gares occupées par les autres gérants
+    const occupiedStationIds = allManagers
+      .filter(m => !currentSelected || m.id !== currentSelected.id)
+      .map(m => m.station_id)
+      .filter((id): id is number => id !== null && id !== undefined);
+      
+    // Retourner uniquement les gares non occupées
+    return allGares.filter(gare => !occupiedStationIds.includes(gare.id));
+  });
+
   gerantForm = this.fb.nonNullable.group({
     prenom:               ['', Validators.required],
     nom:                  ['', Validators.required],

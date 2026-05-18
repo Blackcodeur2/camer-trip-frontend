@@ -74,6 +74,10 @@
                     {{ isProcessing() ? 'Chargement...' : 'TERMINER' }}
                 </button>
                 }
+                <button class="action-btn" style="background: transparent; border: 2px solid rgba(255,255,255,0.5); color: #fff;" (click)="exportManifeste(trip)" [disabled]="exportingVoyageId() === trip.id">
+                    <mat-icon>{{ exportingVoyageId() === trip.id ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
+                    {{ exportingVoyageId() === trip.id ? 'Export...' : 'Passagers' }}
+                </button>
             </div>
         </div>
 
@@ -126,7 +130,13 @@
                             </span>
                         </div>
                     </div>
-                    <mat-icon class="arrow">chevron_right</mat-icon>
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <button class="btn-icon" (click)="exportManifeste(voyage)" [disabled]="exportingVoyageId() === voyage.id" title="Télécharger le manifeste" style="background: none; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: 6px; padding: 4px 8px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-size: 0.75rem;">
+                            <mat-icon style="font-size: 14px; width: 14px; height: 14px;">{{ exportingVoyageId() === voyage.id ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
+                            Manifeste
+                        </button>
+                        <mat-icon class="arrow">chevron_right</mat-icon>
+                    </div>
                 </div>
             </div>
         </section>

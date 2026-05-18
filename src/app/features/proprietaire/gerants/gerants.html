@@ -87,14 +87,17 @@
             <mat-icon>location_city</mat-icon>
             <select id="g-gare" formControlName="station_id">
               <option value="">-- Non affecté --</option>
-              @for (gare of gares(); track gare.id) {
+              @for (gare of availableGares(); track gare.id) {
                 <option [value]="gare.id">{{ gare.nom || (gare.ville + ' - ' + gare.quartier) }}</option>
               }
             </select>
           </div>
           @if (shouldShowError('station_id')) { <span class="field-error">Veuillez sélectionner une station.</span> }
           @if (gares().length === 0) {
-            <span class="field-hint">⚠️ Aucune Station disponible. <a routerLink="/proprietaire/gares">Créez d'abord une station.</a></span>
+            <span class="field-hint">⚠️ Aucune Station disponible. <a href="/proprietaire/gares">Créez d'abord une station.</a></span>
+          }
+          @if (availableGares().length === 0 && gares().length > 0) {
+            <span class="field-hint" style="color: #f59e0b;">⚠️ Toutes vos stations ont déjà un gérant assigné.</span>
           }
         </div>
 

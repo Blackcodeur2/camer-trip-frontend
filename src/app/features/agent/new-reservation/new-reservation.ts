@@ -259,12 +259,74 @@ export class NewReservation {
 
   // -- UI Helpers --
   getTotalSeatsArray(): number[] {
-    // Assuming standard coaster if not provided, but ideally voyages should have bus info
-    // For now let's generate 70 seats if we don't know
-    return Array.from({ length: 70 }, (_, i) => i + 1);
+    const nbPlaces = this.selectedVoyage()?.bus?.nb_places || 70;
+    return Array.from({ length: nbPlaces }, (_, i) => i + 1);
+  }
+
+  getBusLayoutCells(): any[] {
+    const nbPlaces = this.selectedVoyage()?.bus?.nb_places || 70;
+    const isGrosPorteur = nbPlaces > 35;
+    const cells: any[] = [];
+
+    // Rangée 1 (Cockpit / Avant)
+    cells.push({ type: 'driver', seatNumber: 1 });
+    cells.push({ type: 'motorboy', seatNumber: 2 });
+    
+    // Sièges passagers de la rangée 1 (colonnes 3, 4 et 5)
+    if (nbPlaces >= 3) cells.push({ type: 'seat', seatNumber: 3 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 4) cells.push({ type: 'seat', seatNumber: 4 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 5) cells.push({ type: 'seat', seatNumber: 5 });
+    else cells.push({ type: 'empty' });
+
+    // Rangée 2 (Entrée avant)
+    if (nbPlaces >= 6) cells.push({ type: 'seat', seatNumber: 6 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 7) cells.push({ type: 'seat', seatNumber: 7 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 8) cells.push({ type: 'seat', seatNumber: 8 });
+    else cells.push({ type: 'empty' });
+
+    // Porte d'entrée avant sur les colonnes 4 et 5 (2ème rangée)
+    cells.push({ type: 'door', label: 'Front' });
+    cells.push({ type: 'door', label: 'Front' });
+
+    // Reste des sièges passagers (à partir de 9)
+    const startPassengerSeat = 9;
+    const totalRemainingPassengerSeats = nbPlaces >= 9 ? nbPlaces - 8 : 0;
+    
+    if (totalRemainingPassengerSeats > 0) {
+      const totalCellsNeeded = totalRemainingPassengerSeats + (isGrosPorteur ? 2 : 0);
+      const totalRows = Math.ceil(totalCellsNeeded / 5);
+      const backDoorRowIdx = isGrosPorteur && totalRows >= 4 ? totalRows - 3 : -1;
+
+      let seatPointer = startPassengerSeat;
+      for (let r = 0; r < totalRows; r++) {
+        const isBackDoorRow = r === backDoorRowIdx;
+        for (let c = 0; c < 5; c++) {
+          if (isBackDoorRow && (c === 3 || c === 4)) {
+            cells.push({ type: 'door', label: 'Back' });
+          } else {
+            if (seatPointer <= nbPlaces) {
+              cells.push({ type: 'seat', seatNumber: seatPointer });
+              seatPointer++;
+            } else {
+              cells.push({ type: 'empty' });
+            }
+          }
+        }
+      }
+    }
+
+    return cells;
   }
 
   isSeatAvailable(seat: number): boolean {
-    return seat !== 1 && this.availableSeats().includes(seat.toString());
+    return seat !== 1 && seat !== 2 && this.availableSeats().includes(seat.toString());
   }
 }

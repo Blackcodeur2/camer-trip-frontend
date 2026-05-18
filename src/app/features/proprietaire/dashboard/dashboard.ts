@@ -38,6 +38,11 @@ export class Dashboard implements AfterViewInit {
   isLoading = signal(true);
   isPaying = signal(false);
 
+  // Informations sur le plan d'abonnement actif
+  planNom = signal('Plan Annuel');
+  planMontant = signal(50000);
+  planDuree = signal(12);
+
   constructor() {
     effect(() => {
       const history = this.revenueHistory();
@@ -70,6 +75,7 @@ export class Dashboard implements AfterViewInit {
 
   ngOnInit() {
     this.isLoading.set(true);
+    this.loadSubscriptionPlan();
     
     // On commence par charger ce qu'on a en local pour un affichage rapide
     const localUser = this.authService.currentUser();
@@ -117,9 +123,12 @@ export class Dashboard implements AfterViewInit {
   }
 
   subscribe() {
+    const formattedPrice = new Intl.NumberFormat('fr-FR').format(this.planMontant());
+    const periodLabel = this.planDuree() === 12 ? 'annuel' : `${this.planDuree()} mois`;
+
     Swal.fire({
       title: 'Souscrire à l\'abonnement',
-      text: 'L\'abonnement annuel coûte 100,000 FCFA. Entrez votre numéro Mobile Money (237...)',
+      text: `L'abonnement ${periodLabel} coûte ${formattedPrice} FCFA. Entrez votre numéro Mobile Money (237...)`,
       input: 'text',
       inputPlaceholder: '6xxxxxxxx',
       showCancelButton: true,
@@ -146,6 +155,19 @@ export class Dashboard implements AfterViewInit {
           }
         });
       }
+    });
+  }
+
+  loadSubscriptionPlan() {
+    this.proprietaireService.getSubscriptionPlan().subscribe({
+      next: (plan) => {
+        if (plan) {
+          this.planNom.set(plan.nom || 'Plan Annuel');
+          this.planMontant.set(Number(plan.montant ?? 50000));
+          this.planDuree.set(Number(plan.duree ?? 12));
+        }
+      },
+      error: (err) => console.error('Erreur chargement plan d\'abonnement', err)
     });
   }
 

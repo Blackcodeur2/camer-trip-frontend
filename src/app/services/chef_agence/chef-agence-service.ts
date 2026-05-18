@@ -146,4 +146,8 @@ export class ChefAgenceService {
   exportReservationsPdf(): Observable<Blob> {
     return this.http.get(`${this.API}/chef-agence/export-reservations`, { responseType: 'blob' });
   }
+
+  exportPassagersPdf(voyageId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
+  }
 }

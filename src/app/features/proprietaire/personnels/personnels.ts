@@ -25,6 +25,7 @@ import { computed } from '@angular/core';
   gares = signal<Station[]>([]);
   isLoading = signal(true);
   isSubmitting = signal(false);
+  isExporting = signal(false);
 
   currentPage = signal(1);
   pageSize = signal(4);
@@ -97,5 +98,33 @@ import { computed } from '@angular/core';
 
   getInitials(manager: User): string {
     return ((manager.prenom?.[0] ?? '') + (manager.nom?.[0] ?? '')).toUpperCase() || '?';
+  }
+
+  exportPdf() {
+    this.isExporting.set(true);
+    this.proprietaireService.exportPersonnelPdf().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `personnel_proprietaire_${new Date().getTime()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.isExporting.set(false);
+        Swal.fire({
+          icon: 'success',
+          title: 'Export réussi',
+          text: 'Le fichier PDF a été téléchargé avec succès.',
+          timer: 3000,
+          showConfirmButton: false
+        });
+      },
+      error: () => {
+        this.isExporting.set(false);
+        Swal.fire('Erreur', 'Impossible de générer le PDF', 'error');
+      }
+    });
   }
 }

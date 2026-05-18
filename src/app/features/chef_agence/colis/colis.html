@@ -79,10 +79,20 @@
                             <span class="status-badge status--{{ colis.statut === 'retire' ? 'success' : 'pending' }}">
                                 {{ colis.statut }}
                             </span>
-                            @if (colis.statut === 'retire' && colis.modified_by) {
-                            <div class="modifier-info">
-                                Retiré par: {{ colis.modified_by.nom }}
-                            </div>
+                            @if (colis.statut === 'retire') {
+                                @if (colis.modified_by) {
+                                <div class="modifier-info">
+                                    Retiré par: {{ colis.modified_by.nom }} {{ colis.modified_by.prenom }}
+                                </div>
+                                } @else if (colis.user) {
+                                <div class="modifier-info">
+                                    Retiré par: {{ colis.user.nom }} {{ colis.user.prenom }} (Client)
+                                </div>
+                                } @else {
+                                <div class="modifier-info">
+                                    Retiré par: Client
+                                </div>
+                                }
                             }
                         </td>
                         <td>
@@ -90,8 +100,12 @@
                             <div class="agent-info">
                                 <span class="agent-name">{{ colis.agent.nom }} {{ colis.agent.prenom }}</span>
                             </div>
+                            } @else if (colis.user) {
+                            <div class="agent-info">
+                                <span class="agent-name">{{ colis.user.nom }} {{ colis.user.prenom }} (Client)</span>
+                            </div>
                             } @else {
-                            <span class="text-muted">En ligne</span>
+                            <span class="text-muted">Client</span>
                             }
                         </td>
                         <td style="text-align: right;">
@@ -222,6 +236,37 @@
                     <div class="form-group" style="margin-bottom: 1.5rem;">
                         <label>Destination spécifique (Point d'arrêt) <span style="color: var(--color-accent)">*</span></label>
                         <input type="text" formControlName="destination" class="form-control" placeholder="Ex: Edéa, Boumnyébel...">
+                    </div>
+
+                    <div class="form-group" style="position: relative; margin-bottom: 1.5rem;">
+                        <label>Rechercher le destinataire (Optionnel)</label>
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <mat-icon style="position: absolute; left: 1rem; color: var(--color-text-muted);">search</mat-icon>
+                            <input type="text" formControlName="destSearchQuery" class="form-control" style="padding-left: 3rem;" placeholder="Ex: 690..."
+                                (input)="onDestSearch($event)">
+                        </div>
+                        @if (destSearchResults().length > 0) {
+                        <div class="search-results">
+                            @for (m of destSearchResults(); track m.id) {
+                            <div class="search-item" (click)="selectDest(m)">
+                                <span style="font-weight: 800; color: var(--color-dark);">{{ m.nom }} {{ m.prenom }}</span>
+                                <span style="color: var(--color-primary); font-weight: 700;">{{ m.telephone }}</span>
+                            </div>
+                            }
+                        </div>
+                        }
+                        @if (selectedDest()) {
+                        <div class="selected-client-card" style="margin-top: 0.5rem;">
+                            <mat-icon style="color: var(--color-primary);">check_circle</mat-icon>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 800; color: var(--color-dark);">{{ selectedDest()?.nom }} {{ selectedDest()?.prenom }}</div>
+                                <div style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 600;">{{ selectedDest()?.telephone }}</div>
+                            </div>
+                            <button type="button" (click)="clearDest()" style="background: none; border: none; color: var(--color-accent); cursor: pointer;">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                        }
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">

@@ -94,6 +94,10 @@ export class AgentService {
       .pipe(map(response => response.data));
   }
 
+  exportPassagersPdf(voyageId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/${this.getPrefix()}/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
+  }
+
   private getPrefix(): string {
     const user = this.authService.currentUser();
     return user?.role_user === 'AGENT' ? 'agent' : 'chef-agence';

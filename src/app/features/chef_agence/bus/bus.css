@@ -204,12 +204,217 @@
     border-color: var(--color-primary);
 }
 
-/* States */
-.state-container {
-    padding: 5rem;
-    text-align: center;
+/* Bus Grid & Cards */
+.bus-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.bus-card {
+    background: white;
+    border-radius: 24px;
+    border: 1px solid var(--color-border);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.bus-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.08);
+}
+
+.bus-card__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.bus-card__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: var(--color-surface);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.bus-card:hover .bus-card__avatar {
+    transform: scale(1.08);
+}
+
+.bus-card__avatar mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.bus-card__title {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.bus-card__title .immatriculation {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 850;
+    color: var(--color-dark);
+}
+
+.bus-card__title .code {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+}
+
+.bus-card__edit-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.bus-card__edit-btn:hover {
+    background: var(--color-dark);
+    color: white;
+    border-color: var(--color-dark);
+    transform: rotate(15deg);
+}
+
+.bus-card__edit-btn mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.bus-card__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    width: fit-content;
+    font-size: 0.85rem;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Status colors and dot */
+.bus-card.status-disponible .bus-card__status {
+    background: rgba(52, 211, 153, 0.1);
+    color: #059669;
+}
+.bus-card.status-disponible .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+.bus-card.status-voyage .bus-card__status {
+    background: rgba(96, 165, 251, 0.1);
+    color: #2563eb;
+}
+.bus-card.status-voyage .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3b82f6;
+    box-shadow: 0 0 8px #3b82f6;
+}
+
+.bus-card.status-maintenance .bus-card__status {
+    background: rgba(251, 191, 36, 0.1);
+    color: #d97706;
+}
+.bus-card.status-maintenance .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b;
+}
+
+.bus-card__details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px dashed var(--color-border);
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+}
+
+.detail-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-dark);
+    text-transform: capitalize;
+}
+
+.detail-value.class-badge {
+    color: var(--color-primary);
+}
+
+.detail-value.class-badge.vip {
+    color: var(--color-accent, #eab308);
+}
+
+.empty-state-card {
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    justify-content: center;
+    gap: 1rem;
+    padding: 4rem 2rem;
+    background: var(--color-surface);
+    border-radius: 24px;
+    border: 1px dashed var(--color-border);
+    color: var(--color-text-muted);
+}
+
+.empty-state-card mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--color-primary);
+}
+
+.empty-state-card p {
+    font-weight: 750;
+    margin: 0;
 }

@@ -17,5 +17,6 @@ export interface User {
     subscription_expires_at: string;
     kyc_status?: string;
     profil_url?: string;
+    google_id?: string;
     updated_at?: string;
 }

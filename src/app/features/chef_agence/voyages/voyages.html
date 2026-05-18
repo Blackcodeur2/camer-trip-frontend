@@ -146,6 +146,9 @@
                     </td>
                     <td style="text-align: right;">
                         <div class="action-btn-group" style="justify-content: flex-end; display: flex; gap: 0.5rem;">
+                            <button class="btn-icon" (click)="exportManifeste(voyage)" [disabled]="exportingVoyageId() === voyage.id" title="Manifeste (Bordereau)" style="color: var(--color-primary); background: none; border: none; cursor: pointer;">
+                                <mat-icon>{{ exportingVoyageId() === voyage.id ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
+                            </button>
                             @if (voyage.statut === 'en attente') {
                                 <!--<button class="btn-icon" (click)="markAsTerminated(voyage)" title="Terminer" style="color: var(--color-primary); background: none; border: none; cursor: pointer;">
                                     <mat-icon>check_circle</mat-icon>

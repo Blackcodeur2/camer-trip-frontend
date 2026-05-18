@@ -31,10 +31,9 @@ export class Users {
   isLoading = signal<boolean>(true);
   error = signal<string | null>(null);
 
-  // Pagination serveur
+  // Pagination cliente
   currentPage = signal<number>(1);
-  totalItems = signal<number>(0);
-  pageSize = signal<number>(4);
+  pageSize = signal<number>(5); // 5 utilisateurs par page
   avatarPreview = signal<string | null>(null);
   showCreateForm = signal<boolean>(false);
   isCreating = signal<boolean>(false);
@@ -45,6 +44,13 @@ export class Users {
   filteredUsers = computed(() => {
     const role = this.filterRole();
     return role ? this.users().filter(u => u.role_user === role) : this.users();
+  });
+
+  totalItems = computed(() => this.filteredUsers().length);
+
+  paginatedUsers = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.filteredUsers().slice(start, start + this.pageSize());
   });
 
   roles = ['ADMIN', 'CHEF_AGENCE', 'AGENT', 'CHAUFFEUR', 'CLIENT', 'PROPRIETAIRE'];
@@ -66,6 +72,7 @@ export class Users {
     this.loadUsers();
     this.loadAgences();
 
+    // Reset page on role filter change
     this.userForm.get('agence_id')?.valueChanges.subscribe(agenceId => {
       this.userForm.get('gare_id')?.setValue('');
       if (agenceId) {
@@ -91,25 +98,17 @@ export class Users {
     });
   }
 
-  loadUsers(page: number = 1) {
+  loadUsers() {
     this.isLoading.set(true);
     this.error.set(null);
-    this.adminService.getUsers(page).subscribe({
+    this.adminService.getUsers().subscribe({
       next: (response: any) => {
         const data = response?.data;
         
         if (Array.isArray(data)) {
-          // Cas d'une liste simple (non paginée)
           this.users.set(data);
-          this.totalItems.set(data.length);
-          this.pageSize.set(data.length);
-          this.currentPage.set(1);
         } else if (data && Array.isArray(data.data)) {
-          // Cas de la pagination Laravel standard
           this.users.set(data.data);
-          this.totalItems.set(data.total ?? 0);
-          this.pageSize.set(data.per_page ?? 20);
-          this.currentPage.set(data.current_page ?? 1);
         } else {
           this.users.set([]);
         }
@@ -126,7 +125,6 @@ export class Users {
 
   onPageChange(page: number) {
     this.currentPage.set(page);
-    this.loadUsers(page);
   }
 
   loadAgences() {

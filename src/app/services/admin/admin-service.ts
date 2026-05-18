@@ -87,6 +87,16 @@ export class AdminService {
       map(response => response.data)
     );
   }
+
+  getSubscriptionPlan(): Observable<any> {
+    return this.http.get<{ statut: boolean; data: any }>(`${this.API}/admin/subscription-plan`).pipe(
+      map(response => response.data)
+    );
+  }
+
+  updateSubscriptionPlan(data: { nom: string; montant: number; duree: number }): Observable<any> {
+    return this.http.put<{ statut: boolean; data: any }>(`${this.API}/admin/subscription-plan`, data);
+  }
 }
 
 
