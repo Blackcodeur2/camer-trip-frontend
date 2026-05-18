@@ -10,16 +10,10 @@ export class TicketService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private readonly API = environment.apiUrl;
-  private role = this.authService.currentUser()?.role_user;
-
 
   downloadTicket(reservationId: number): void {
-    let r = '';
-    if (this.role === 'CHEF_AGENCE') {
-      r = 'chef-agence';
-    } else {
-      r = 'agent';
-    }
+    const role = this.authService.currentUser()?.role_user;
+    const r = role === 'CHEF_AGENCE' ? 'chef-agence' : 'agent';
     const url = `${this.API}/${r}/reservations/${reservationId}/ticket`;
 
     this.http.get(url, { responseType: 'blob' }).subscribe({
@@ -38,12 +32,8 @@ export class TicketService {
   }
 
   openTicket(reservationId: number): void {
-    let r = '';
-    if (this.role === 'CHEF_AGENCE') {
-      r = 'chef-agence';
-    } else {
-      r = 'agent';
-    }
+    const role = this.authService.currentUser()?.role_user;
+    const r = role === 'CHEF_AGENCE' ? 'chef-agence' : 'agent';
     const url = `${this.API}/${r}/reservations/${reservationId}/ticket`;
 
     this.http.get(url, { responseType: 'blob' }).subscribe({

@@ -123,7 +123,7 @@ export class Reservations {
   }
 
    printReservation(id: number) {
-    this.ticketService.downloadTicket(id);
+    this.ticketService.openTicket(id);
   }
 
   openTicket(id: number)
