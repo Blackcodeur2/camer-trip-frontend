@@ -94,6 +94,10 @@ export class AgentService {
       .pipe(map(response => response.data));
   }
 
+  bulkUpdateColisStatus(ids: number[], statut: string): Observable<any> {
+    return this.http.patch<{ statut: boolean; message: string }>(`${this.API}/${this.getPrefix()}/colis/bulk-status`, { ids, statut });
+  }
+
   exportPassagersPdf(voyageId: number): Observable<Blob> {
     return this.http.get(`${this.API}/${this.getPrefix()}/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
   }

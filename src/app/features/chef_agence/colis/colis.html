@@ -21,9 +21,46 @@
         </div>
         } @else {
         <div class="table-container">
+            <!-- Filters and Bulk Actions -->
+            <div class="table-filters" style="display: flex; gap: 1rem; align-items: center; padding: 1rem; background: var(--color-bg); border-bottom: 1px solid var(--color-border); flex-wrap: wrap;">
+                <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <mat-icon style="color: var(--color-text-muted);">place</mat-icon>
+                    <select class="form-control" [ngModel]="filterDestination()" (ngModelChange)="filterDestination.set($event)" style="min-width: 200px;">
+                        <option value="">Toutes les destinations</option>
+                        @for (dest of uniqueDestinations(); track dest) {
+                            <option [value]="dest">{{ dest }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <mat-icon style="color: var(--color-text-muted);">calendar_today</mat-icon>
+                    <input type="date" class="form-control" [ngModel]="filterDate()" (ngModelChange)="filterDate.set($event)">
+                </div>
+
+                <div style="flex: 1;"></div>
+
+                @if (selectedColisIds().size > 0) {
+                    <div class="bulk-actions" style="display: flex; gap: 0.5rem; align-items: center;">
+                        <span style="font-weight: 600; font-size: 0.9rem; color: var(--color-dark); margin-right: 0.5rem;">
+                            {{ selectedColisIds().size }} sélectionné(s)
+                        </span>
+                        <button class="btn-secondary" (click)="bulkUpdateStatus('en route')" style="color: var(--color-warning); border-color: var(--color-warning);">
+                            <mat-icon style="font-size: 18px; width: 18px; height: 18px;">local_shipping</mat-icon> Mettre en route
+                        </button>
+                        <button class="btn-secondary" (click)="bulkUpdateStatus('arrive')" style="color: var(--color-info); border-color: var(--color-info);">
+                            <mat-icon style="font-size: 18px; width: 18px; height: 18px;">where_to_vote</mat-icon> Marquer Arrivés
+                        </button>
+                    </div>
+                }
+            </div>
+
             <table class="premium-table">
                 <thead>
                     <tr>
+                        <th style="width: 40px; text-align: center;">
+                            <input type="checkbox" [checked]="isAllSelected()" (change)="toggleAllSelection($event)" style="cursor: pointer;">
+                        </th>
                         <th>Expéditeur</th>
                         <th>Colis</th>
                         <th>Destinataire</th>
@@ -34,7 +71,10 @@
                 </thead>
                 <tbody>
                     @for (colis of paginatedColis(); track colis.id) {
-                    <tr>
+                    <tr [class.selected]="selectedColisIds().has(colis.id!)">
+                        <td style="text-align: center;">
+                            <input type="checkbox" [checked]="selectedColisIds().has(colis.id!)" (change)="toggleColisSelection(colis.id!, $event)" style="cursor: pointer;">
+                        </td>
                         <td>
                             <div class="client-info">
                                 <span class="name">
@@ -146,7 +186,7 @@
             </table>
         </div>
 
-        <gev-pagination [totalItems]="colisList().length" [pageSize]="pageSize()"
+        <gev-pagination [totalItems]="filteredColisList().length" [pageSize]="pageSize()"
             [currentPage]="currentPage()" (pageChange)="currentPage.set($event)">
         </gev-pagination>
         }

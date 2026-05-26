@@ -230,3 +230,15 @@
     align-items: center;
     gap: 1.5rem;
 }
+
+/* Bulk Selection */
+tr.selected {
+    background-color: rgba(0, 102, 68, 0.05);
+}
+
+.table-filters .form-control {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    font-size: 0.9rem;
+}

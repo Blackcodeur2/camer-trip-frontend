@@ -24,12 +24,45 @@ export class ColisPage {
   isLoading = signal(true);
   isSubmitting = signal(false);
 
+  // Grouping and Filtering
+  filterDestination = signal<string>('');
+  filterDate = signal<string>('');
+
+  // Bulk selection
+  selectedColisIds = signal<Set<number>>(new Set());
+
+  // Filtered List
+  filteredColisList = computed(() => {
+    return this.colisList().filter(colis => {
+      let matchDest = true;
+      let matchDate = true;
+      
+      if (this.filterDestination()) {
+        matchDest = colis.destination?.toLowerCase() === this.filterDestination().toLowerCase();
+      }
+      
+      if (this.filterDate()) {
+        const colisDate = new Date(colis.created_at || '').toISOString().split('T')[0];
+        matchDate = colisDate === this.filterDate();
+      }
+      
+      return matchDest && matchDate;
+    });
+  });
+
+  // Unique Destinations for dropdown
+  uniqueDestinations = computed(() => {
+    const dests = this.colisList().map(c => c.destination).filter(d => !!d);
+    return [...new Set(dests)];
+  });
+
+
   // Pagination support
   currentPage = signal(1);
-  pageSize = signal(4);
+  pageSize = signal(10); // Changed to 10 for easier bulk selection
   paginatedColis = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize();
-    return this.colisList().slice(start, start + this.pageSize());
+    return this.filteredColisList().slice(start, start + this.pageSize());
   });
 
   // Client (Expéditeur) search support
@@ -110,6 +143,7 @@ export class ColisPage {
     this.agentService.getColis().subscribe({
       next: (data) => {
         this.colisList.set(data);
+        this.selectedColisIds.set(new Set()); // Clear selection when data reloads
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -257,10 +291,72 @@ export class ColisPage {
           next: () => {
             this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: newStatut } : c));
             Swal.fire('Validé !', `Le colis est maintenant ${newStatut}.`, 'success');
-            this.loadColis();
           },
           error: (err) => {
             Swal.fire('Erreur', err.error?.message || 'Une erreur est survenue.', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  // --- BULK OPERATIONS ---
+  toggleColisSelection(id: number, event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const newSet = new Set(this.selectedColisIds());
+    if (isChecked) {
+      newSet.add(id);
+    } else {
+      newSet.delete(id);
+    }
+    this.selectedColisIds.set(newSet);
+  }
+
+  toggleAllSelection(event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      // Select all currently visible (filtered) items that are not already "retire" 
+      // (or we can select all, but bulk update validates it anyway)
+      const ids = this.filteredColisList().map(c => c.id!);
+      this.selectedColisIds.set(new Set(ids));
+    } else {
+      this.selectedColisIds.set(new Set());
+    }
+  }
+
+  isAllSelected() {
+    const filteredCount = this.filteredColisList().length;
+    return filteredCount > 0 && this.selectedColisIds().size === filteredCount;
+  }
+
+  bulkUpdateStatus(newStatut: string) {
+    const ids = Array.from(this.selectedColisIds());
+    if (ids.length === 0) return;
+
+    const actionText = newStatut === 'en route' ? 'mettre en route' : 'marquer comme arrivé(s)';
+
+    Swal.fire({
+      title: 'Modification massive',
+      text: `Voulez-vous ${actionText} les ${ids.length} colis sélectionnés ?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#10B981',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Oui, confirmer',
+      cancelButtonText: 'Annuler'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading.set(true);
+        this.agentService.bulkUpdateColisStatus(ids, newStatut).subscribe({
+          next: (res) => {
+            this.colisList.update(list => list.map(c => ids.includes(c.id!) ? { ...c, statut: newStatut } : c));
+            this.selectedColisIds.set(new Set());
+            Swal.fire('Succès !', res.message || `${ids.length} colis mis à jour.`, 'success');
+            this.isLoading.set(false);
+          },
+          error: (err) => {
+            Swal.fire('Erreur', err.error?.message || 'Erreur lors de la modification massive.', 'error');
+            this.isLoading.set(false);
           }
         });
       }
