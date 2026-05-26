@@ -89,8 +89,8 @@ export class AgentService {
       .pipe(map(response => response.data));
   }
 
-  updateColisStatus(id: number, statut: string): Observable<Colis> {
-    return this.http.patch<{ statut: boolean; data: Colis }>(`${this.API}/${this.getPrefix()}/colis/${id}/status`, { statut })
+  updateColisStatus(id: number, statut: string, code_retrait?: string): Observable<Colis> {
+    return this.http.patch<{ statut: boolean; data: Colis }>(`${this.API}/${this.getPrefix()}/colis/${id}/status`, { statut, code_retrait })
       .pipe(map(response => response.data));
   }
 

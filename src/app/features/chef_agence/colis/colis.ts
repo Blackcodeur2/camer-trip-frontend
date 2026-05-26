@@ -200,8 +200,51 @@ export class ColisPage {
 
   markAsRetrieved(id: number) {
     Swal.fire({
-      title: 'Confirmer le retrait',
-      text: 'Voulez-vous marquer ce colis comme retiré par le destinataire ?',
+      title: 'Code de retrait',
+      text: 'Veuillez saisir le code de retrait fourni par le destinataire :',
+      input: 'text',
+      inputPlaceholder: 'Entrez le code ici...',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#10B981',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Valider',
+      cancelButtonText: 'Annuler',
+      preConfirm: (code) => {
+        if (!code) {
+          Swal.showValidationMessage('Le code de retrait est requis pour valider cette opération.');
+        }
+        return code;
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const code_retrait = result.value;
+        this.agentService.updateColisStatus(id, 'retire', code_retrait).subscribe({
+          next: () => {
+            this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: 'retire' } : c));
+            Swal.fire('Validé !', 'Le colis a été marqué comme retiré.', 'success');
+            this.loadColis();
+            this.loadTrajets();
+          },
+          error: (err) => {
+            Swal.fire('Erreur', err.error?.message || 'Code incorrect ou une erreur est survenue.', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  changeStatus(id: number, currentStatut: string, newStatut: string) {
+    if (newStatut === 'retire') {
+      this.markAsRetrieved(id);
+      return;
+    }
+
+    const actionText = newStatut === 'en route' ? 'mettre en route' : 'marquer comme arrivé';
+
+    Swal.fire({
+      title: 'Changer le statut',
+      text: `Voulez-vous ${actionText} ce colis ?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#10B981',
@@ -210,12 +253,11 @@ export class ColisPage {
       cancelButtonText: 'Annuler'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.agentService.updateColisStatus(id, 'retire').subscribe({
+        this.agentService.updateColisStatus(id, newStatut).subscribe({
           next: () => {
-            this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: 'retire' } : c));
-            Swal.fire('Validé !', 'Le colis a été marqué comme retiré.', 'success');
+            this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: newStatut } : c));
+            Swal.fire('Validé !', `Le colis est maintenant ${newStatut}.`, 'success');
             this.loadColis();
-            this.loadTrajets();
           },
           error: (err) => {
             Swal.fire('Erreur', err.error?.message || 'Une erreur est survenue.', 'error');
@@ -229,7 +271,6 @@ export class ColisPage {
     if (this.colisForm.invalid) {
       if (!this.isGuestSender() && !this.selectedClient()) {
          Swal.fire('Attention', 'Veuillez sélectionner un client ou remplir les infos expéditeur', 'warning');
-         return;
       }
       return;
     }

@@ -8,6 +8,10 @@ export interface Colis {
     user_id?: number;
     nom_expediteur?: string;
     tel_expediteur?: string;
+    date_arrivee?: string;
+    date_retrait?: string;
+    code_retrait?: string;
+    notification_stage?: string;
     nom_colis: string;
     description?: string;
     nom_destinataire: string;

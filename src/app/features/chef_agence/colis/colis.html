@@ -29,7 +29,6 @@
                         <th>Destinataire</th>
                         <th>Trajet</th>
                         <th>Statut</th>
-                        <th>Enregistré par</th>
                         <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
@@ -95,7 +94,7 @@
                                 }
                             }
                         </td>
-                        <td>
+                        <!--<td>
                             @if (colis.agent) {
                             <div class="agent-info">
                                 <span class="agent-name">{{ colis.agent.nom }} {{ colis.agent.prenom }}</span>
@@ -107,13 +106,28 @@
                             } @else {
                             <span class="text-muted">Client</span>
                             }
-                        </td>
+                        </td>-->
                         <td style="text-align: right;">
                             <div class="action-btn-group" style="justify-content: flex-end;">
                                 @if (colis.statut === 'en attente') {
-                                <button class="table-action-btn" title="Marquer comme retiré" (click)="markAsRetrieved(colis.id!)" style="color: var(--color-primary);">
+                                <button class="table-action-btn" title="Mettre en route" (click)="changeStatus(colis.id!, 'en attente', 'en route')" style="color: var(--color-warning);">
+                                    <mat-icon>local_shipping</mat-icon>
+                                </button>
+                                }
+                                @if (colis.statut === 'en route') {
+                                <button class="table-action-btn" title="Marquer comme arrivé" (click)="changeStatus(colis.id!, 'en route', 'arrive')" style="color: var(--color-info);">
+                                    <mat-icon>where_to_vote</mat-icon>
+                                </button>
+                                }
+                                @if (colis.statut === 'arrive') {
+                                <button class="table-action-btn" title="Marquer comme retiré" (click)="changeStatus(colis.id!, 'arrive', 'retire')" style="color: var(--color-primary);">
                                     <mat-icon>check_circle</mat-icon>
                                 </button>
+                                }
+                                @if (colis.code_retrait) {
+                                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-dark); margin-left: 0.5rem; padding: 0.2rem 0.5rem; background: var(--color-bg); border-radius: 4px;">
+                                        Code: {{ colis.code_retrait }}
+                                    </span>
                                 }
                             </div>
                         </td>
