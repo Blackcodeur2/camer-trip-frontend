@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { PaginationComponent } from '../../../shared/pagination/pagination-component/pagination-component';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of, catchError } from 'rxjs';
@@ -11,7 +11,7 @@ import { AgentService } from '../../../services/agent/agent-service';
 
 @Component({
   selector: 'app-colis',
-  imports: [CommonModule, MatIconModule, ReactiveFormsModule, PaginationComponent, AppButton],
+  imports: [CommonModule, MatIconModule, ReactiveFormsModule, FormsModule, PaginationComponent, AppButton],
   templateUrl: './colis.html',
   styleUrl: './colis.css',
 })
