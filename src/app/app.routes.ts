@@ -204,7 +204,7 @@ export const routes: Routes = [
         path: 'agent',
         component: AgentLayout,
         canActivate: [authGuardGuard],
-        data: { roles: ['AGENT'] },
+        data: { roles: ['AGENT_RESERVATION', 'AGENT_ENVOIE_COURIER', 'AGENT_RECUPERATION_COURIER'] },
         children: [
             {
                 path: 'dashboard',

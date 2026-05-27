@@ -27,7 +27,7 @@ export class Personnels implements OnInit {
   isExporting = signal(false);
   editId = signal<number | null>(null);
 
-  roles = ['AGENT', 'CHAUFFEUR'];
+  roles = ['AGENT_RESERVATION', 'AGENT_ENVOIE_COURIER', 'AGENT_RECUPERATION_COURIER', 'CHAUFFEUR'];
   currentPage = signal(1);
   pageSize = signal(5);
 
@@ -39,7 +39,7 @@ export class Personnels implements OnInit {
     return list.slice(start, end);
   });
 
-  totalAgents = computed(() => this.staffMembers().filter(m => m.role_user === 'AGENT').length);
+  totalAgents = computed(() => this.staffMembers().filter(m => ['AGENT_RESERVATION', 'AGENT_ENVOIE_COURIER', 'AGENT_RECUPERATION_COURIER'].includes(m.role_user)).length);
   totalChauffeurs = computed(() => this.staffMembers().filter(m => m.role_user === 'CHAUFFEUR').length);
 
   staffForm = this.fb.group({
@@ -49,7 +49,7 @@ export class Personnels implements OnInit {
     date_naissance: ['', Validators.required],
     num_cni: ['', Validators.required],
     telephone: ['', Validators.required],
-    role_user: ['AGENT', Validators.required],
+    role_user: ['AGENT_RESERVATION', Validators.required],
     password: ['', [Validators.required, Validators.minLength(8)]],
     station_id: [null as number | null | undefined, [Validators.required]],
   });
@@ -75,7 +75,7 @@ export class Personnels implements OnInit {
     if (this.showForm()) {
         this.isEditing.set(false);
         this.editId.set(null);
-        this.staffForm.reset({ role_user: 'AGENT' });
+        this.staffForm.reset({ role_user: 'AGENT_RESERVATION' });
         this.staffForm.get('password')?.setValidators([Validators.required, Validators.minLength(8)]);
     } else {
         // Prepare for create mode
@@ -142,7 +142,7 @@ onSubmit() {
         this.isSubmitting.set(false);
         this.isEditing.set(false);
         this.editId.set(null);
-        this.staffForm.reset({ role_user: 'AGENT' });
+        this.staffForm.reset({ role_user: 'AGENT_RESERVATION' });
       },
       error: (error) => {
         this.isSubmitting.set(false);

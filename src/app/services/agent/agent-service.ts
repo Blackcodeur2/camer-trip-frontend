@@ -98,12 +98,18 @@ export class AgentService {
     return this.http.patch<{ statut: boolean; message: string }>(`${this.API}/${this.getPrefix()}/colis/bulk-status`, { ids, statut });
   }
 
+  searchColisByPhone(telephone: string): Observable<Colis[]> {
+    return this.http.get<{ statut: boolean; data: Colis[]; total: number }>(`${this.API}/${this.getPrefix()}/colis/search?telephone=${telephone}`)
+      .pipe(map(response => response.data));
+  }
+
   exportPassagersPdf(voyageId: number): Observable<Blob> {
     return this.http.get(`${this.API}/${this.getPrefix()}/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
   }
 
   private getPrefix(): string {
     const user = this.authService.currentUser();
-    return user?.role_user === 'AGENT' ? 'agent' : 'chef-agence';
+    const rolesAgent = ['AGENT_RESERVATION', 'AGENT_ENVOIE_COURIER', 'AGENT_RECUPERATION_COURIER'];
+    return user && rolesAgent.includes(user.role_user) ? 'agent' : 'chef-agence';
   }
 }

@@ -19,12 +19,23 @@ export class AgentLayout {
   protected readonly currentUser = this.authService.currentUser;
   isUserMenuOpen = false;
 
-  menuItems = [
-    { label: 'Dashboard', route: '/agent/dashboard', icon: 'dashboard' },
-    { label: 'Nouvelle reservation', route: '/agent/booking/new', icon: 'add' },
-    { label: 'Reservations', route: '/agent/reservations', icon: 'list' },
-    { label: 'Gestion Colis', route: '/agent/colis', icon: 'inventory_2' },
-  ];
+  protected readonly menuItems = computed(() => {
+    const role = this.currentUserRole();
+    const items = [
+      { label: 'Dashboard', route: '/agent/dashboard', icon: 'dashboard' }
+    ];
+    
+    if (role === 'AGENT_RESERVATION') {
+      items.push({ label: 'Nouvelle reservation', route: '/agent/booking/new', icon: 'add' });
+      items.push({ label: 'Reservations', route: '/agent/reservations', icon: 'list' });
+    }
+    
+    if (role === 'AGENT_ENVOIE_COURIER' || role === 'AGENT_RECUPERATION_COURIER') {
+      items.push({ label: 'Gestion Colis', route: '/agent/colis', icon: 'inventory_2' });
+    }
+    
+    return items;
+  });
 
   protected readonly userInitials = computed(() => {
     const u = this.currentUser();

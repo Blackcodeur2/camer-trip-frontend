@@ -211,7 +211,7 @@
                             </p>
                         </div>
                         
-                        @if (user.role_user === 'CHEF_AGENCE' || user.role_user === 'AGENT' || user.role_user === 'CHAUFFEUR') {
+                        @if (user.role_user === 'CHEF_AGENCE' || user.role_user === 'AGENT_RESERVATION' || user.role_user === 'AGENT_ENVOIE_COURIER' || user.role_user === 'AGENT_RECUPERATION_COURIER' || user.role_user === 'CHAUFFEUR') {
                             <div class="info-item">
                                 <label>Gare assignée</label>
                                 <p>{{ getStationName(user.station_id) }}</p>

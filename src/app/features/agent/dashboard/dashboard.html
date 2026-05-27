@@ -76,15 +76,15 @@
     <section class="recent-actions">
         <h2>Actions Rapides</h2>
         <div class="actions-grid">
-            <button class="action-btn primary" (click)="navigateTo('/agent/booking')">
+            <button *ngIf="currentUserRole() === 'AGENT_RESERVATION'" class="action-btn primary" (click)="navigateTo('/agent/booking')">
                 <mat-icon>add_shopping_cart</mat-icon>
                 <span>Nouvelle Vente</span>
             </button>
-            <button class="action-btn secondary" (click)="navigateTo('/agent/colis')">
+            <button *ngIf="currentUserRole() === 'AGENT_ENVOIE_COURIER'" class="action-btn secondary" (click)="navigateTo('/agent/colis')">
                 <mat-icon>local_mall</mat-icon>
                 <span>Nouveau Colis</span>
             </button>
-            <button class="action-btn secondary" (click)="navigateTo('/agent/reservations')">
+            <button *ngIf="currentUserRole() === 'AGENT_RESERVATION'" class="action-btn secondary" (click)="navigateTo('/agent/reservations')">
                 <mat-icon>history</mat-icon>
                 <span>Historique</span>
             </button>

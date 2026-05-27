@@ -18,7 +18,7 @@ export const authGuardGuard: CanActivateFn = (route, state) => {
       if (userRole === 'ADMIN') return router.createUrlTree(['/admin/dashboard']);
       if (userRole === 'CHEF_AGENCE') return router.createUrlTree(['/chef_agence/dashboard']);
       if (userRole === 'CHAUFFEUR') return router.createUrlTree(['/chauffeur/dashboard']);
-      if (userRole === 'AGENT') return router.createUrlTree(['/agent/dashboard']);
+      if (['AGENT_RESERVATION', 'AGENT_ENVOIE_COURIER', 'AGENT_RECUPERATION_COURIER'].includes(userRole as string)) return router.createUrlTree(['/agent/dashboard']);
       if (userRole === 'CLIENT') return router.createUrlTree(['client/home']);
       return router.createUrlTree(['/auth/login']);
     }

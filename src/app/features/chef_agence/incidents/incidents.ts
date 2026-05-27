@@ -131,7 +131,8 @@ export class Incidents implements OnInit {
     }
   }
 
-  viewFullPhoto(photoUrl: string) {
+  viewFullPhoto(photoUrl: string | null) {
+    if (!photoUrl) return;
     Swal.fire({
       imageUrl: photoUrl,
       imageAlt: "Photo de l'incident",
@@ -140,6 +141,23 @@ export class Incidents implements OnInit {
       background: '#fff',
       width: '600px',
     });
+  }
+
+  /** Remplace l'image cassée par un placeholder visuel */
+  onImgError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    // SVG inline en base64 — icône caméra barrée
+    img.src = `data:image/svg+xml;base64,${btoa(`
+      <svg xmlns="http://www.w3.org/2000/svg" width="320" height="180" viewBox="0 0 320 180">
+        <rect width="320" height="180" fill="#f1f5f9" rx="12"/>
+        <text x="160" y="80" text-anchor="middle" font-size="48" fill="#cbd5e1">📷</text>
+        <text x="160" y="120" text-anchor="middle" font-size="14" fill="#94a3b8" font-family="sans-serif">Image non disponible</text>
+      </svg>
+    `)}`;
+    img.style.objectFit = 'contain';
+    img.style.padding = '8px';
+    // Désactiver le zoom sur une image cassée
+    img.parentElement?.classList.add('no-zoom');
   }
 
   // Counts for summary cards

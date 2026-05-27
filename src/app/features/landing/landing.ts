@@ -24,7 +24,9 @@ export class Landing {
       case 'ADMIN': return '/admin/dashboard';
       case 'PROPRIETAIRE': return '/proprietaire/dashboard';
       case 'CHEF_AGENCE': return '/chef_agence/dashboard';
-      case 'AGENT': return '/agent/dashboard';
+      case 'AGENT_RESERVATION':
+      case 'AGENT_ENVOIE_COURIER':
+      case 'AGENT_RECUPERATION_COURIER': return '/agent/dashboard';
       case 'CHAUFFEUR': return '/chauffeur/dashboard';
       case 'CLIENT': return '/client/home';
       default: return '/landing';

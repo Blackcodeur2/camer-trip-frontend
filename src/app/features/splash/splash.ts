@@ -41,7 +41,9 @@ export class Splash {
       'ADMIN': '/admin/dashboard',
       'CHEF_AGENCE': '/chef_agence/dashboard',
       'CHAUFFEUR': '/chauffeur/dashboard',
-      'AGENT': '/agent/dashboard',
+      'AGENT_RESERVATION': '/agent/dashboard',
+      'AGENT_ENVOIE_COURIER': '/agent/dashboard',
+      'AGENT_RECUPERATION_COURIER': '/agent/dashboard',
       'PROPRIETAIRE': '/proprietaire/dashboard',
       'CLIENT': '/landing'
     };

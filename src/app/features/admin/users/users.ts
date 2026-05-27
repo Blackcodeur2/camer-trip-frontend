@@ -53,7 +53,7 @@ export class Users {
     return this.filteredUsers().slice(start, start + this.pageSize());
   });
 
-  roles = ['ADMIN', 'CHEF_AGENCE', 'AGENT', 'CHAUFFEUR', 'CLIENT', 'PROPRIETAIRE'];
+  roles = ['ADMIN', 'CHEF_AGENCE', 'AGENT_RESERVATION', 'AGENT_ENVOIE_COURIER', 'AGENT_RECUPERATION_COURIER', 'CHAUFFEUR', 'CLIENT', 'PROPRIETAIRE'];
 
   userForm = this.fb.group({
     nom: ['', Validators.required],
@@ -84,7 +84,7 @@ export class Users {
     });
 
     this.userForm.get('role_user')?.valueChanges.subscribe(role => {
-      if (role === 'CHEF_AGENCE' || role === 'AGENT' || role === 'CHAUFFEUR') {
+      if (role === 'CHEF_AGENCE' || role === 'AGENT_RESERVATION' || role === 'AGENT_ENVOIE_COURIER' || role === 'AGENT_RECUPERATION_COURIER' || role === 'CHAUFFEUR') {
         this.userForm.get('agence_id')?.setValidators(Validators.required);
         this.userForm.get('gare_id')?.setValidators(Validators.required);
       } else {
@@ -154,14 +154,16 @@ export class Users {
 
   needsGareAssignment(): boolean {
     const role = this.userForm.get('role_user')?.value;
-    return role === 'CHEF_AGENCE' || role === 'AGENT' || role === 'CHAUFFEUR';
+    return role === 'CHEF_AGENCE' || role === 'AGENT_RESERVATION' || role === 'AGENT_ENVOIE_COURIER' || role === 'AGENT_RECUPERATION_COURIER' || role === 'CHAUFFEUR';
   }
 
   getRoleLabel(role: string): string {
     const labels: Record<string, string> = {
       ADMIN: 'Administrateur',
       CHEF_AGENCE: 'Chef d\'agence',
-      AGENT: 'Agent',
+      AGENT_RESERVATION: 'Agent de Réservation',
+      AGENT_ENVOIE_COURIER: 'Agent d\'Envoi Courrier',
+      AGENT_RECUPERATION_COURIER: 'Agent de Récupération Courrier',
       CHAUFFEUR: 'Chauffeur',
       CLIENT: 'Client',
       PROPRIETAIRE: 'Propriétaire'

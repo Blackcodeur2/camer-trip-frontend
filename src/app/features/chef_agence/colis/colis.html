@@ -5,12 +5,125 @@
             <p class="page-subtitle">Consultez et enregistrez les expéditions de colis.</p>
         </div>
         <div class="header-actions">
+            @if (!isRecuperationAgent() && !isChefAgence()) {
             <button class="btn-primary" (click)="toggleViewMode()">
                 <mat-icon>{{ viewMode() === 'list' ? 'add' : 'list' }}</mat-icon>
                 <span>{{ viewMode() === 'list' ? 'Nouveau Colis' : 'Retour à la liste' }}</span>
             </button>
+            }
         </div>
     </header>
+
+    <!-- PANNEAU DE RECHERCHE PAR TÉLÉPHONE (uniquement pour l'Agent de Récupération) -->
+    @if (isRecuperationAgent()) {
+    <div class="phone-search-panel" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; border: 1px solid rgba(99,102,241,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.2);">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #6366f1, #8b5cf6); display: flex; align-items: center; justify-content: center;">
+                <mat-icon style="color: white; font-size: 22px; width: 22px; height: 22px;">phone_in_talk</mat-icon>
+            </div>
+            <div>
+                <h2 style="margin: 0; color: white; font-size: 1.1rem; font-weight: 800;">Recherche par numéro de téléphone</h2>
+                <p style="margin: 0; color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600;">Saisissez le numéro du destinataire pour trouver ses colis</p>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; align-items: stretch;">
+            <div style="flex: 1; position: relative; display: flex; align-items: center;">
+                <mat-icon style="position: absolute; left: 1rem; color: rgba(255,255,255,0.4); font-size: 22px; width: 22px; height: 22px;">phone</mat-icon>
+                <input
+                    type="tel"
+                    [value]="phoneSearchQuery()"
+                    (input)="phoneSearchQuery.set($any($event.target).value)"
+                    (keyup.enter)="searchByPhone()"
+                    placeholder="Ex: 690 12 34 56..."
+                    style="width: 100%; padding: 0.9rem 1rem 0.9rem 3rem; background: rgba(255,255,255,0.07); border: 1.5px solid rgba(99,102,241,0.4); border-radius: 12px; color: white; font-size: 1rem; font-weight: 700; outline: none; box-sizing: border-box; transition: border-color 0.2s;"
+                    (focus)="$any($event.target).style.borderColor='#6366f1'"
+                    (blur)="$any($event.target).style.borderColor='rgba(99,102,241,0.4)'"
+                >
+            </div>
+            <button
+                (click)="searchByPhone()"
+                [disabled]="isSearching()"
+                style="padding: 0 1.75rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 12px; color: white; font-weight: 800; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; transition: opacity 0.2s;"
+                [style.opacity]="isSearching() ? '0.6' : '1'">
+                <mat-icon style="font-size: 20px; width: 20px; height: 20px;">{{ isSearching() ? 'hourglass_empty' : 'search' }}</mat-icon>
+                {{ isSearching() ? 'Recherche...' : 'Rechercher' }}
+            </button>
+            @if (hasSearched()) {
+            <button
+                (click)="clearPhoneSearch()"
+                style="padding: 0 1rem; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 12px; color: rgba(255,255,255,0.7); font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">close</mat-icon>
+                Effacer
+            </button>
+            }
+        </div>
+
+        <!-- Résultats de la recherche -->
+        @if (hasSearched()) {
+        <div style="margin-top: 1.5rem;">
+            @if (isSearching()) {
+                <div style="text-align: center; color: rgba(255,255,255,0.5); padding: 1.5rem; font-weight: 600;">
+                    <mat-icon style="font-size: 36px; width: 36px; height: 36px; animation: spin 1s linear infinite; display: block; margin: 0 auto 0.5rem;">hourglass_empty</mat-icon>
+                    Recherche en cours...
+                </div>
+            } @else if (phoneSearchResults().length === 0) {
+                <div style="text-align: center; padding: 2rem; background: rgba(255,255,255,0.04); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.1);">
+                    <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: rgba(255,255,255,0.2); display: block; margin: 0 auto 0.75rem;">search_off</mat-icon>
+                    <p style="color: rgba(255,255,255,0.5); font-weight: 700; margin: 0;">Aucun colis trouvé pour ce numéro de téléphone.</p>
+                </div>
+            } @else {
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <span style="background: #6366f1; color: white; padding: 0.2rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 800;">{{ phoneSearchResults().length }} colis trouvé(s)</span>
+                    <span style="color: rgba(255,255,255,0.4); font-size: 0.85rem; font-weight: 600;">pour le numéro {{ phoneSearchQuery() }}</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    @for (colis of phoneSearchResults(); track colis.id) {
+                    <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+                        <!-- Infos Colis -->
+                        <div style="flex: 1; min-width: 200px;">
+                            <div style="color: white; font-weight: 800; font-size: 1rem; margin-bottom: 0.25rem;">{{ colis.nom_colis }}</div>
+                            <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem; font-weight: 600;">
+                                <mat-icon style="font-size: 13px; width: 13px; height: 13px; vertical-align: middle;">place</mat-icon>
+                                Dest. : {{ colis.destination }}
+                            </div>
+                        </div>
+                        <!-- Destinataire -->
+                        <div style="min-width: 160px;">
+                            <div style="color: rgba(255,255,255,0.5); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Destinataire</div>
+                            <div style="color: white; font-weight: 800;">{{ colis.nom_destinataire }}</div>
+                            <div style="color: #a5b4fc; font-weight: 700; font-size: 0.88rem;">{{ colis.tel_destinataire }}</div>
+                        </div>
+                        <!-- Statut -->
+                        <div style="min-width: 120px; text-align: center;">
+                            <span [style.background]="colis.statut === 'retire' ? 'rgba(16,185,129,0.15)' : colis.statut === 'arrive' ? 'rgba(59,130,246,0.15)' : 'rgba(245,158,11,0.15)'"
+                                  [style.color]="colis.statut === 'retire' ? '#10b981' : colis.statut === 'arrive' ? '#3b82f6' : '#f59e0b'"
+                                  style="padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.8rem; font-weight: 800; display: inline-block;">
+                                {{ colis.statut === 'retire' ? '✓ Retiré' : colis.statut === 'arrive' ? '📦 Arrivé' : colis.statut === 'en route' ? '🚛 En route' : '⏳ En attente' }}
+                            </span>
+                        </div>
+                        <!-- Action Retrait -->
+                        @if (colis.statut === 'arrive') {
+                        <div>
+                            <button
+                                (click)="markAsRetrieved(colis.id!)"
+                                style="padding: 0.6rem 1.25rem; background: linear-gradient(135deg, #10b981, #059669); border: none; border-radius: 10px; color: white; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">check_circle</mat-icon>
+                                Valider Retrait
+                            </button>
+                        </div>
+                        }
+                        @if (colis.statut === 'retire') {
+                        <div style="color: rgba(255,255,255,0.3); font-size: 0.8rem; font-weight: 600; font-style: italic;">Déjà retiré</div>
+                        }
+                    </div>
+                    }
+                </div>
+            }
+        </div>
+        }
+    </div>
+    }
 
     <!-- VIEW: LIST -->
     @if (viewMode() === 'list') {

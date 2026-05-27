@@ -58,7 +58,9 @@ export class Login {
             case 'CHAUFFEUR':
               this.router.navigate(['/chauffeur/dashboard']);
               break;
-            case 'AGENT':
+            case 'AGENT_RESERVATION':
+            case 'AGENT_ENVOIE_COURIER':
+            case 'AGENT_RECUPERATION_COURIER':
               this.router.navigate(['/agent/dashboard']);
               break;
             case 'PROPRIETAIRE':

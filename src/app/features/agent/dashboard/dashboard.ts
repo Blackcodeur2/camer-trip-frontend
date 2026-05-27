@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, effect, AfterViewInit } from '@angular/core';
+import { Component, inject, signal, effect, AfterViewInit, computed } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { catchError, of } from 'rxjs';
 import { AgentService } from '../../../services/agent/agent-service';
+import { AuthService } from '../../../services/auth/auth-service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -17,6 +18,9 @@ Chart.register(...registerables);
 export class Dashboard implements AfterViewInit {
   private agentService = inject(AgentService);
   private router = inject(Router);
+  private authService = inject(AuthService);
+
+  protected readonly currentUserRole = computed(() => this.authService.currentUser()?.role_user);
 
   isLoading = signal(true);
   stats = signal({ salesToday: 0, activeReservations: 0, revenueToday: 0, pendingValidations: 0 });

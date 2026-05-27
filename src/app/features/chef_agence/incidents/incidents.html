@@ -130,10 +130,21 @@
                     <p>{{ incident.description }}</p>
                 </div>
 
+                <!-- Photo section: always shown -->
                 @if (incident.photo_url) {
-                <div class="incident-photo-container">
-                    <img [src]="incident.photo_url" alt="Preuve d'incident" class="incident-photo-thumb" (click)="viewFullPhoto(incident.photo_url)">
+                <div class="incident-photo-container" (click)="viewFullPhoto(incident.photo_url)">
+                    <img
+                        [src]="incident.photo_url"
+                        alt="Preuve d'incident"
+                        class="incident-photo-thumb"
+                        (error)="onImgError($event)"
+                    >
                     <span class="zoom-badge"><mat-icon>zoom_in</mat-icon> Zoomer</span>
+                </div>
+                } @else {
+                <div class="incident-no-photo">
+                    <mat-icon>hide_image</mat-icon>
+                    <span>Aucune photo jointe</span>
                 </div>
                 }
 

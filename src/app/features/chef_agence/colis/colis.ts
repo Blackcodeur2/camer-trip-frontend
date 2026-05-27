@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { Colis } from '../../../models/colis';
 import { AppButton } from "../../../shared/button/app-button/app-button";
 import { AgentService } from '../../../services/agent/agent-service';
+import { AuthService } from '../../../services/auth/auth-service';
 
 @Component({
   selector: 'app-colis',
@@ -17,12 +18,23 @@ import { AgentService } from '../../../services/agent/agent-service';
 })
 export class ColisPage {
   private agentService = inject(AgentService);
+  private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+
+  protected readonly currentUserRole = computed(() => this.authService.currentUser()?.role_user);
+  protected readonly isRecuperationAgent = computed(() => this.currentUserRole() === 'AGENT_RECUPERATION_COURIER');
+  protected readonly isChefAgence = computed(() => this.currentUserRole() === 'CHEF_AGENCE');
 
   viewMode = signal<'list' | 'create'>('list');
   colisList = signal<Colis[]>([]);
   isLoading = signal(true);
   isSubmitting = signal(false);
+
+  // Phone search (for AGENT_RECUPERATION_COURIER)
+  phoneSearchQuery = signal<string>('');
+  phoneSearchResults = signal<Colis[]>([]);
+  isSearching = signal(false);
+  hasSearched = signal(false);
 
   // Grouping and Filtering
   filterDestination = signal<string>('');
@@ -124,6 +136,28 @@ export class ColisPage {
   ngOnInit() {
     this.loadColis();
     this.loadTrajets();
+  }
+
+  searchByPhone() {
+    const phone = this.phoneSearchQuery().trim();
+    if (phone.length < 6) {
+      Swal.fire('Attention', 'Veuillez saisir au moins 6 chiffres du numéro de téléphone.', 'warning');
+      return;
+    }
+    this.isSearching.set(true);
+    this.hasSearched.set(true);
+    this.agentService.searchColisByPhone(phone).pipe(
+      catchError(() => of([]))
+    ).subscribe(results => {
+      this.phoneSearchResults.set(results);
+      this.isSearching.set(false);
+    });
+  }
+
+  clearPhoneSearch() {
+    this.phoneSearchQuery.set('');
+    this.phoneSearchResults.set([]);
+    this.hasSearched.set(false);
   }
 
   toggleViewMode() {
@@ -256,6 +290,10 @@ export class ColisPage {
         this.agentService.updateColisStatus(id, 'retire', code_retrait).subscribe({
           next: () => {
             this.colisList.update(list => list.map(c => c.id === id ? { ...c, statut: 'retire' } : c));
+            // Rafraîchir les résultats de la recherche téléphone si active
+            if (this.hasSearched()) {
+              this.phoneSearchResults.update(list => list.map(c => c.id === id ? { ...c, statut: 'retire' } : c));
+            }
             Swal.fire('Validé !', 'Le colis a été marqué comme retiré.', 'success');
             this.loadColis();
             this.loadTrajets();

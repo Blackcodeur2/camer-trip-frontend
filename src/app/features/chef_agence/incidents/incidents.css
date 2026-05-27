@@ -412,3 +412,33 @@
     width: 14px;
     height: 14px;
 }
+
+/* Désactiver le curseur zoom sur les images cassées */
+.incident-photo-container.no-zoom {
+    cursor: default;
+}
+.incident-photo-container.no-zoom .zoom-badge {
+    display: none;
+}
+
+/* Placeholder "Aucune photo" */
+.incident-no-photo {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1.5rem 0;
+    padding: 0.85rem 1.25rem;
+    background: var(--color-surface);
+    border: 1.5px dashed var(--color-border);
+    border-radius: 14px;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    max-width: 320px;
+}
+
+.incident-no-photo mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: #cbd5e1;
+}

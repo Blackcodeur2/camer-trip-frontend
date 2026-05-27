@@ -18,9 +18,11 @@
                 <option value="annule">Annulée</option>
             </select>
 
+            @if (!isChefAgence()) {
             <button class="btn-primary" (click)="newReservation()">
                 <mat-icon>add</mat-icon> <span>Nouvelle</span>
             </button>
+            }
             @if (isChefAgence()) {
             <button class="btn-secondary" (click)="downloadPdf()" [disabled]="isExporting()">
                 <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>

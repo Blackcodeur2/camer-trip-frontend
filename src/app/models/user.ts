@@ -10,7 +10,7 @@ export interface User {
     date_naissance?: string;
     telephone: string;
     station_id: number;
-    role_user: 'ADMIN' | 'CLIENT' | 'CHEF_AGENCE' | 'CHAUFFEUR' | 'AGENT'| 'PROPRIETAIRE';
+    role_user: 'ADMIN' | 'CLIENT' | 'CHEF_AGENCE' | 'CHAUFFEUR' | 'AGENT_RESERVATION' | 'AGENT_ENVOIE_COURIER' | 'AGENT_RECUPERATION_COURIER' | 'PROPRIETAIRE';
     sexe: 'M' | 'F' | string;
     statut?: string,
     is_subscribed: number;
