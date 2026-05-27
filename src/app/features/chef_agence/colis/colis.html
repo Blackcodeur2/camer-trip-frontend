@@ -5,7 +5,7 @@
             <p class="page-subtitle">Consultez et enregistrez les expéditions de colis.</p>
         </div>
         <div class="header-actions">
-            @if (!isRecuperationAgent() && !isChefAgence()) {
+            @if (canCreate()) {
             <button class="btn-primary" (click)="toggleViewMode()">
                 <mat-icon>{{ viewMode() === 'list' ? 'add' : 'list' }}</mat-icon>
                 <span>{{ viewMode() === 'list' ? 'Nouveau Colis' : 'Retour à la liste' }}</span>
@@ -102,8 +102,8 @@
                                 {{ colis.statut === 'retire' ? '✓ Retiré' : colis.statut === 'arrive' ? '📦 Arrivé' : colis.statut === 'en route' ? '🚛 En route' : '⏳ En attente' }}
                             </span>
                         </div>
-                        <!-- Action Retrait -->
-                        @if (colis.statut === 'arrive') {
+                        <!-- Action Retrait : masqué pour l'agent d'envoi -->
+                        @if (colis.statut === 'arrive' && canWithdraw()) {
                         <div>
                             <button
                                 (click)="markAsRetrieved(colis.id!)"
@@ -153,7 +153,7 @@
 
                 <div style="flex: 1;"></div>
 
-                @if (selectedColisIds().size > 0) {
+                @if (selectedColisIds().size > 0 && canCreate()) {
                     <div class="bulk-actions" style="display: flex; gap: 0.5rem; align-items: center;">
                         <span style="font-weight: 600; font-size: 0.9rem; color: var(--color-dark); margin-right: 0.5rem;">
                             {{ selectedColisIds().size }} sélectionné(s)
@@ -262,17 +262,19 @@
                         </td>-->
                         <td style="text-align: right;">
                             <div class="action-btn-group" style="justify-content: flex-end;">
-                                @if (colis.statut === 'en attente') {
+                                <!-- Mettre en route / Arrivé : uniquement pour canCreate (agent envoi ou chef agence) -->
+                                @if (colis.statut === 'en attente' && canCreate()) {
                                 <button class="table-action-btn" title="Mettre en route" (click)="changeStatus(colis.id!, 'en attente', 'en route')" style="color: var(--color-warning);">
                                     <mat-icon>local_shipping</mat-icon>
                                 </button>
                                 }
-                                @if (colis.statut === 'en route') {
+                                @if (colis.statut === 'en route' && canCreate()) {
                                 <button class="table-action-btn" title="Marquer comme arrivé" (click)="changeStatus(colis.id!, 'en route', 'arrive')" style="color: var(--color-info);">
                                     <mat-icon>where_to_vote</mat-icon>
                                 </button>
                                 }
-                                @if (colis.statut === 'arrive') {
+                                <!-- Retrait : uniquement pour canWithdraw (agent récup ou chef agence) -->
+                                @if (colis.statut === 'arrive' && canWithdraw()) {
                                 <button class="table-action-btn" title="Marquer comme retiré" (click)="changeStatus(colis.id!, 'arrive', 'retire')" style="color: var(--color-primary);">
                                     <mat-icon>check_circle</mat-icon>
                                 </button>
@@ -305,8 +307,8 @@
         }
     }
 
-    <!-- VIEW: CREATE -->
-    @if (viewMode() === 'create') {
+    <!-- VIEW: CREATE : uniquement pour les agents autorisés à créer -->
+    @if (viewMode() === 'create' && canCreate()) {
     <div class="form-card">
         <form [formGroup]="colisForm" (ngSubmit)="onSubmitColis()">
             <div class="form-grid">

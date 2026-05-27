@@ -23,7 +23,13 @@ export class ColisPage {
 
   protected readonly currentUserRole = computed(() => this.authService.currentUser()?.role_user);
   protected readonly isRecuperationAgent = computed(() => this.currentUserRole() === 'AGENT_RECUPERATION_COURIER');
-  protected readonly isChefAgence = computed(() => this.currentUserRole() === 'CHEF_AGENCE');
+  protected readonly isEnvoiAgent        = computed(() => this.currentUserRole() === 'AGENT_ENVOIE_COURIER');
+  protected readonly isChefAgence        = computed(() => this.currentUserRole() === 'CHEF_AGENCE');
+
+  /** L'agent d'envoi ne peut PAS retirer de colis */
+  protected readonly canWithdraw = computed(() => !this.isEnvoiAgent());
+  /** L'agent de récupération ne peut PAS créer de colis */
+  protected readonly canCreate   = computed(() => !this.isRecuperationAgent() && !this.isChefAgence());
 
   viewMode = signal<'list' | 'create'>('list');
   colisList = signal<Colis[]>([]);
