@@ -62,6 +62,10 @@ export class Dashboard implements AfterViewInit {
   totalRoutes = computed(() => this.dashboardData()?.stats?.total_trajets ?? 0);
   ticketsSoldToday = computed(() => this.dashboardData()?.stats?.tickets_today ?? 0);
   dailyRevenue = computed(() => this.dashboardData()?.stats?.revenue_today ?? 0);
+  monthlyRevenue = computed(() => this.dashboardData()?.stats?.revenue_month ?? 0);
+  currentMonthLabel = computed(() =>
+    new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date())
+  );
 
   busesOnRoad = computed(() => {
     const raw = this.dashboardData()?.fleet_status ?? [];

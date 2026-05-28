@@ -19,6 +19,13 @@ interface Stats {
   chefs_agence: number;
 }
 
+interface AgenceRevenueMonth {
+  id: number;
+  nom: string;
+  period: string; // YYYY-MM
+  revenue_month: number;
+}
+
 @Component({
   selector: 'app-dashboard',
   imports: [CommonModule, MatIconModule],
@@ -34,6 +41,7 @@ export class Dashboard implements AfterViewInit {
   isSubscribed = signal(false);
   stats = signal<Stats | null>(null);
   revenueHistory = signal<any[]>([]);
+  agencesRevenueMonth = signal<AgenceRevenueMonth[]>([]);
   subscription = signal<any>(null);
   isLoading = signal(true);
   isPaying = signal(false);
@@ -94,6 +102,7 @@ export class Dashboard implements AfterViewInit {
           this.isSubscribed.set(!!user.is_subscribed);
           
           if (user.is_subscribed && this.kycStatus() === 'approuve') {
+            this.selectedPeriod.set(this.currentPeriod());
             this.loadStats();
             this.loadStations();
           } else {
@@ -173,6 +182,14 @@ export class Dashboard implements AfterViewInit {
 
   stations = signal<any[]>([]);
   selectedStationId = signal<number | null>(null);
+  selectedPeriod = signal<string>('');
+
+  currentPeriod = computed(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    return `${y}-${m}`;
+  });
 
   loadStats(stationId?: number) {
     // On ne montre le loader principal que lors du tout premier chargement
@@ -182,10 +199,13 @@ export class Dashboard implements AfterViewInit {
       this.isLoading.set(true);
     }
 
-    this.proprietaireService.getMyStatistics(stationId).subscribe({
+    const period = this.selectedPeriod() || this.currentPeriod();
+
+    this.proprietaireService.getMyStatistics(stationId, period).subscribe({
       next: (data) => {
         this.stats.set(data.stats);
         this.revenueHistory.set(data.revenue_history);
+        this.agencesRevenueMonth.set(Array.isArray(data.agences_revenue_month) ? data.agences_revenue_month : []);
         
         if (data.isSubscribed !== undefined) {
           this.isSubscribed.set(!!data.isSubscribed);
@@ -233,6 +253,12 @@ export class Dashboard implements AfterViewInit {
     const stationId = value ? parseInt(value, 10) : undefined;
     this.selectedStationId.set(stationId || null);
     this.loadStats(stationId);
+  }
+
+  onPeriodChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.selectedPeriod.set(value || this.currentPeriod());
+    this.loadStats(this.selectedStationId() || undefined);
   }
 
   getStatValue(key: string): number {

@@ -58,6 +58,15 @@
 
             <div class="stat-card">
                 <div class="info">
+                    <span class="value">{{ monthlyRevenue() | number }} <small>FCFA</small></span>
+                    <span class="label">Ventes du mois</span>
+                    <span class="sub text-green">{{ currentMonthLabel() }}</span>
+                </div>
+                <div class="icon-circle money">📈</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="info">
                     <span class="value">{{ activeStaff() }}</span>
                     <span class="label">Employés</span>
                     <span class="sub">Chauffeurs & Agents</span>

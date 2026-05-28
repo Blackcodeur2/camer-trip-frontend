@@ -111,11 +111,12 @@ export class ProprietaireService {
   }
 
   // ── Statistiques ──
-  getMyStatistics(stationId?: number): Observable<any> {
+  getMyStatistics(stationId?: number, period?: string): Observable<any> {
     let url = `${this.API}/proprietaire/statistiques`;
-    if (stationId) {
-      url += `?station_id=${stationId}`;
-    }
+    const params: string[] = [];
+    if (stationId) params.push(`station_id=${stationId}`);
+    if (period) params.push(`period=${encodeURIComponent(period)}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
     return this.http.get<{ statut: boolean; data: any }>(url)
       .pipe(map(response => response.data));
   }

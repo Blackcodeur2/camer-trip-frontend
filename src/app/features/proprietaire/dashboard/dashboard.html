@@ -81,14 +81,20 @@
               <h2>Activité de vos Agences</h2>
               <p class="subtitle">Évolution des réservations</p>
             </div>
-            <div class="filter-box">
-              <mat-icon>filter_list</mat-icon>
-              <select (change)="onStationChange($event)" [value]="selectedStationId() || ''">
-                <option value="">Toutes les stations</option>
-                @for (station of stations(); track station.id) {
-                  <option [value]="station.id">{{ station.ville }} - {{ station.adresse}}</option>
-                }
-              </select>
+            <div class="filters-row">
+              <div class="filter-box">
+                <mat-icon>event</mat-icon>
+                <input type="month" (change)="onPeriodChange($event)" [value]="selectedPeriod() || currentPeriod()" />
+              </div>
+              <div class="filter-box">
+                <mat-icon>filter_list</mat-icon>
+                <select (change)="onStationChange($event)" [value]="selectedStationId() || ''">
+                  <option value="">Toutes les stations</option>
+                  @for (station of stations(); track station.id) {
+                    <option [value]="station.id">{{ station.ville }} - {{ station.adresse}}</option>
+                  }
+                </select>
+              </div>
             </div>
           </div>
           <div class="chart-container">
@@ -105,6 +111,35 @@
           </div>
         </section>
       </div>
+
+      <section class="panel agences-revenue-panel animate-fade-in" style="animation-delay: 0.25s;">
+        <div class="panel-header">
+          <div>
+            <h2>Montant généré par agence</h2>
+            <p class="subtitle">Total du mois sélectionné (réservations + colis)</p>
+          </div>
+        </div>
+
+        @if (agencesRevenueMonth().length === 0) {
+          <div class="empty-list">
+            Aucune donnée disponible pour cette période.
+          </div>
+        } @else {
+          <div class="agences-revenue-list">
+            @for (agence of agencesRevenueMonth(); track agence.id) {
+              <div class="agence-revenue-item">
+                <div class="agence-name">
+                  <span class="name">{{ agence.nom }}</span>
+                  <span class="period">{{ agence.period }}</span>
+                </div>
+                <div class="agence-amount">
+                  {{ agence.revenue_month | number }} <small>FCFA</small>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </section>
     }
   }
 </div>
