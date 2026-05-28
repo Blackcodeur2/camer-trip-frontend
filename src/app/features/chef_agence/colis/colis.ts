@@ -408,10 +408,13 @@ export class ColisPage {
   }
 
   onSubmitColis() {
+    if (!this.isGuestSender() && !this.selectedClient()) {
+      Swal.fire('Attention', 'Veuillez sélectionner un client expéditeur ou cocher "Client non inscrit".', 'warning');
+      return;
+    }
+
     if (this.colisForm.invalid) {
-      if (!this.isGuestSender() && !this.selectedClient()) {
-         Swal.fire('Attention', 'Veuillez sélectionner un client ou remplir les infos expéditeur', 'warning');
-      }
+      Swal.fire('Attention', 'Veuillez remplir tous les champs obligatoires.', 'warning');
       return;
     }
 

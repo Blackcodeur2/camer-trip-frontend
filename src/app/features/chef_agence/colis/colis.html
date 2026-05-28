@@ -454,7 +454,7 @@
 
             <div class="form-actions">
                 <button type="button" class="btn-secondary" (click)="toggleViewMode()">Annuler</button>
-                <app-app-button type="submit" [disabled]="colisForm.invalid || isSubmitting()">
+                <app-app-button type="submit" [disabled]="colisForm.invalid || isSubmitting() || (!isGuestSender() && !selectedClient())">
                     {{ isSubmitting() ? 'Enregistrement...' : 'Enregistrer le Colis' }}
                 </app-app-button>
             </div>
