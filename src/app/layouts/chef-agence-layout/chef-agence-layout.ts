@@ -27,7 +27,7 @@ export class ChefAgenceLayout {
     { label: 'Réservations', route: '/chef_agence/reservations', icon: 'confirmation_number' },
     //{ label: 'Gestion Colis', route: '/chef_agence/colis', icon: 'inventory_2' },
     { label: 'Personnel', route: '/chef_agence/personnels', icon: 'people' },
-    { label: 'Annonces', route: '/chef_agence/annonces', icon: 'campaign' },
+    //{ label: 'Annonces', route: '/chef_agence/annonces', icon: 'campaign' },
     { label: 'Incidents', route: '/chef_agence/incidents', icon: 'report_problem' },
   ];
 
