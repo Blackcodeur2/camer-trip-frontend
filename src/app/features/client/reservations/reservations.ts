@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { Reservation } from '../../../models/reservation';
 import { Router } from '@angular/router';
 import { ClientService } from '../../../services/client/client-service';
+import { TicketService } from '../../../services/ticket/ticket-service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -17,6 +18,7 @@ import Swal from 'sweetalert2';
 export class Reservations implements OnInit {
   private clientService = inject(ClientService);
   private router = inject(Router);
+  private ticketService = inject(TicketService);
 
   reservations = signal<Reservation[]>([]);
   searchTerm = signal<string>('');
@@ -141,6 +143,10 @@ export class Reservations implements OnInit {
 
   goToVoyages(): void {
     this.router.navigate(['/client/agences']);
+  }
+
+  downloadTicket(reservationId: number): void {
+    this.ticketService.downloadTicket(reservationId);
   }
 
   canSignalerEmpechement(reservation: Reservation): boolean {
