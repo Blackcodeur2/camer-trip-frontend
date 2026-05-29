@@ -68,4 +68,8 @@ export class ClientService {
   reportIncident(incidentData: FormData): Observable<any> {
     return this.http.post<any>(`${this.API}/client/incidents`, incidentData);
   }
+
+  signalerEmpechement(reservationId: number, motif: string): Observable<any> {
+    return this.http.post<any>(`${this.API}/client/reservations/${reservationId}/signaler-empechement`, { motif });
+  }
 }

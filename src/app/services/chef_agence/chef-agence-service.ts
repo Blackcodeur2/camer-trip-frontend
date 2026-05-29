@@ -150,4 +150,19 @@ export class ChefAgenceService {
   exportPassagersPdf(voyageId: number): Observable<Blob> {
     return this.http.get(`${this.API}/chef-agence/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
   }
+
+  // ── Annonces ──
+  getAnnonces(): Observable<any[]> {
+    return this.http.get<{ statut: boolean; data: any[] }>(`${this.API}/chef-agence/annonces`)
+      .pipe(map(response => response.data));
+  }
+
+  createAnnonce(formData: FormData): Observable<any> {
+    return this.http.post<{ statut: boolean; data: any; message: string }>(`${this.API}/chef-agence/annonces`, formData)
+      .pipe(map(response => response.data));
+  }
+
+  deleteAnnonce(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.API}/chef-agence/annonces/${id}`);
+  }
 }

@@ -101,6 +101,13 @@
                             </div>
                             }
                         }
+                        @if (res.empechement_signale_at) {
+                        <div class="empechement-alert" [title]="res.motif_empechement || ''">
+                            <mat-icon>event_busy</mat-icon>
+                            Empêchement signalé
+                            <span class="empechement-date">{{ res.empechement_signale_at | date:'dd/MM/yyyy' }}</span>
+                        </div>
+                        }
                     </td>
                     <td>
                         @if (res.agent) {

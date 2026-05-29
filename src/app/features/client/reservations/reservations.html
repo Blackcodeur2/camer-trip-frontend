@@ -62,6 +62,15 @@
                     <button class="pay-btn" *ngIf="r.statut === 'en attente'" (click)="onPayReservation(r)">
                         Payer <mat-icon>payments</mat-icon>
                     </button>
+                    <button class="empechement-btn" *ngIf="canSignalerEmpechement(r)" (click)="onSignalerEmpechement(r)" title="Signaler un empêchement">
+                        <mat-icon>event_busy</mat-icon>
+                        Empêchement
+                    </button>
+                    @if (r.empechement_signale_at) {
+                    <span class="empechement-badge" title="Empêchement signalé le {{ r.empechement_signale_at | date:'dd/MM/yyyy HH:mm' }}">
+                        <mat-icon>info</mat-icon> Empêchement signalé
+                    </span>
+                    }
                     <button class="incident-btn" *ngIf="r.statut === 'validee' && r.voyage?.statut === 'en cours'" (click)="onReportIncident(r)" title="Signaler un incident sur ce voyage">
                         <mat-icon>report_problem</mat-icon>
                     </button>

@@ -143,6 +143,54 @@ export class Reservations implements OnInit {
     this.router.navigate(['/client/agences']);
   }
 
+  canSignalerEmpechement(reservation: Reservation): boolean {
+    if (!['validee', 'en attente'].includes(reservation.statut)) return false;
+    if (reservation.empechement_signale_at) return false;
+    const voyageStatut = reservation.voyage?.statut?.toLowerCase();
+    return !voyageStatut || !['en cours', 'termine', 'terminé', 'annule', 'annulé'].includes(voyageStatut);
+  }
+
+  async onSignalerEmpechement(reservation: Reservation) {
+    const { value: motif } = await Swal.fire({
+      title: 'Signaler un empêchement',
+      html: '<p style="font-size:0.9rem;color:#64748b;margin-bottom:1rem;">Vous ne pourrez pas effectuer ce voyage. Décrivez brièvement la raison.</p>',
+      input: 'textarea',
+      inputPlaceholder: 'Ex: Problème de santé, urgence familiale...',
+      inputAttributes: { maxlength: '1000' },
+      showCancelButton: true,
+      confirmButtonText: 'Envoyer le signalement',
+      cancelButtonText: 'Annuler',
+      confirmButtonColor: '#f59e0b',
+      inputValidator: (value) => {
+        if (!value || value.trim().length < 10) {
+          return 'Veuillez décrire votre empêchement (au moins 10 caractères).';
+        }
+        return null;
+      }
+    });
+
+    if (!motif) return;
+
+    Swal.fire({
+      title: 'Envoi en cours...',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    this.clientService.signalerEmpechement(reservation.id, motif.trim()).subscribe({
+      next: () => {
+        Swal.fire(
+          'Signalé',
+          'Votre empêchement a été transmis à l\'agence. Vous serez contacté si nécessaire.',
+          'success'
+        ).then(() => this.loadReservations());
+      },
+      error: (err) => {
+        Swal.fire('Erreur', err.error?.message || 'Impossible d\'envoyer le signalement.', 'error');
+      }
+    });
+  }
+
   async onReportIncident(reservation: Reservation) {
     const { value: formValues } = await Swal.fire({
       title: 'Signaler un incident',

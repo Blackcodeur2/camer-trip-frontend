@@ -7,6 +7,8 @@ export interface Reservation {
     num_reservation: any;
     id: number;
     statut: string;
+    motif_empechement?: string;
+    empechement_signale_at?: string;
     prix: number;
     voyage: Voyage;
     user?: User;

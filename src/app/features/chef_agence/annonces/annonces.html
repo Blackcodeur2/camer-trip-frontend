@@ -1,0 +1,89 @@
+<div class="page-container">
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Annonces</h1>
+            <p class="page-subtitle">Publiez des informations et promotions visibles par vos clients.</p>
+        </div>
+        <button class="btn-primary" (click)="toggleForm()">
+            <mat-icon>{{ showForm() ? 'close' : 'campaign' }}</mat-icon>
+            <span>{{ showForm() ? 'Fermer' : 'Nouvelle annonce' }}</span>
+        </button>
+    </header>
+
+    @if (showForm()) {
+    <div class="form-card">
+        <form [formGroup]="annonceForm" (ngSubmit)="publishAnnonce()">
+            <div class="form-group">
+                <label>Contenu de l'annonce <span class="required">*</span></label>
+                <textarea formControlName="contenu_text" rows="4" class="form-control"
+                    placeholder="Ex: Promotion sur la ligne Douala - Yaoundé ce week-end..."></textarea>
+            </div>
+
+            <label class="checkbox-row">
+                <input type="checkbox" formControlName="is_promo">
+                <span>Marquer comme promotion</span>
+            </label>
+
+            <div class="form-group">
+                <label>Image (optionnelle)</label>
+                <input type="file" accept="image/jpeg,image/png,image/gif,image/webp" (change)="onImageSelected($event)" class="form-control">
+                @if (imagePreview()) {
+                <div class="image-preview">
+                    <img [src]="imagePreview()!" alt="Aperçu">
+                    <button type="button" class="btn-remove-img" (click)="clearImage()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+                }
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="toggleForm()">Annuler</button>
+                <button type="submit" class="btn-primary" [disabled]="annonceForm.invalid || isSubmitting()">
+                    {{ isSubmitting() ? 'Publication...' : 'Publier' }}
+                </button>
+            </div>
+        </form>
+    </div>
+    }
+
+    @if (isLoading()) {
+    <div class="state-container">
+        <div class="spinner"></div>
+        <p>Chargement des annonces...</p>
+    </div>
+    } @else {
+    <div class="annonces-grid">
+        @for (a of annonces(); track a.id) {
+        <article class="annonce-card">
+            @if (getAnnonceImageUrl(a); as imageSrc) {
+            <div class="annonce-image">
+                <img [src]="imageSrc" alt="Annonce" loading="lazy">
+            </div>
+            }
+            <div class="annonce-body">
+                <div class="annonce-meta">
+                    @if (a.is_promo) {
+                    <span class="promo-badge">Promo</span>
+                    }
+                    <span class="date">{{ a.created_at | date:'dd MMM yyyy HH:mm' }}</span>
+                </div>
+                <p class="contenu">{{ a.contenu_text }}</p>
+                @if (a.station?.agence?.nom) {
+                <span class="agence-name">{{ a.station.agence.nom }}</span>
+                }
+            </div>
+            <button class="btn-delete" type="button" (click)="deleteAnnonce(a)" title="Supprimer">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </article>
+        } @empty {
+        <div class="empty-state">
+            <mat-icon>campaign</mat-icon>
+            <h3>Aucune annonce</h3>
+            <p>Publiez votre première annonce pour informer vos clients.</p>
+        </div>
+        }
+    </div>
+    }
+</div>

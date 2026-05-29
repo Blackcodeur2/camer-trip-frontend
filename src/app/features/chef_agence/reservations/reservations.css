@@ -222,3 +222,28 @@
     align-items: center;
     gap: 1.5rem;
 }
+
+.empechement-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+    background: #fff7ed;
+    color: #c2410c;
+    font-size: 0.72rem;
+    font-weight: 700;
+    max-width: 200px;
+}
+
+.empechement-alert mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.empechement-date {
+    opacity: 0.8;
+    font-weight: 600;
+}

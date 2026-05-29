@@ -234,6 +234,33 @@
     color: #b91c1c;
 }
 
+.empechement-btn {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.empechement-btn:hover {
+    background: #fde68a;
+}
+
+.empechement-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    background: #fff7ed;
+    color: #c2410c;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.empechement-badge mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
 .ticket-btn {
     background: #f1f5f9;
     color: #475569;
