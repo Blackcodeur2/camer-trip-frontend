@@ -73,8 +73,28 @@ export class ClientColisComponent implements OnInit {
   }
 
   downloadReceipt(colis: Colis) {
-    // To be implemented in the backend/service
-    console.log('Downloading receipt for colis:', colis.id);
+    if (!colis.id) {
+      return;
+    }
+
+    this.clientService.downloadColisReceipt(colis.id).subscribe({
+      next: (blob) => this.saveBlobAs(blob, `recu-colis-${colis.id}.pdf`),
+      error: (err) => {
+        console.error('Receipt download error', err);
+        window.alert(err.error?.message || 'Impossible de télécharger le bordereau.');
+      }
+    });
+  }
+
+  private saveBlobAs(blob: Blob, filename: string) {
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    window.URL.revokeObjectURL(url);
+    anchor.remove();
   }
 
   getStatusClass(statut: string): string {

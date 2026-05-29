@@ -103,6 +103,10 @@ export class AgentService {
       .pipe(map(response => response.data));
   }
 
+  downloadColisReceipt(colisId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/${this.getPrefix()}/colis/${colisId}/receipt`, { responseType: 'blob' });
+  }
+
   exportPassagersPdf(voyageId: number): Observable<Blob> {
     return this.http.get(`${this.API}/${this.getPrefix()}/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
   }

@@ -344,6 +344,27 @@ export class ColisPage {
     });
   }
 
+  downloadColisReceipt(colisId: number) {
+    this.agentService.downloadColisReceipt(colisId).subscribe({
+      next: (blob) => this.saveBlobAs(blob, `recu-colis-${colisId}.pdf`),
+      error: (err) => {
+        Swal.fire('Erreur', err.error?.message || 'Impossible de télécharger le reçu.', 'error');
+        console.error('Receipt download error', err);
+      }
+    });
+  }
+
+  private saveBlobAs(blob: Blob, filename: string) {
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    window.URL.revokeObjectURL(url);
+    anchor.remove();
+  }
+
   // --- BULK OPERATIONS ---
   toggleColisSelection(id: number, event: Event) {
     const isChecked = (event.target as HTMLInputElement).checked;

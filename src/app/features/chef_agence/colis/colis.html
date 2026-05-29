@@ -102,6 +102,14 @@
                                 {{ colis.statut === 'retire' ? '✓ Retiré' : colis.statut === 'arrive' ? '📦 Arrivé' : colis.statut === 'en route' ? '🚛 En route' : '⏳ En attente' }}
                             </span>
                         </div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.75rem;">
+                            <button
+                                (click)="downloadColisReceipt(colis.id!)"
+                                style="padding: 0.55rem 1rem; background: #3b82f6; border: none; border-radius: 10px; color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                                <mat-icon style="font-size: 18px; width: 18px; height: 18px;">download</mat-icon>
+                                Bordereau
+                            </button>
+                        </div>
                         <!-- Action Retrait : masqué pour l'agent d'envoi -->
                         @if (colis.statut === 'arrive' && canWithdraw()) {
                         <div>
@@ -279,6 +287,9 @@
                                     <mat-icon>check_circle</mat-icon>
                                 </button>
                                 }
+                                <button class="table-action-btn" title="Télécharger le bordereau" (click)="downloadColisReceipt(colis.id!)" style="color: var(--color-info);">
+                                    <mat-icon>download</mat-icon>
+                                </button>
                                 @if (colis.code_retrait) {
                                     <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-dark); margin-left: 0.5rem; padding: 0.2rem 0.5rem; background: var(--color-bg); border-radius: 4px;">
                                         Code: {{ colis.code_retrait }}

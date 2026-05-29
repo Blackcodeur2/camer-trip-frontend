@@ -64,6 +64,10 @@ export class ClientService {
       .pipe(map(response => response.data));
   }
 
+  downloadColisReceipt(colisId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/client/colis/${colisId}/receipt`, { responseType: 'blob' });
+  }
+
   // ── Incidents ──
   reportIncident(incidentData: FormData): Observable<any> {
     return this.http.post<any>(`${this.API}/client/incidents`, incidentData);
