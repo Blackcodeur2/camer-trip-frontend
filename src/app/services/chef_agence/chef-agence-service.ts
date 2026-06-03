@@ -87,8 +87,8 @@ export class ChefAgenceService {
     return this.http.post<any>(`${this.API}/chef-agence/voyages`, voyage);
   }
 
-  updateVoyageStatus(id: number, statut: string): Observable<any> {
-    return this.http.put<any>(`${this.API}/chef-agence/voyages/${id}`, { statut });
+  updateVoyageStatus(id: number, statut: string, motif_annulation?: string): Observable<any> {
+    return this.http.put<any>(`${this.API}/chef-agence/voyages/${id}`, { statut, motif_annulation });
   }
 
   // ── Reservations ──

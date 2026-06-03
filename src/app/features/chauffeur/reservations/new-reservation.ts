@@ -42,6 +42,14 @@ export class ChauffeurNewReservation implements OnInit, OnDestroy {
     return Array.from({ length: count }, (_, i) => i + 1);
   });
 
+  getRoutePrefix(): string {
+    const url = this.router.url;
+    if (url.includes('/proprietaire')) return '/proprietaire';
+    if (url.includes('/chef_agence')) return '/chef_agence';
+    if (url.includes('/agent')) return '/agent';
+    return '/chauffeur';
+  }
+
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -49,7 +57,12 @@ export class ChauffeurNewReservation implements OnInit, OnDestroy {
       this.loadData();
       this.startRealtimeUpdates();
     } else {
-      this.router.navigate(['/chauffeur/reservations']);
+      const prefix = this.getRoutePrefix();
+      if (prefix === '/chauffeur') {
+        this.router.navigate(['/chauffeur/reservations']);
+      } else {
+        this.router.navigate([`${prefix}/reservations/self`]);
+      }
     }
   }
 
@@ -199,7 +212,12 @@ export class ChauffeurNewReservation implements OnInit, OnDestroy {
             clearInterval(interval);
             this.isSubmitting.set(false);
             Swal.fire('Succès', 'Paiement réussi ! Votre place est réservée.', 'success').then(() => {
-              this.router.navigate(['/chauffeur/historique']);
+              const prefix = this.getRoutePrefix();
+              if (prefix === '/chauffeur') {
+                this.router.navigate(['/chauffeur/historique']);
+              } else {
+                this.router.navigate([`${prefix}/reservations/self`]);
+              }
             });
           } else if (res.statut === 'FAILED' || res.statut === 'echoue') {
             clearInterval(interval);
@@ -221,6 +239,11 @@ export class ChauffeurNewReservation implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(['/chauffeur/reservations']);
+    const prefix = this.getRoutePrefix();
+    if (prefix === '/chauffeur') {
+      this.router.navigate(['/chauffeur/reservations']);
+    } else {
+      this.router.navigate([`${prefix}/reservations/self`]);
+    }
   }
 }

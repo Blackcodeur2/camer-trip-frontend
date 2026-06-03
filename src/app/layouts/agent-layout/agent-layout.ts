@@ -22,7 +22,8 @@ export class AgentLayout {
   protected readonly menuItems = computed(() => {
     const role = this.currentUserRole();
     const items = [
-      { label: 'Dashboard', route: '/agent/dashboard', icon: 'dashboard' }
+      { label: 'Dashboard', route: '/agent/dashboard', icon: 'dashboard' },
+      { label: 'Mes Réservations', route: '/agent/reservations/self', icon: 'assignment_ind' }
     ];
     
     if (role === 'AGENT_RESERVATION') {

@@ -148,6 +148,14 @@ export const routes: Routes = [
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },
+            {
+                path: 'reservations/self',
+                loadComponent: () => import('./features/chauffeur/reservations/chauffeur-booking').then(m => m.ChauffeurBooking)
+            },
+            {
+                path: 'reservations/self/new/:id',
+                loadComponent: () => import('./features/chauffeur/reservations/new-reservation').then(m => m.ChauffeurNewReservation)
+            },
         ],
     },
 
@@ -201,6 +209,14 @@ export const routes: Routes = [
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
             },
+            {
+                path: 'reservations/self',
+                loadComponent: () => import('./features/chauffeur/reservations/chauffeur-booking').then(m => m.ChauffeurBooking)
+            },
+            {
+                path: 'reservations/self/new/:id',
+                loadComponent: () => import('./features/chauffeur/reservations/new-reservation').then(m => m.ChauffeurNewReservation)
+            },
         ],
     },
 
@@ -229,6 +245,14 @@ export const routes: Routes = [
             {
                 path: 'profile',
                 loadComponent: () => import('./features/shared/profile/profile').then(m => m.Profile),
+            },
+            {
+                path: 'reservations/self',
+                loadComponent: () => import('./features/chauffeur/reservations/chauffeur-booking').then(m => m.ChauffeurBooking)
+            },
+            {
+                path: 'reservations/self/new/:id',
+                loadComponent: () => import('./features/chauffeur/reservations/new-reservation').then(m => m.ChauffeurNewReservation)
             },
         ],
     },

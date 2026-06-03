@@ -2,42 +2,60 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../auth/auth-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChauffeurService {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
   private readonly API = environment.apiUrl;
+
+  private getRolePrefix(): string {
+    const role = this.authService.currentUser()?.role_user;
+    if (role === 'PROPRIETAIRE') return 'proprietaire';
+    if (role === 'CHEF_AGENCE') return 'chef-agence';
+    if (role?.startsWith('AGENT_')) return 'agent';
+    return 'chauffeur';
+  }
 
   // ── Voyages ──
   getMyVoyages(): Observable<any[]> {
-    return this.http.get<{ status: boolean; data: any[] }>(`${this.API}/chauffeur/voyages`)
+    const prefix = this.getRolePrefix();
+    return this.http.get<{ status: boolean; data: any[] }>(`${this.API}/${prefix}/voyages`)
       .pipe(map(response => response.data));
   }
 
   searchVoyages(payload: any): Observable<any[]> {
-    return this.http.post<{ status: boolean; data: any[] }>(`${this.API}/chauffeur/search-trips`, payload)
+    const prefix = this.getRolePrefix();
+    return this.http.post<{ status: boolean; data: any[] }>(`${this.API}/${prefix}/search-trips`, payload)
       .pipe(map(response => response.data));
   }
 
   getVoyageDetails(id: number): Observable<any> {
-    return this.http.get<{ status: boolean; data: any }>(`${this.API}/chauffeur/voyages/${id}`)
+    const prefix = this.getRolePrefix();
+    return this.http.get<{ status: boolean; data: any }>(`${this.API}/${prefix}/voyages/${id}`)
       .pipe(map(response => response.data));
   }
 
   updateVoyageStatus(id: number, status: string): Observable<any> {
-    return this.http.put<any>(`${this.API}/chauffeur/voyages/${id}/statut`, { statut: status });
+    const prefix = this.getRolePrefix();
+    return this.http.put<any>(`${this.API}/${prefix}/voyages/${id}/statut`, { statut: status });
   }
 
   // ── Historique & Réservations ──
   getMyReservations(): Observable<any[]> {
-    return this.http.get<{ status: boolean; data: any[] }>(`${this.API}/chauffeur/reservations`)
+    const prefix = this.getRolePrefix();
+    const endpoint = prefix === 'chauffeur' ? 'reservations' : 'reservations/self';
+    return this.http.get<{ status: boolean; data: any[] }>(`${this.API}/${prefix}/${endpoint}`)
       .pipe(map(response => response.data));
   }
 
   createReservation(payload: any): Observable<any> {
-    return this.http.post<any>(`${this.API}/chauffeur/reservations`, payload);
+    const prefix = this.getRolePrefix();
+    const endpoint = prefix === 'chauffeur' ? 'reservations' : 'reservations/self';
+    return this.http.post<any>(`${this.API}/${prefix}/${endpoint}`, payload);
   }
 
   // ── Paiement ──

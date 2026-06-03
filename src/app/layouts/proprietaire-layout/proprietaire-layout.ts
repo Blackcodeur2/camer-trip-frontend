@@ -29,6 +29,7 @@ export class ProprietaireLayout {
     { label: 'Gérants', route: '/proprietaire/gerants', icon: 'manage_accounts', badge: null },
     { label: 'Agents & Chauffeurs', route: '/proprietaire/personnels', icon: 'manage_accounts', badge: null },
     { label: 'KYC / Documents', route: '/proprietaire/kyc', icon: 'verified_user', badge: null },
+    { label: 'Mes Réservations', route: '/proprietaire/reservations/self', icon: 'assignment_ind' },
   ];
 
   protected readonly userInitials = computed(() => {

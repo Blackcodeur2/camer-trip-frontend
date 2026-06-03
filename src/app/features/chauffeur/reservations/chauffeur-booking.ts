@@ -35,7 +35,16 @@ export class ChauffeurBooking {
     });
   }
 
+  getRoutePrefix(): string {
+    const url = this.router.url;
+    if (url.includes('/proprietaire')) return '/proprietaire';
+    if (url.includes('/chef_agence')) return '/chef_agence';
+    if (url.includes('/agent')) return '/agent';
+    return '/chauffeur';
+  }
+
   selectVoyage(id: number) {
-    this.router.navigate(['/chauffeur/reservations/new', id]);
+    const prefix = this.getRoutePrefix();
+    this.router.navigate([`${prefix}/reservations/self/new`, id]);
   }
 }

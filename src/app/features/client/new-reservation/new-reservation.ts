@@ -34,18 +34,11 @@ export class NewReservation implements OnInit, OnDestroy {
     return places <= 35;
   });
 
-  busColumns = computed(() => {
-    return this.isSmallBus() ? 3 : 4;
-  });
 
-  seatsArray = computed(() => {
-    const count = this.voyage()?.bus?.nb_places || 0;
-    return Array.from({ length: count }, (_, i) => i + 1);
-  });
 
   freeSeats = computed(() => {
-    const total = this.voyage()?.bus?.nb_places || 1;
-    return (total - 1) - this.occupancyCount();
+    const total = this.voyage()?.bus?.nb_places || 2;
+    return (total - 2) - this.occupancyCount();
   });
 
   ngOnInit(): void {
@@ -113,12 +106,79 @@ export class NewReservation implements OnInit, OnDestroy {
   }
 
   isOccupied(seat: number): boolean {
-    return seat === 1 || this.occupiedSeats().includes(seat);
+    return !this.isSeatAvailable(seat);
+  }
+
+  isSeatAvailable(seat: number): boolean {
+    return seat !== 1 && seat !== 2 && !this.occupiedSeats().includes(seat);
   }
 
   selectSeat(seat: number): void {
-    if (seat === 1 || this.isOccupied(seat)) return;
+    if (!this.isSeatAvailable(seat)) return;
     this.selectedSeat.set(seat === this.selectedSeat() ? null : seat);
+  }
+
+  getBusLayoutCells(): any[] {
+    const nbPlaces = this.voyage()?.bus?.nb_places || 70;
+    const isGrosPorteur = nbPlaces > 35;
+    const cells: any[] = [];
+
+    // Rangée 1 (Cockpit / Avant)
+    cells.push({ type: 'driver', seatNumber: 1 });
+    cells.push({ type: 'motorboy', seatNumber: 2 });
+    
+    // Sièges passagers de la rangée 1 (colonnes 3, 4 et 5)
+    if (nbPlaces >= 3) cells.push({ type: 'seat', seatNumber: 3 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 4) cells.push({ type: 'seat', seatNumber: 4 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 5) cells.push({ type: 'seat', seatNumber: 5 });
+    else cells.push({ type: 'empty' });
+
+    // Rangée 2 (Entrée avant)
+    if (nbPlaces >= 6) cells.push({ type: 'seat', seatNumber: 6 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 7) cells.push({ type: 'seat', seatNumber: 7 });
+    else cells.push({ type: 'empty' });
+
+    if (nbPlaces >= 8) cells.push({ type: 'seat', seatNumber: 8 });
+    else cells.push({ type: 'empty' });
+
+    // Porte d'entrée avant sur les colonnes 4 et 5 (2ème rangée)
+    cells.push({ type: 'door', label: 'Front' });
+    cells.push({ type: 'door', label: 'Front' });
+
+    // Reste des sièges passagers (à partir de 9)
+    const startPassengerSeat = 9;
+    const totalRemainingPassengerSeats = nbPlaces >= 9 ? nbPlaces - 8 : 0;
+    
+    if (totalRemainingPassengerSeats > 0) {
+      const totalCellsNeeded = totalRemainingPassengerSeats + (isGrosPorteur ? 2 : 0);
+      const totalRows = Math.ceil(totalCellsNeeded / 5);
+      const backDoorRowIdx = isGrosPorteur && totalRows >= 4 ? totalRows - 3 : -1;
+
+      let seatPointer = startPassengerSeat;
+      for (let r = 0; r < totalRows; r++) {
+        const isBackDoorRow = r === backDoorRowIdx;
+        for (let c = 0; c < 5; c++) {
+          if (isBackDoorRow && (c === 3 || c === 4)) {
+            cells.push({ type: 'door', label: 'Back' });
+          } else {
+            if (seatPointer <= nbPlaces) {
+              cells.push({ type: 'seat', seatNumber: seatPointer });
+              seatPointer++;
+            } else {
+              cells.push({ type: 'empty' });
+            }
+          }
+        }
+      }
+    }
+
+    return cells;
   }
 
   confirmBooking(): void {

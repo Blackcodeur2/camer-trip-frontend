@@ -224,6 +224,38 @@ export class Voyages {
     });
   }
 
+  cancelVoyage(voyage: any) {
+    Swal.fire({
+      title: 'Annuler le voyage ?',
+      text: "Veuillez saisir le motif d'annulation. Tous les passagers ayant réservé seront notifiés.",
+      icon: 'warning',
+      input: 'text',
+      inputPlaceholder: "Motif d'annulation (ex: Panne mécanique, mauvais temps...)",
+      showCancelButton: true,
+      confirmButtonText: 'Oui, annuler',
+      cancelButtonText: 'Fermer',
+      confirmButtonColor: '#ef4444',
+      inputValidator: (value) => {
+        if (!value) {
+          return "Vous devez saisir un motif d'annulation !";
+        }
+        return null;
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        this.chefService.updateVoyageStatus(voyage.id, 'annule', result.value).subscribe({
+          next: () => {
+            Swal.fire('Annulé', 'Le voyage a été annulé avec succès.', 'success');
+            this.loadVoyages();
+          },
+          error: (err) => {
+            Swal.fire('Erreur', err.error?.message || "Impossible d'annuler le voyage.", 'error');
+          }
+        });
+      }
+    });
+  }
+
   exportManifeste(voyage: any) {
     this.exportingVoyageId.set(voyage.id);
     this.chefService.exportPassagersPdf(voyage.id).subscribe({
