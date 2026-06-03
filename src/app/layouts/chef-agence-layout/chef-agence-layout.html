@@ -12,7 +12,7 @@
 
     <nav class="sidebar-nav">
       @for (item of menuItems; track item.route) {
-      <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+      <a [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
         <mat-icon class="icon">{{ item.icon }}</mat-icon>
         <span>{{ item.label }}</span>
       </a>
