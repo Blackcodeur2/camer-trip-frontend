@@ -26,6 +26,7 @@ export class Personnels implements OnInit {
   isEditing = signal(false);
   isExporting = signal(false);
   editId = signal<number | null>(null);
+  driverLicense = signal<File | null>(null);
 
   roles = ['AGENT_RESERVATION', 'AGENT_ENVOIE_COURIER', 'AGENT_RECUPERATION_COURIER', 'CHAUFFEUR'];
   currentPage = signal(1);
@@ -98,6 +99,7 @@ export class Personnels implements OnInit {
         role_user: member.role_user,
         station_id: member.station_id
     });
+    this.driverLicense.set(null);
     // Password is not required when editing
     this.staffForm.get('password')?.clearValidators();
     /*this.staffForm.get('password')?.setValidators([Validators.minLength(8)]);*/
@@ -106,20 +108,47 @@ export class Personnels implements OnInit {
     this.showForm.set(true);
   }
 
-onSubmit() {
+  onLicenseFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    if (!file) {
+      this.driverLicense.set(null);
+      return;
+    }
+    this.driverLicense.set(file);
+  }
+
+  onSubmit() {
     if (this.staffForm.invalid) return;
     this.isSubmitting.set(true);
 
     const formValue = this.staffForm.getRawValue();
-    const payload = {
-      ...formValue,
-      id: this.editId(),
-      station_id: this.editId() ? formValue.station_id : this.authService.currentUser()?.station_id,
-    };
+    if (formValue.role_user === 'CHAUFFEUR' && !this.isEditing() && !this.driverLicense()) {
+      Swal.fire({ icon: 'error', title: 'Erreur', text: 'Le permis de conduire est requis pour un chauffeur.' });
+      this.isSubmitting.set(false);
+      return;
+    }
 
-    // If password is empty during edit, Remove it from payload
-    if (this.isEditing() && !payload.password) {
-      delete (payload as any).password;
+    const payload = new FormData();
+    payload.append('nom', formValue.nom);
+    payload.append('prenom', formValue.prenom);
+    payload.append('email', formValue.email);
+    payload.append('date_naissance', formValue.date_naissance);
+    payload.append('num_cni', formValue.num_cni);
+    payload.append('telephone', formValue.telephone);
+    payload.append('role_user', formValue.role_user);
+    payload.append('station_id', String(this.editId() ? formValue.station_id : this.authService.currentUser()?.station_id ?? ''));
+
+    if (formValue.password) {
+      payload.append('password', formValue.password);
+    }
+
+    if (this.driverLicense()) {
+      payload.append('permis_de_conduire', this.driverLicense()!);
+    }
+
+    if (this.isEditing() && this.editId()) {
+      payload.append('id', String(this.editId()));
     }
 
     const request = this.isEditing()
@@ -142,6 +171,7 @@ onSubmit() {
         this.isSubmitting.set(false);
         this.isEditing.set(false);
         this.editId.set(null);
+        this.driverLicense.set(null);
         this.staffForm.reset({ role_user: 'AGENT_RESERVATION' });
       },
       error: (error) => {
