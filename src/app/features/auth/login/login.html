@@ -23,8 +23,11 @@
         <label class="field__label" for="password">Mot de passe</label>
         <div class="input-container">
           <span class="input-icon"><mat-icon>lock</mat-icon></span>
-          <input id="password" class="field__control" type="password" formControlName="password"
+          <input id="password" class="field__control" [type]="showPassword() ? 'text' : 'password'" formControlName="password"
             autocomplete="current-password" placeholder="••••••••" />
+          <button type="button" class="password-toggle" (click)="showPassword.update(v => !v)" aria-label="Afficher ou masquer le mot de passe">
+            <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </div>
         @if (shouldShowError('password')) {
         <div class="field__error">{{ errorMessage('password') }}</div>

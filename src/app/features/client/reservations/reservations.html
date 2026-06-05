@@ -71,7 +71,7 @@
                         <mat-icon>info</mat-icon> Empêchement signalé
                     </span>
                     }
-                    <button class="incident-btn" *ngIf="r.statut === 'validee' && r.voyage?.statut === 'en cours'" (click)="onReportIncident(r)" title="Signaler un incident sur ce voyage">
+                    <button class="incident-btn" *ngIf="r.statut === 'validee' && r.voyage.statut === 'en cours'" (click)="onReportIncident(r)" title="Signaler un incident sur ce voyage">
                         <mat-icon>report_problem</mat-icon>
                     </button>
                     <button class="ticket-btn" *ngIf="r.statut === 'validee'" (click)="downloadTicket(r.id)">

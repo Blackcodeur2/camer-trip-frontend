@@ -73,8 +73,8 @@ export class ChefAgenceService {
     return this.http.post<User>(`${this.API}/chef-agence/staff`, staff);
   }
 
-  updateStaff(staff: any): Observable<any> {
-    return this.http.put<any>(`${this.API}/chef-agence/staff/${staff.id}`, staff);
+  updateStaff(staffId: number, staff: any): Observable<any> {
+    return this.http.put<any>(`${this.API}/chef-agence/staff/${staffId}`, staff);
   }
 
   // ── Voyages ──

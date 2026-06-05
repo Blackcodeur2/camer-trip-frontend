@@ -88,7 +88,8 @@ export class Personnels implements OnInit {
 
   editStaff(member: User) {
     this.isEditing.set(true);
-    this.editId.set(member.id || null);
+    const staffId = Number(member.id ?? '');
+    this.editId.set(Number.isFinite(staffId) ? staffId : null);
     this.staffForm.patchValue({
         nom: member.nom,
         prenom: member.prenom,
@@ -147,13 +148,19 @@ export class Personnels implements OnInit {
       payload.append('permis_de_conduire', this.driverLicense()!);
     }
 
-    if (this.isEditing() && this.editId()) {
-      payload.append('id', String(this.editId()));
+    let request;
+    if (this.isEditing()) {
+      const staffId = this.editId();
+      if (staffId !== null) {
+        request = this.chefAgenceService.updateStaff(staffId, payload);
+      } else {
+        this.isSubmitting.set(false);
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de mettre à jour : identifiant du personnel manquant.' });
+        return;
+      }
+    } else {
+      request = this.chefAgenceService.addStaff(payload);
     }
-
-    const request = this.isEditing()
-      ? this.chefAgenceService.updateStaff(payload)
-      : this.chefAgenceService.addStaff(payload);
 
     request.subscribe({
       next: (res: any) => {

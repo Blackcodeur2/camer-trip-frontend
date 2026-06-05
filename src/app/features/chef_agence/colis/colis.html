@@ -161,6 +161,13 @@
 
                 <div style="flex: 1;"></div>
 
+                <div class="filter-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.4rem; font-weight: 700; color: var(--color-text-main);">
+                        <input type="checkbox" [checked]="showRetired()" (change)="showRetired.set($any($event.target).checked)">
+                        Afficher colis retirés
+                    </label>
+                </div>
+
                 @if (selectedColisIds().size > 0 && canCreate()) {
                     <div class="bulk-actions" style="display: flex; gap: 0.5rem; align-items: center;">
                         <span style="font-weight: 600; font-size: 0.9rem; color: var(--color-dark); margin-right: 0.5rem;">

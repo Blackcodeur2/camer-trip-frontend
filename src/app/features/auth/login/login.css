@@ -83,6 +83,27 @@
   align-items: center;
 }
 
+.password-toggle {
+  position: absolute;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0.35rem;
+}
+
+.password-toggle:hover {
+  color: var(--color-primary);
+}
+
+.password-toggle mat-icon {
+  font-size: 1.25rem;
+}
+
 .input-icon {
   position: absolute;
   left: 1.25rem;

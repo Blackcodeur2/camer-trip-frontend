@@ -152,7 +152,7 @@ export class Reservations implements OnInit {
   canSignalerEmpechement(reservation: Reservation): boolean {
     if (!['validee', 'en attente'].includes(reservation.statut)) return false;
     if (reservation.empechement_signale_at) return false;
-    const voyageStatut = reservation.voyage?.statut?.toLowerCase();
+    const voyageStatut = reservation.voyage.statut.toLowerCase();
     return !voyageStatut || !['en cours', 'termine', 'terminé', 'annule', 'annulé'].includes(voyageStatut);
   }
 

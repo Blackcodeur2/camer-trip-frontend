@@ -45,6 +45,7 @@ export class ColisPage {
   // Grouping and Filtering
   filterDestination = signal<string>('');
   filterDate = signal<string>('');
+  showRetired = signal<boolean>(true);
 
   // Bulk selection
   selectedColisIds = signal<Set<number>>(new Set());
@@ -52,6 +53,10 @@ export class ColisPage {
   // Filtered List
   filteredColisList = computed(() => {
     return this.colisList().filter(colis => {
+      if (!this.showRetired() && colis.statut === 'retire') {
+        return false;
+      }
+
       let matchDest = true;
       let matchDate = true;
       

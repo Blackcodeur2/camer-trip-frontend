@@ -16,6 +16,7 @@ import { AppButton } from '../../../shared/button/app-button/app-button';
 export class Login {
   protected readonly submitted = signal(false);
   protected readonly isLoading = signal(false);
+  protected readonly showPassword = signal(false);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
