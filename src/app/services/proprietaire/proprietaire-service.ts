@@ -194,6 +194,21 @@ export class ProprietaireService {
     return this.http.get(`${this.API}/proprietaire/export-personnel`, { responseType: 'blob' });
   }
 
+  exportActivityReport(stationId?: number, period?: string): Observable<Blob> {
+    let url = `${this.API}/proprietaire/export-activites`;
+    const params: string[] = [];
+    if (stationId) {
+      params.push(`station_id=${stationId}`);
+    }
+    if (period) {
+      params.push(`period=${encodeURIComponent(period)}`);
+    }
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+    return this.http.get(url, { responseType: 'blob' });
+  }
+
   exportPassagersPdf(voyageId: number): Observable<Blob> {
     return this.http.get(`${this.API}/proprietaire/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
   }

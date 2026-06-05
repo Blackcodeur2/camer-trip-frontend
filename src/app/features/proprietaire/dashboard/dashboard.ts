@@ -45,6 +45,7 @@ export class Dashboard implements AfterViewInit {
   subscription = signal<any>(null);
   isLoading = signal(true);
   isPaying = signal(false);
+  isDownloadingReport = signal(false);
 
   // Informations sur le plan d'abonnement actif
   planNom = signal('Plan Annuel');
@@ -245,6 +246,35 @@ export class Dashboard implements AfterViewInit {
     this.proprietaireService.getMyStations().subscribe({
       next: (stations) => this.stations.set(stations),
       error: (err) => console.error('Error loading stations', err)
+    });
+  }
+
+  exportActivityReport() {
+    if (this.isDownloadingReport()) {
+      return;
+    }
+
+    this.isDownloadingReport.set(true);
+    const stationId = this.selectedStationId() || undefined;
+    const period = this.selectedPeriod() || this.currentPeriod();
+
+    this.proprietaireService.exportActivityReport(stationId, period).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `rapport_activite_${period}_${stationId ?? 'toutes_stations'}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err: any) => {
+        Swal.fire('Erreur', err.error?.message || 'Impossible de générer le rapport.', 'error');
+      },
+      complete: () => {
+        this.isDownloadingReport.set(false);
+      }
     });
   }
 

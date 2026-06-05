@@ -96,6 +96,12 @@
                 </select>
               </div>
             </div>
+            <div class="panel-actions">
+              <button class="btn-export" type="button" (click)="exportActivityReport()" [disabled]="isDownloadingReport()">
+                <mat-icon>download</mat-icon>
+                {{ isDownloadingReport() ? 'Génération...' : 'Exporter le rapport' }}
+              </button>
+            </div>
           </div>
           <div class="chart-container">
             <canvas id="activityChart"></canvas>

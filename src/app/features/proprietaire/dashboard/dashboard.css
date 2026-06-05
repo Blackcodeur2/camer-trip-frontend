@@ -378,6 +378,36 @@
   cursor: not-allowed;
 }
 
+.panel-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+.btn-export {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.btn-export:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: var(--color-primary-dark);
+}
+
+.btn-export:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;

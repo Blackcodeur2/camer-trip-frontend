@@ -130,13 +130,13 @@ export class Personnels implements OnInit {
     }
 
     const payload = new FormData();
-    payload.append('nom', formValue.nom);
-    payload.append('prenom', formValue.prenom);
-    payload.append('email', formValue.email);
-    payload.append('date_naissance', formValue.date_naissance);
-    payload.append('num_cni', formValue.num_cni);
-    payload.append('telephone', formValue.telephone);
-    payload.append('role_user', formValue.role_user);
+    payload.append('nom', formValue.nom || '');
+    payload.append('prenom', formValue.prenom || '');
+    payload.append('email', formValue.email || '');
+    payload.append('date_naissance', formValue.date_naissance || '');
+    payload.append('num_cni', formValue.num_cni || '');
+    payload.append('telephone', formValue.telephone || '');
+    payload.append('role_user', formValue.role_user || '');
     payload.append('station_id', String(this.editId() ? formValue.station_id : this.authService.currentUser()?.station_id ?? ''));
 
     if (formValue.password) {
