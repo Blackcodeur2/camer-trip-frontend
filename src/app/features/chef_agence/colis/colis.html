@@ -4,7 +4,13 @@
             <h1 class="page-title">Gestion des Colis</h1>
             <p class="page-subtitle">Consultez et enregistrez les expéditions de colis.</p>
         </div>
-        <div class="header-actions">
+        <div class="header-actions" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            @if (canExportDailyReport()) {
+            <button class="btn-secondary" (click)="isEnvoiAgent() ? exportRegisteredColisReport() : exportRetiredColisReport()">
+                <mat-icon>picture_as_pdf</mat-icon>
+                <span>{{ isEnvoiAgent() ? 'Imprimer colis enregistrés' : 'Imprimer colis retirés' }}</span>
+            </button>
+            }
             @if (canCreate()) {
             <button class="btn-primary" (click)="toggleViewMode()">
                 <mat-icon>{{ viewMode() === 'list' ? 'add' : 'list' }}</mat-icon>
@@ -283,7 +289,7 @@
                                     <mat-icon>local_shipping</mat-icon>
                                 </button>
                                 }
-                                @if (colis.statut === 'en route' && canCreate()) {
+                                @if (colis.statut === 'en route' && canConfirmArrival()) {
                                 <button class="table-action-btn" title="Marquer comme arrivé" (click)="changeStatus(colis.id!, 'en route', 'arrive')" style="color: var(--color-info);">
                                     <mat-icon>where_to_vote</mat-icon>
                                 </button>

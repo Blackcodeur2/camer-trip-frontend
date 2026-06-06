@@ -131,6 +131,22 @@ export class ChefAgenceService {
     return this.http.get(`${this.API}/chef-agence/export-personnel`, { responseType: 'blob' });
   }
 
+  exportPersonnelBadgesPdf(): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/personnels/export-badges`, { responseType: 'blob' });
+  }
+
+  exportStaffMemberPdf(memberId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/personnels/${memberId}/fiche`, { responseType: 'blob' });
+  }
+
+  exportStaffBadgePdf(memberId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/personnels/${memberId}/badge`, { responseType: 'blob' });
+  }
+
+  exportStaffLicensePdf(memberId: number): Observable<Blob> {
+    return this.http.get(`${this.API}/chef-agence/personnels/${memberId}/permis`, { responseType: 'blob' });
+  }
+
   exportBusesPdf(): Observable<Blob> {
     return this.http.get(`${this.API}/chef-agence/export-buses`, { responseType: 'blob' });
   }

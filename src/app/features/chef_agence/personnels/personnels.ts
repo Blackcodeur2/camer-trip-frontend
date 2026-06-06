@@ -22,6 +22,8 @@ export class Personnels implements OnInit {
 
   staffMembers = signal<User[]>([]);
   showForm = signal(false);
+  // Control visibility of badge export buttons (hidden by default)
+  showBadgeButtons = signal(false);
   isSubmitting = signal(false);
   isEditing = signal(false);
   isExporting = signal(false);
@@ -221,5 +223,66 @@ export class Personnels implements OnInit {
         Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de télécharger le document PDF' });
       }
     });
+  }
+
+  downloadStaffFiche(member: User) {
+    if (this.isExporting()) return;
+    this.isExporting.set(true);
+    this.chefAgenceService.exportStaffMemberPdf(Number(member.id)).subscribe({
+      next: (blob) => this.saveBlob(blob, `fiche_personnel_${member.nom}_${member.prenom}.pdf`),
+      error: () => {
+        this.isExporting.set(false);
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de télécharger la fiche du personnel' });
+      }
+    });
+  }
+
+  downloadStaffBadge(member: User) {
+    if (this.isExporting()) return;
+    this.isExporting.set(true);
+    this.chefAgenceService.exportStaffBadgePdf(Number(member.id)).subscribe({
+      next: (blob) => this.saveBlob(blob, `badge_personnel_${member.nom}_${member.prenom}.pdf`),
+      error: () => {
+        this.isExporting.set(false);
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de télécharger le badge du personnel' });
+      }
+    });
+  }
+
+  downloadStaffLicense(member: User) {
+    if (this.isExporting()) return;
+    this.isExporting.set(true);
+    this.chefAgenceService.exportStaffLicensePdf(Number(member.id)).subscribe({
+      next: (blob) => this.saveBlob(blob, `permis_chauffeur_${member.nom}_${member.prenom}.pdf`),
+      error: () => {
+        this.isExporting.set(false);
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de télécharger le permis du chauffeur' });
+      }
+    });
+  }
+
+  downloadAllBadges() {
+    if (this.isExporting()) return;
+    this.isExporting.set(true);
+    this.chefAgenceService.exportPersonnelBadgesPdf().subscribe({
+      next: (blob) => this.saveBlob(blob, `badges_personnel_${new Date().toISOString()}.pdf`),
+      error: () => {
+        this.isExporting.set(false);
+        Swal.fire({ icon: 'error', title: 'Erreur', text: 'Impossible de télécharger les badges du personnel' });
+      }
+    });
+  }
+
+  private saveBlob(blob: Blob, fileName: string) {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName.replace(/\s+/g, '_').replace(/[:\.]/g, '_');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    this.isExporting.set(false);
+    Swal.fire({ icon: 'success', title: 'Succès', text: 'Téléchargement réussi', timer: 2000, showConfirmButton: false });
   }
 }

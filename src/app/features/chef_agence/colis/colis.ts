@@ -30,6 +30,9 @@ export class ColisPage {
   protected readonly canWithdraw = computed(() => !this.isEnvoiAgent());
   /** L'agent de récupération ne peut PAS créer de colis */
   protected readonly canCreate   = computed(() => !this.isRecuperationAgent() && !this.isChefAgence());
+  /** L'agent de récupération peut marquer un colis arrivé */
+  protected readonly canConfirmArrival = computed(() => this.canCreate() || this.isRecuperationAgent());
+  protected readonly canExportDailyReport = computed(() => this.isEnvoiAgent() || this.isRecuperationAgent());
 
   viewMode = signal<'list' | 'create'>('list');
   colisList = signal<Colis[]>([]);
@@ -355,6 +358,28 @@ export class ColisPage {
       error: (err) => {
         Swal.fire('Erreur', err.error?.message || 'Impossible de télécharger le reçu.', 'error');
         console.error('Receipt download error', err);
+      }
+    });
+  }
+
+  exportRegisteredColisReport() {
+    const date = this.filterDate() || new Date().toISOString().split('T')[0];
+    this.agentService.exportRegisteredColisPdf(date).subscribe({
+      next: (blob) => this.saveBlobAs(blob, `colis_enregistres_${date}.pdf`),
+      error: (err) => {
+        Swal.fire('Erreur', err.error?.message || 'Impossible de télécharger le rapport des colis enregistrés.', 'error');
+        console.error('Export registered colis error', err);
+      }
+    });
+  }
+
+  exportRetiredColisReport() {
+    const date = this.filterDate() || new Date().toISOString().split('T')[0];
+    this.agentService.exportRetiredColisPdf(date).subscribe({
+      next: (blob) => this.saveBlobAs(blob, `colis_retires_${date}.pdf`),
+      error: (err) => {
+        Swal.fire('Erreur', err.error?.message || 'Impossible de télécharger le rapport des colis retirés.', 'error');
+        console.error('Export retired colis error', err);
       }
     });
   }

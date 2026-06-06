@@ -9,6 +9,12 @@
                 <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'picture_as_pdf' }}</mat-icon>
                 <span>{{ isExporting() ? 'Export...' : 'Exporter PDF' }}</span>
             </button>
+            @if (showBadgeButtons()) {
+            <button class="btn-secondary" (click)="downloadAllBadges()" [disabled]="isExporting()">
+                <mat-icon>{{ isExporting() ? 'hourglass_empty' : 'badge' }}</mat-icon>
+                <span>{{ isExporting() ? 'Export...' : 'Badges par station' }}</span>
+            </button>
+            }
             <button class="btn-primary" (click)="toggleForm()">
                 <mat-icon>{{ showForm() ? 'close' : 'person_add' }}</mat-icon>
                 <span>{{ showForm() ? 'Annuler' : 'Ajouter Membre' }}</span>
@@ -100,7 +106,7 @@
                     <td>
                         <div class="user-cell"
                             style="display: flex;justify-content: space-between;align-items: center;">
-                            <div class="user-avatar avatar-{{ member?.role_user?.toLowerCase() }}">
+                            <div class="user-avatar avatar-{{ member.role_user.toLowerCase() }}">
                                 @if (member?.profil_url) {
                                     <img [src]="member.profil_url" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                                 } @else {
@@ -134,9 +140,16 @@
                         </div>
                     </td>
                     <td>
-                        <div class="info-cell">
+                            <div class="info-cell">
                             <span class="birth">
                                 <button class="action-btn edit" (click)="editStaff(member)" title="Modifier"><mat-icon>edit_note</mat-icon></button>
+                                @if (showBadgeButtons()) {
+                                <button class="action-btn" (click)="downloadStaffFiche(member)" title="Imprimer la fiche"><mat-icon>description</mat-icon></button>
+                                <button class="action-btn" (click)="downloadStaffBadge(member)" title="Imprimer le badge"><mat-icon>badge</mat-icon></button>
+                                }
+                                @if (member?.role_user === 'CHAUFFEUR') {
+                                <button class="action-btn" (click)="downloadStaffLicense(member)" title="Imprimer le permis"><mat-icon>assignment</mat-icon></button>
+                                }
                             </span>
                         </div>
                     </td>

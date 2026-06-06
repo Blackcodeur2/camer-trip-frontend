@@ -107,6 +107,16 @@ export class AgentService {
     return this.http.get(`${this.API}/${this.getPrefix()}/colis/${colisId}/receipt`, { responseType: 'blob' });
   }
 
+  exportRegisteredColisPdf(date?: string): Observable<Blob> {
+    const params = date ? `?date=${encodeURIComponent(date)}` : '';
+    return this.http.get(`${this.API}/${this.getPrefix()}/colis/export-registered${params}`, { responseType: 'blob' });
+  }
+
+  exportRetiredColisPdf(date?: string): Observable<Blob> {
+    const params = date ? `?date=${encodeURIComponent(date)}` : '';
+    return this.http.get(`${this.API}/${this.getPrefix()}/colis/export-retired${params}`, { responseType: 'blob' });
+  }
+
   exportPassagersPdf(voyageId: number): Observable<Blob> {
     return this.http.get(`${this.API}/${this.getPrefix()}/voyages/${voyageId}/export-passagers`, { responseType: 'blob' });
   }
