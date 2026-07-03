@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/<nom-de-ton-projet>/browser",
+  "outputDirectory": "dist/camer_trip/browser",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
